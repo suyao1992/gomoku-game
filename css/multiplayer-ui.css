@@ -1,0 +1,2487 @@
+/**
+ * Multiplayer UI Styles
+ * 联机模式UI样式 - 量子搜索、命运之轮、玩家卡片、结算页面
+ */
+
+/* ============ CSS变量定义 ============ */
+:root {
+    /* 主题色 */
+    --mp-primary: #667eea;
+    --mp-secondary: #764ba2;
+    --mp-accent: #f093fb;
+    --mp-success: #4ade80;
+    --mp-danger: #f87171;
+    --mp-warning: #fbbf24;
+
+    /* 背景 */
+    --mp-bg-dark: rgba(15, 15, 35, 0.95);
+    --mp-bg-glass: rgba(30, 30, 60, 0.85);
+    --mp-bg-card: rgba(40, 40, 80, 0.9);
+
+    /* 边框 */
+    --mp-border: rgba(255, 255, 255, 0.1);
+    --mp-border-glow: rgba(102, 126, 234, 0.5);
+
+    /* 阴影 */
+    --mp-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    --mp-glow: 0 0 30px rgba(102, 126, 234, 0.4);
+
+    /* ========== 对战布局参数 ========== */
+    /* 棋盘相对于视口中心的半宽 */
+    --game-board-half-width: 260px;
+    /* 卡片与棋盘的间距 */
+    --game-card-gap: 10px;
+    /* 操作按钮相对于我方卡片左边缘的偏移 */
+    --game-button-offset: 210px;
+    /* 操作按钮垂直偏移（用于居中对齐卡片）*/
+    --game-button-v-offset: 20px;
+}
+
+/* ============ 毛玻璃弹窗基础 ============ */
+.mp-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.mp-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mp-modal-content {
+    background: var(--mp-bg-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--mp-border);
+    border-radius: 24px;
+    box-shadow: var(--mp-shadow);
+    padding: 32px;
+    max-width: 480px;
+    width: 90%;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.mp-modal.active .mp-modal-content {
+    transform: scale(1);
+}
+
+/* ============ 聊天选项按钮 ============ */
+.chat-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.chat-option-btn {
+    background: var(--mp-bg-card);
+    border: 1px solid var(--mp-border);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.chat-option-btn:hover {
+    background: var(--mp-primary);
+    border-color: var(--mp-primary);
+    transform: scale(1.02);
+}
+
+/* ============ 快捷聊天弹窗（专用样式）============ */
+#mp-chat-popup {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 320px !important;
+    max-width: 90vw !important;
+    background: var(--mp-bg-glass) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--mp-border) !important;
+    border-radius: 20px !important;
+    padding: 25px !important;
+    z-index: 500 !important;
+    /* 很高的层级 */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
+}
+
+#mp-chat-popup .request-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#mp-chat-popup .request-btn.reject {
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--mp-border);
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#mp-chat-popup .request-btn.reject:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ============ 隐藏类 ============ */
+.hidden {
+    display: none !important;
+}
+
+.quantum-search {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.quantum-title {
+    font-size: 1.5rem;
+    color: var(--mp-accent);
+    margin-bottom: 30px;
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        text-shadow: 0 0 10px var(--mp-accent);
+    }
+
+    50% {
+        text-shadow: 0 0 30px var(--mp-accent), 0 0 60px var(--mp-primary);
+    }
+}
+
+/* 玩家头像容器 */
+.quantum-avatars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin: 30px 0;
+}
+
+.quantum-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--mp-bg-card);
+    border: 3px solid var(--mp-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    box-shadow: var(--mp-glow);
+}
+
+.quantum-avatar.opponent {
+    border-color: var(--mp-secondary);
+    animation: avatar-pulse 1.5s infinite;
+}
+
+@keyframes avatar-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+}
+
+/* 扫描连接线 */
+.quantum-connection {
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--mp-primary), var(--mp-secondary));
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.quantum-connection::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, white, transparent);
+    animation: scan-line 1.5s infinite;
+}
+
+@keyframes scan-line {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+/* 进度条 */
+.quantum-progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.quantum-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mp-primary), var(--mp-secondary));
+    border-radius: 3px;
+    animation: progress-pulse 2s infinite;
+}
+
+@keyframes progress-pulse {
+
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* 计时器 */
+.quantum-timer {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    font-family: 'Courier New', monospace;
+    margin: 20px 0;
+}
+
+/* 取消按钮 */
+.quantum-cancel-btn {
+    background: transparent;
+    border: 2px solid var(--mp-danger);
+    color: var(--mp-danger);
+    padding: 12px 32px;
+    border-radius: 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quantum-cancel-btn:hover {
+    background: var(--mp-danger);
+    color: white;
+}
+
+/* ============ 命运之轮 ============ */
+.fate-wheel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+}
+
+.fate-wheel {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg,
+            #ff6b6b, #ffd93d, #6bcb77, #4d96ff,
+            #9b59b6, #e74c3c, #f39c12, #27ae60,
+            #ff6b6b);
+    position: relative;
+    box-shadow: 0 0 40px rgba(102, 126, 234, 0.5);
+}
+
+.fate-wheel::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    background: var(--mp-bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fate-wheel-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    z-index: 1;
+}
+
+.fate-wheel.spinning {
+    animation: wheel-spin 2s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+}
+
+@keyframes wheel-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(1440deg);
+    }
+}
+
+.fate-wheel-text {
+    margin-top: 30px;
+    font-size: 1.2rem;
+    color: var(--mp-accent);
+}
+
+/* 匹配成功文字 */
+.match-success {
+    text-align: center;
+    animation: fade-in-up 0.5s ease;
+}
+
+.match-success h2 {
+    font-size: 1.8rem;
+    color: var(--mp-success);
+    margin-bottom: 10px;
+}
+
+.match-success p {
+    font-size: 1.2rem;
+    color: white;
+    opacity: 0.8;
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============ 英雄对决风格 ============ */
+.hero-duel-container {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.duel-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--mp-accent);
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px var(--mp-accent);
+    animation: title-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes title-glow {
+    from {
+        text-shadow: 0 0 10px var(--mp-accent);
+    }
+
+    to {
+        text-shadow: 0 0 30px var(--mp-accent), 0 0 60px var(--mp-primary);
+    }
+}
+
+.duel-arena {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+/* ============ 玩家区域 - 新布局 ============ */
+.duel-arena .player-zone {
+    background: var(--mp-bg-card);
+    border-radius: 16px;
+    padding: 15px;
+    width: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid transparent;
+}
+
+.duel-arena .player-zone.me {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    border-color: var(--mp-primary);
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+}
+
+.duel-arena .player-zone.opponent {
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.2), rgba(251, 191, 36, 0.2));
+    border-color: var(--mp-danger);
+    box-shadow: 0 0 15px rgba(248, 113, 113, 0.3);
+}
+
+/* 头像区域 */
+.duel-arena .zone-avatar {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.duel-arena .avatar-emoji {
+    font-size: 2rem;
+    z-index: 1;
+    animation: avatar-bounce 0.6s ease-out;
+}
+
+/* 信息区域 */
+.duel-arena .zone-info {
+    text-align: center;
+    width: 100%;
+}
+
+.duel-arena .zone-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.duel-arena .zone-label.me {
+    background: var(--mp-primary);
+    color: white;
+}
+
+.duel-arena .zone-label.opponent {
+    background: var(--mp-danger);
+    color: white;
+}
+
+.duel-arena .zone-name {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.duel-arena .zone-elo {
+    font-size: 0.65rem;
+    color: var(--mp-warning);
+    margin-top: 2px;
+}
+
+/* 棋子指示区域 */
+.duel-arena .zone-piece {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.duel-arena .zone-piece .piece-icon {
+    font-size: 1rem;
+}
+
+.duel-arena .zone-piece .piece-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.duel-arena .zone-piece.me {
+    background: rgba(102, 126, 234, 0.2);
+}
+
+.duel-arena .zone-piece.opponent {
+    background: rgba(248, 113, 113, 0.2);
+}
+
+/* 英雄卡片 - 仅在对决区域内生效（保留兼容性）*/
+.duel-arena .hero-card {
+    background: var(--mp-bg-card);
+    border-radius: 16px;
+    padding: 15px 12px;
+    width: 120px;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.duel-arena .hero-card.me {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+    border: 2px solid var(--mp-primary);
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+}
+
+.duel-arena .hero-card.opponent {
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.3), rgba(251, 191, 36, 0.3));
+    border: 2px solid var(--mp-danger);
+    box-shadow: 0 0 20px rgba(248, 113, 113, 0.4);
+}
+
+.duel-arena .hero-avatar {
+    font-size: 2.2rem;
+    margin-bottom: 6px;
+    animation: avatar-bounce 0.6s ease-out;
+}
+
+@keyframes avatar-bounce {
+    0% {
+        transform: scale(0);
+    }
+
+    60% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.duel-arena .hero-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.duel-arena .hero-card.me .hero-label {
+    background: var(--mp-primary);
+    color: white;
+}
+
+.duel-arena .hero-card.opponent .hero-label {
+    background: var(--mp-danger);
+    color: white;
+}
+
+.duel-arena .hero-name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: white;
+    margin: 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.duel-arena .hero-elo {
+    font-size: 0.7rem;
+    color: var(--mp-warning);
+    margin-bottom: 4px;
+}
+
+.duel-arena .hero-color {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 10px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.duel-arena .hero-color.me {
+    background: rgba(102, 126, 234, 0.3);
+    color: var(--mp-primary);
+}
+
+.duel-arena .hero-color.opponent {
+    background: rgba(248, 113, 113, 0.3);
+    color: var(--mp-danger);
+}
+
+/* VS 闪电效果 */
+.vs-lightning {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.lightning-bolt {
+    font-size: 1.5rem;
+    animation: lightning-flash 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes lightning-flash {
+    from {
+        opacity: 0.5;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+.vs-text {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    margin: 5px 0;
+}
+
+/* 入场动画 */
+.slide-in-left {
+    animation: slideInLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px) rotate(-10deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) rotate(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px) rotate(10deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) rotate(0);
+    }
+}
+
+.duel-message {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+}
+
+/* ============ 极光背景 ============ */
+.aurora-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg,
+            rgba(102, 126, 234, 0.1) 0%,
+            rgba(118, 75, 162, 0.1) 25%,
+            rgba(240, 147, 251, 0.1) 50%,
+            rgba(118, 75, 162, 0.1) 75%,
+            rgba(102, 126, 234, 0.1) 100%);
+    background-size: 400% 400%;
+    animation: aurora-flow 8s ease-in-out infinite;
+    border-radius: 24px;
+    z-index: 0;
+}
+
+@keyframes aurora-flow {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.hero-duel-container {
+    position: relative;
+    text-align: center;
+    padding: 25px 15px;
+    z-index: 1;
+}
+
+/* ============ 头像光晕 ============ */
+.hero-avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.duel-arena .avatar-halo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    animation: halo-breathe 2s ease-in-out infinite;
+}
+
+.duel-arena .avatar-halo.me {
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.6) 0%, transparent 70%);
+}
+
+.duel-arena .avatar-halo.opponent {
+    background: radial-gradient(circle, rgba(248, 113, 113, 0.6) 0%, transparent 70%);
+}
+
+@keyframes halo-breathe {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 1;
+    }
+}
+
+/* ============ VS 连接区域 ============ */
+.duel-arena .vs-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-width: 50px;
+}
+
+.duel-arena .vs-badge {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, var(--mp-primary), var(--mp-secondary));
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    animation: vs-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes vs-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px var(--mp-primary);
+    }
+
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 25px var(--mp-primary), 0 0 40px var(--mp-secondary);
+    }
+}
+
+/* ============ 粒子流动 ============ */
+.duel-arena .particle-flow {
+    display: flex;
+    gap: 4px;
+    opacity: 0.8;
+}
+
+.duel-arena .particle-flow.reverse {
+    flex-direction: row-reverse;
+}
+
+.duel-arena .particle {
+    font-size: 0.7rem;
+    animation: particle-float 2s ease-in-out infinite;
+}
+
+.particle.p1 {
+    animation-delay: 0s;
+}
+
+.particle.p2 {
+    animation-delay: 0.3s;
+}
+
+.particle.p3 {
+    animation-delay: 0.6s;
+}
+
+@keyframes particle-float {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(0.8);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: translateY(-5px) scale(1);
+        opacity: 1;
+    }
+}
+
+/* ============ 统一倒计时区域 ============ */
+.duel-countdown-section {
+    margin-top: 20px;
+}
+
+.duel-countdown-number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 30px var(--mp-primary);
+    margin-top: 10px;
+}
+
+.duel-countdown-number.bounce {
+    animation: countdown-bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes countdown-bounce-in {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.duel-countdown-number.final {
+    color: var(--mp-warning);
+    animation: countdown-shake 0.5s ease;
+}
+
+@keyframes countdown-shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.duel-countdown-number.go {
+    color: var(--mp-success);
+    font-size: 2.5rem;
+    animation: go-burst 0.5s ease-out;
+}
+
+@keyframes go-burst {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.5);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ============ 倒计时 ============ */
+#matchmaking-modal .countdown-container {
+    text-align: center;
+    padding: 60px;
+}
+
+#matchmaking-modal .countdown-players {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+#matchmaking-modal .countdown-player {
+    text-align: center;
+}
+
+#matchmaking-modal .countdown-player-avatar {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+#matchmaking-modal .countdown-player-name {
+    font-size: 1rem;
+    color: white;
+    opacity: 0.8;
+}
+
+#matchmaking-modal .countdown-number {
+    font-size: 8rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 40px var(--mp-primary);
+    animation: countdown-bounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes countdown-bounce {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+#matchmaking-modal .countdown-text {
+    font-size: 1.5rem;
+    color: var(--mp-accent);
+    margin-top: 20px;
+}
+
+/* ============ 玩家信息卡片 ============ */
+.mp-game .player-card {
+    background: var(--mp-bg-card);
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 16px 20px;
+    position: fixed;
+    z-index: 100;
+    min-width: 180px;
+    backdrop-filter: blur(10px);
+    background-image:
+        linear-gradient(var(--mp-bg-card), var(--mp-bg-card)),
+        linear-gradient(135deg, var(--mp-primary), var(--mp-secondary));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+/* 玩家卡片位置 - 使用CSS变量，便于复用 */
+
+.mp-game .player-card.me {
+    /* 我方卡片：左边缘 = 棋盘左边缘 */
+    left: calc(50% - var(--game-board-half-width));
+    /* 垂直位置：棋盘下方，紧贴 */
+    bottom: calc(50% - var(--game-board-half-width) - var(--game-card-gap));
+    top: auto;
+    transform: translateY(100%);
+}
+
+.mp-game .player-card.opponent {
+    /* 对手卡片：右边缘 = 棋盘右边缘 */
+    right: calc(50% - var(--game-board-half-width));
+    /* 垂直位置：棋盘上方，紧贴 */
+    top: calc(50% - var(--game-board-half-width) - var(--game-card-gap));
+    bottom: auto;
+    transform: translateY(-100%);
+}
+
+/* ============ 回合状态 ============ */
+.mp-game .player-card.me.active-turn {
+    animation: active-glow 1.5s ease-in-out infinite;
+    transform: translateY(100%) scale(1.02);
+}
+
+.mp-game .player-card.opponent.active-turn {
+    animation: active-glow 1.5s ease-in-out infinite;
+    transform: translateY(-100%) scale(1.02);
+}
+
+.mp-game .player-card.waiting-turn {
+    opacity: 0.7;
+    filter: grayscale(0.3);
+}
+
+@keyframes active-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 15px var(--mp-primary), 0 0 30px rgba(102, 126, 234, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 25px var(--mp-primary), 0 0 50px rgba(102, 126, 234, 0.5);
+    }
+}
+
+/* ============ 计时器警告效果 ============ */
+.mp-game .player-card.time-warning {
+    border-color: var(--mp-warning) !important;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+}
+
+.mp-game .player-card.time-danger {
+    border-color: var(--mp-danger) !important;
+    animation: danger-pulse 0.5s ease-in-out infinite;
+}
+
+.mp-game .player-card.time-critical {
+    border-color: #ff0000 !important;
+    animation: critical-shake 0.3s ease-in-out infinite;
+}
+
+@keyframes danger-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(248, 113, 113, 0.7);
+    }
+}
+
+@keyframes critical-shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+        box-shadow: 0 0 20px #ff0000;
+    }
+
+    25% {
+        transform: translateX(-3px);
+    }
+
+    75% {
+        transform: translateX(3px);
+    }
+}
+
+/* 计时器文字样式 */
+.mp-game .player-card-time.warning {
+    color: var(--mp-warning);
+}
+
+.mp-game .player-card-time.danger {
+    color: var(--mp-danger);
+    animation: time-blink 0.5s ease-in-out infinite;
+}
+
+.mp-game .player-card-time.critical {
+    color: #ff0000;
+    font-weight: bold;
+    font-size: 1.1em;
+    animation: time-blink 0.25s ease-in-out infinite;
+}
+
+@keyframes time-blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+}
+
+/* 回合状态文字 */
+.mp-game .player-card-status {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: linear-gradient(135deg, var(--mp-primary), var(--mp-secondary));
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: white;
+    text-align: center;
+    animation: status-bounce 0.5s ease-out;
+}
+
+@keyframes status-bounce {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ============ 步时计时器环绕头像 ============ */
+.mp-game .avatar-wrapper {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mp-game .move-timer-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 60px;
+    transform: rotate(-90deg);
+}
+
+.mp-game .move-timer-ring .ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 4;
+}
+
+.mp-game .move-timer-ring .ring-progress {
+    fill: none;
+    stroke: var(--mp-primary);
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
+}
+
+.mp-game .player-card-avatar {
+    font-size: 1.8rem;
+    z-index: 1;
+}
+
+.mp-game .move-timer-text {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    background: var(--mp-bg-dark);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--mp-primary);
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.mp-game .move-timer-text.danger {
+    color: var(--mp-danger);
+    border-color: var(--mp-danger);
+    animation: timer-pulse 0.5s ease-in-out infinite;
+}
+
+.mp-game .move-timer-text.critical {
+    color: #ff0000;
+    border-color: #ff0000;
+    animation: timer-pulse 0.25s ease-in-out infinite;
+    font-size: 0.8rem;
+}
+
+@keyframes timer-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+.mp-game .player-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.mp-game .player-card-avatar {
+    font-size: 2rem;
+}
+
+.mp-game .player-card-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+}
+
+.mp-game .player-card-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.mp-game .player-card-elo {
+    color: var(--mp-warning);
+}
+
+.mp-game .player-card-color {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.mp-game .player-card-moves {
+    color: var(--mp-success);
+    font-weight: 500;
+}
+
+/* 卡片内聊天消息显示 */
+.mp-game .player-card-chat {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    animation: chat-pop 0.3s ease-out;
+}
+
+.mp-game .player-card-chat.chat-active {
+    animation: chat-pulse 1s ease-in-out infinite;
+}
+
+@keyframes chat-pop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes chat-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.8);
+    }
+}
+
+.mp-game .player-card-time {
+    font-family: 'Courier New', monospace;
+    color: white;
+}
+
+.mp-game .player-card-time.warning {
+    color: var(--mp-danger);
+    animation: time-flash 0.5s infinite;
+}
+
+@keyframes time-flash {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* ============ 操作按钮 - 联机对战模式 (所有屏幕尺寸) ============ */
+/* 使用ID选择器确保更高优先级，覆盖hidden类和任何transform */
+body.mp-game #mp-game-actions {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    /* 关键：取消translateY避免推出屏幕 */
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 200 !important;
+}
+
+.mp-game .game-actions {
+    position: fixed;
+    /* 在我方卡片右侧 */
+    left: calc(50% - var(--game-board-half-width) + var(--game-button-offset));
+    /* 与我方卡片同一位置 */
+    bottom: calc(50% - var(--game-board-half-width) - var(--game-card-gap));
+    transform: translateY(100%) translateY(var(--game-button-v-offset));
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 2列 */
+    gap: 8px;
+    z-index: 100;
+}
+
+.mp-game .action-btn {
+    background: var(--mp-bg-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--mp-border);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mp-game .action-btn:hover {
+    background: var(--mp-bg-card);
+    transform: translateY(-2px);
+    box-shadow: var(--mp-glow);
+}
+
+.mp-game .action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.mp-game .action-btn.danger:hover {
+    border-color: var(--mp-danger);
+    box-shadow: 0 0 20px rgba(248, 113, 113, 0.3);
+}
+
+/* ============ 聊天气泡 ============ */
+.mp-game .chat-bubble {
+    position: fixed;
+    /* 使用 fixed 确保可见 */
+    background: var(--mp-bg-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--mp-border);
+    border-radius: 16px;
+    padding: 12px 20px;
+    color: white;
+    font-size: 0.95rem;
+    animation: bubble-in 0.3s ease, bubble-out 0.3s ease 2.7s forwards;
+    z-index: 200;
+    /* 提高层级确保可见 */
+    max-width: 200px;
+    text-align: center;
+}
+
+.mp-game .chat-bubble.me {
+    /* 在我方卡片上方显示 */
+    left: calc(50% - var(--game-board-half-width));
+    bottom: calc(50% - var(--game-board-half-width) + 50px);
+}
+
+.mp-game .chat-bubble.opponent {
+    /* 在对手卡片下方显示 */
+    right: calc(50% - var(--game-board-half-width));
+    top: calc(50% - var(--game-board-half-width) + 50px);
+}
+
+@keyframes bubble-in {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes bubble-out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+/* ============ 回合指示器 ============ */
+.mp-game .turn-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--mp-bg-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--mp-border);
+    border-radius: 30px;
+    padding: 10px 30px;
+    color: white;
+    font-size: 1rem;
+    z-index: 90;
+    pointer-events: none;
+}
+
+.mp-game .turn-indicator.my-turn {
+    border-color: var(--mp-success);
+    color: var(--mp-success);
+}
+
+/* ============ 结算页面 ============ */
+.mp-game .result-modal {
+    text-align: center;
+}
+
+.mp-game .result-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    animation: result-pop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes result-pop {
+    0% {
+        transform: scale(0);
+    }
+
+    60% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.mp-game .result-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.mp-game .result-title.victory {
+    color: var(--mp-success);
+    text-shadow: 0 0 30px var(--mp-success);
+}
+
+.mp-game .result-title.defeat {
+    color: var(--mp-danger);
+}
+
+.mp-game .result-title.draw {
+    color: var(--mp-warning);
+}
+
+.mp-game .result-stats {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.mp-game .result-stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.mp-game .result-elo {
+    font-size: 1.2rem;
+    margin: 20px 0;
+}
+
+.mp-game .result-elo.up {
+    color: var(--mp-success);
+}
+
+.mp-game .result-elo.down {
+    color: var(--mp-danger);
+}
+
+.mp-game .result-message {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+    margin: 15px 0;
+}
+
+.mp-game .result-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.mp-game .result-btn {
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.mp-game .result-btn.primary {
+    background: linear-gradient(135deg, var(--mp-primary), var(--mp-secondary));
+    color: white;
+}
+
+.mp-game .result-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.mp-game .result-btn.secondary {
+    background: transparent;
+    border: 2px solid var(--mp-border);
+    color: white;
+}
+
+.mp-game .result-btn.secondary:hover {
+    border-color: var(--mp-primary);
+}
+
+/* ============ 请求弹窗 ============ */
+.mp-game .request-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--mp-bg-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--mp-border);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    z-index: 200;
+    animation: popup-in 0.3s ease;
+}
+
+@keyframes popup-in {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.mp-game .request-title {
+    font-size: 1.3rem;
+    color: white;
+    margin-bottom: 15px;
+}
+
+.mp-game .request-timer {
+    font-size: 1.5rem;
+    color: var(--mp-warning);
+    margin: 15px 0;
+}
+
+.mp-game .request-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.mp-game .request-btn {
+    padding: 10px 25px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.mp-game .request-btn.accept {
+    background: var(--mp-success);
+    color: white;
+}
+
+.mp-game .request-btn.reject {
+    background: var(--mp-danger);
+    color: white;
+}
+
+/* ============ Canvas粒子层 ============ */
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1001;
+}
+
+/* ============ 移动端适配 ============ */
+@media (max-width: 768px) {
+    .player-card {
+        min-width: 140px;
+        padding: 12px 16px;
+    }
+
+    .player-card.me {
+        left: 10px;
+        bottom: 80px;
+    }
+
+    .player-card.opponent {
+        right: 10px;
+        top: 60px;
+    }
+
+    .game-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 90%;
+    }
+
+    .action-btn {
+        padding: 10px 16px;
+        font-size: 0.8rem;
+    }
+
+    .quantum-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+
+    .countdown-number {
+        font-size: 5rem;
+    }
+}
+
+/* ============ iPhone 专用适配 (600px以下) ============ */
+@media (max-width: 600px) {
+
+    /* 联机对战容器全屏布局 */
+    body.mp-game {
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+
+    body.mp-game .container {
+        height: 100vh !important;
+        height: 100dvh !important;
+        /* 动态视口高度 */
+        min-height: 100vh !important;
+        min-height: 100dvh !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }
+
+    /* 顶部信息栏紧凑化 */
+    .online-header,
+    #online-header {
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        padding: 8px 10px !important;
+        padding-top: max(8px, env(safe-area-inset-top)) !important;
+        background: rgba(10, 10, 30, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+        z-index: 100 !important;
+        flex-shrink: 0 !important;
+    }
+
+    .soul-header-layout {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 5px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        transform: none !important;
+    }
+
+    .soul-card {
+        width: auto !important;
+        min-width: 90px !important;
+        max-width: 120px !important;
+        padding: 5px 8px !important;
+        flex-direction: row !important;
+        gap: 8px !important;
+    }
+
+    .soul-avatar-container {
+        width: 35px !important;
+        height: 35px !important;
+    }
+
+    .soul-avatar-emoji {
+        font-size: 20px !important;
+    }
+
+    .soul-name {
+        font-size: 11px !important;
+        max-width: 60px !important;
+    }
+
+    .soul-elo {
+        font-size: 9px !important;
+    }
+
+    .soul-timer {
+        font-size: 12px !important;
+        padding: 2px 6px !important;
+    }
+
+    /* AI思考指示器 */
+    #ai-thinking,
+    .ai-thinking {
+        position: relative !important;
+        top: 0 !important;
+        margin: 5px auto !important;
+        padding: 5px 15px !important;
+        font-size: 12px !important;
+    }
+
+    /* 游戏布局：使用flex填充 - 必须限定作用域 */
+    body.mp-game .game-layout {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 5px !important;
+        overflow: hidden !important;
+        min-height: 0 !important;
+    }
+
+    /* 棋盘容器：自适应剩余空间 - 必须限定作用域 */
+    body.mp-game .game-container {
+        flex: 1 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 5px !important;
+        min-height: 0 !important;
+    }
+
+    /* 棋盘：根据可用空间自适应 */
+    body.mp-game #board {
+        width: min(100%, calc(100vh - 180px)) !important;
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+        max-height: calc(100vh - 180px) !important;
+        max-height: calc(100dvh - 180px) !important;
+    }
+
+    /* 联机对战底部操作栏 - 必须限定作用域 */
+    body.mp-game .game-actions,
+    body.mp-game .mp-game-actions {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        padding: 10px 15px !important;
+        padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+        background: rgba(10, 10, 30, 0.98) !important;
+        backdrop-filter: blur(10px) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        z-index: 200 !important;
+        display: flex !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        flex-wrap: nowrap !important;
+    }
+
+    .action-btn {
+        flex: 1 !important;
+        max-width: 120px !important;
+        padding: 12px 8px !important;
+        font-size: 0.85rem !important;
+        border-radius: 10px !important;
+    }
+
+    /* ============================================
+       联机对战 - 超紧凑单行布局
+       顶部：对手 (单行) | 中间：棋盘 | 底部：我方 (单行) + 按钮
+       ============================================ */
+
+    /* 玩家卡片统一样式 - 超紧凑单行 */
+    .mp-game .player-card {
+        position: fixed !important;
+        width: calc(100% - 20px) !important;
+        left: 10px !important;
+        right: 10px !important;
+        padding: 6px 12px !important;
+        /* 极小padding */
+        margin: 0 !important;
+        border-radius: 8px !important;
+        z-index: 150 !important;
+        min-width: unset !important;
+        max-width: 100% !important;
+        transform: none !important;
+        display: flex !important;
+        flex-direction: row !important;
+        /* 强制单行 */
+        align-items: center !important;
+        gap: 8px !important;
+        height: 44px !important;
+        /* 固定高度 */
+        max-height: 44px !important;
+        overflow: hidden !important;
+        background: rgba(20, 20, 40, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+    }
+
+    /* 对手卡片：顶部 */
+    .mp-game .player-card.opponent {
+        top: env(safe-area-inset-top, 0) !important;
+        bottom: auto !important;
+    }
+
+    /* 我方卡片：底部按钮上方 */
+    .mp-game .player-card.me {
+        bottom: calc(50px + env(safe-area-inset-bottom, 0)) !important;
+        top: auto !important;
+    }
+
+    /* 子容器改为内联显示（不隐藏！） */
+    .mp-game .player-card-header {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .mp-game .player-card-info {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+
+    /* 隐藏状态文字（移动端用chat元素代替） */
+    .mp-game .player-card-status {
+        display: none !important;
+    }
+
+    /* avatar-wrapper 改为包含计时器环的容器 */
+    .mp-game .avatar-wrapper {
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 36px !important;
+        height: 36px !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* 移动端计时器环 - 缩小版 */
+    .mp-game .avatar-wrapper .move-timer-ring {
+        display: block !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 36px !important;
+        height: 36px !important;
+        transform: rotate(-90deg) !important;
+    }
+
+    .mp-game .move-timer-ring .ring-bg {
+        fill: none !important;
+        stroke: rgba(255, 255, 255, 0.15) !important;
+        stroke-width: 3 !important;
+    }
+
+    .mp-game .move-timer-ring .ring-progress {
+        fill: none !important;
+        stroke: var(--mp-primary) !important;
+        stroke-width: 3 !important;
+        stroke-linecap: round !important;
+        transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease !important;
+    }
+
+    /* 移动端步时文字 - 小圆角底部 */
+    .mp-game .avatar-wrapper .move-timer-text {
+        display: flex !important;
+        position: absolute !important;
+        bottom: -4px !important;
+        right: -4px !important;
+        background: var(--mp-bg-dark) !important;
+        color: white !important;
+        font-size: 9px !important;
+        font-weight: bold !important;
+        min-width: 16px !important;
+        height: 16px !important;
+        border-radius: 8px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border: 1.5px solid var(--mp-primary) !important;
+        z-index: 2 !important;
+    }
+
+    /* 头像：在计时器环内居中显示 */
+    .mp-game .player-card-avatar {
+        display: inline-block !important;
+        font-size: 18px !important;
+        flex-shrink: 0 !important;
+        line-height: 1 !important;
+        z-index: 1 !important;
+    }
+
+
+    /* 名字：紧凑 */
+    .mp-game .player-card-name {
+        display: inline-block !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #fff !important;
+        flex: 1 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 80px !important;
+    }
+
+    /* ELO和执棋：单行显示 */
+    .mp-game .player-card-elo {
+        display: inline-block !important;
+        font-size: 10px !important;
+        color: rgba(255, 255, 255, 0.6) !important;
+        flex-shrink: 0 !important;
+    }
+
+    .mp-game .player-card-color {
+        display: inline-block !important;
+        font-size: 11px !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+        flex-shrink: 0 !important;
+        padding: 2px 6px !important;
+        background: rgba(102, 126, 234, 0.3) !important;
+        border-radius: 4px !important;
+    }
+
+    /* 时间：突出显示 */
+    .mp-game .player-card-time {
+        display: inline-block !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        font-family: 'Courier New', monospace !important;
+        color: #fff !important;
+        padding: 3px 8px !important;
+        background: rgba(0, 0, 0, 0.4) !important;
+        border-radius: 6px !important;
+        flex-shrink: 0 !important;
+        margin-left: auto !important;
+        /* 推到右侧 */
+    }
+
+    /* 移动端聊天消息：紧凑显示在落子数旁边 */
+    .mp-game .player-card-chat {
+        display: inline-block !important;
+        font-size: 10px !important;
+        padding: 2px 6px !important;
+        border-radius: 8px !important;
+        max-width: 80px !important;
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        color: white !important;
+        flex-shrink: 1 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    /* 🔥 关键：确保 hidden 类能覆盖上面的 display: inline-block */
+    .mp-game .player-card-chat.hidden {
+        display: none !important;
+    }
+
+    .mp-game .player-card-chat.chat-active {
+        animation: chat-pulse 1s ease-in-out infinite !important;
+    }
+
+    /* 回合状态样式 - 区分于聊天消息 */
+    .mp-game .player-card-chat.turn-status {
+        background: linear-gradient(135deg, #4ade80, #22c55e) !important;
+        animation: none !important;
+    }
+
+    .mp-game .player-card.opponent .player-card-chat.turn-status {
+        background: linear-gradient(135deg, #fb923c, #f97316) !important;
+    }
+
+    /* 回合状态 */
+    .mp-game .player-card.active-turn {
+        border: 1px solid rgba(74, 222, 128, 0.6) !important;
+        box-shadow: 0 0 8px rgba(74, 222, 128, 0.4) !important;
+    }
+
+    .mp-game .player-card.waiting-turn {
+        opacity: 0.6 !important;
+    }
+
+    /* ============ 底部操作按钮 - 仅限联机对战模式 ============ */
+    /* 重要：所有规则必须以 body.mp-game 开头，避免影响其他页面 */
+    body.mp-game #mp-game-actions,
+    body.mp-game .game-actions {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 50px !important;
+        padding: 8px 10px !important;
+        padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+        background: rgba(10, 10, 30, 0.98) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        z-index: 200 !important;
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        gap: 6px !important;
+    }
+
+    /* 覆盖hidden类 - 仅限mp-game模式 */
+    body.mp-game #mp-game-actions.hidden {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    body.mp-game #mp-game-actions .action-btn {
+        flex: 1 !important;
+        padding: 8px 4px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+        min-width: 0 !important;
+        white-space: nowrap !important;
+    }
+
+    /* 游戏布局调整 - 让卡片更靠近棋盘 */
+    body.mp-game .game-layout {
+        padding-top: 46px !important;
+        /* 紧贴卡片 */
+        padding-bottom: 94px !important;
+        /* 紧贴底部 */
+    }
+
+    body.mp-game #board {
+        max-height: calc(100vh - 144px) !important;
+        max-height: calc(100dvh - 144px) !important;
+    }
+
+    @keyframes mobile-active-pulse {
+
+        0%,
+        100% {
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        50% {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+        }
+    }
+
+    .mp-game .player-card.waiting-turn {
+        opacity: 0.7 !important;
+    }
+
+    /* 注：操作按钮样式已在上方定义，使用body.mp-game前缀 */
+
+    /* 游戏布局调整：为固定元素留出空间 */
+    body.mp-game .game-layout {
+        padding-top: 70px !important;
+        /* 对手卡片高度 */
+        padding-bottom: 140px !important;
+        /* 我方卡片 + 按钮高度 */
+    }
+
+    /* 棋盘自适应 */
+    body.mp-game #board {
+        max-height: calc(100vh - 220px) !important;
+        max-height: calc(100dvh - 220px) !important;
+        width: auto !important;
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+    }
+
+    /* 隐藏装饰性元素节省空间 */
+    body.mp-game .vs-logo,
+    body.mp-game h1 {
+        display: none !important;
+    }
+
+    /* 聊天气泡位置调整 */
+    .chat-bubble {
+        max-width: 150px !important;
+        font-size: 11px !important;
+    }
+
+    /* 结算弹窗移动端适配 */
+    #mp-result-modal,
+    .mp-result-modal {
+        padding: 20px 10px !important;
+    }
+
+    #mp-result-modal .result-content,
+    .result-content {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        padding: 20px 15px !important;
+    }
+
+    .result-title {
+        font-size: 1.5rem !important;
+    }
+
+    .result-stats {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .result-actions {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .result-actions button {
+        width: 100% !important;
+    }
+
+    /* 聊天弹窗移动端适配 - 确保在所有元素之上 */
+    #mp-chat-popup {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90vw !important;
+        max-width: 320px !important;
+        z-index: 10001 !important;
+        /* 超高层级确保可见 */
+        padding: 20px !important;
+        border-radius: 16px !important;
+    }
+
+    #mp-chat-popup .chat-options {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    #mp-chat-popup .chat-option-btn {
+        padding: 10px 8px !important;
+        font-size: 13px !important;
+    }
+
+    /* 量子搜索弹窗 */
+    .quantum-search {
+        padding: 30px 15px !important;
+    }
+
+    .quantum-title {
+        font-size: 1.2rem !important;
+    }
+
+    .quantum-avatars {
+        gap: 20px !important;
+    }
+
+    .quantum-avatar {
+        width: 55px !important;
+        height: 55px !important;
+        font-size: 1.8rem !important;
+    }
+
+    .quantum-timer {
+        font-size: 1.5rem !important;
+    }
+
+    /* 英雄对决区域 */
+    .hero-duel-container {
+        padding: 20px 10px !important;
+    }
+
+    .duel-title {
+        font-size: 1.2rem !important;
+        margin-bottom: 15px !important;
+    }
+
+    .duel-arena {
+        gap: 10px !important;
+    }
+
+    .duel-arena .player-zone,
+    .duel-arena .hero-card {
+        width: 100px !important;
+        padding: 10px !important;
+    }
+
+    .duel-arena .zone-avatar,
+    .duel-arena .hero-avatar-wrapper {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .duel-arena .avatar-emoji,
+    .duel-arena .hero-avatar {
+        font-size: 1.5rem !important;
+    }
+
+    .vs-text {
+        font-size: 1.3rem !important;
+    }
+
+    /* 倒计时动画 */
+    .countdown-modal .countdown-number {
+        font-size: 4rem !important;
+    }
+
+    /* 回合提示Toast（如"还没轮到你"）*/
+    .toast,
+    #toast-container .toast {
+        top: 80px !important;
+        /* 避免遮挡对手卡片 */
+        max-width: 200px !important;
+        font-size: 13px !important;
+        padding: 10px 20px !important;
+    }
+}
+
+/* ============ 渐进式提示样式 ============ */
+.quantum-subtitle {
+    font-size: 0.95em;
+    color: rgba(150, 180, 220, 0.8);
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    min-height: 24px;
+}
+
+.quantum-online {
+    font-size: 0.9em;
+    color: rgba(100, 200, 255, 0.9);
+    margin: 15px 0;
+    padding: 8px 16px;
+    background: rgba(0, 150, 255, 0.15);
+    border-radius: 20px;
+    display: inline-block;
+    border: 1px solid rgba(0, 150, 255, 0.3);
+}
+
+.quantum-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.quantum-btn {
+    padding: 12px 24px;
+    border-radius: 25px;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.quantum-btn.primary {
+    background: linear-gradient(135deg, #00d4ff, #00a8ff);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 150, 255, 0.3);
+}
+
+.quantum-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.quantum-btn:hover {
+    transform: scale(1.05);
+}
+
+.quantum-btn.primary:hover {
+    box-shadow: 0 6px 20px rgba(0, 150, 255, 0.5);
+}
+
+/* ============ 预约匹配 UI ============ */
+.reservation-mode {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.reservation-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: bellRing 1.5s ease-in-out infinite;
+}
+
+@keyframes bellRing {
+    0%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(15deg); }
+    20% { transform: rotate(-15deg); }
+    30% { transform: rotate(10deg); }
+    40% { transform: rotate(-10deg); }
+    50% { transform: rotate(5deg); }
+    60% { transform: rotate(0deg); }
+}
+
+.reservation-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #00d4ff;
+    margin-bottom: 15px;
+}
+
+.reservation-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 20px;
+}
+
+.reservation-status .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #4ade80;
+    animation: statusBlink 1.5s infinite;
+}
+
+@keyframes statusBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.reservation-tip {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 25px;
+    padding: 12px;
+    background: rgba(0, 150, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 150, 255, 0.2);
+}
+
+.reservation-activities {
+    margin-bottom: 25px;
+}
+
+.activities-title {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 12px;
+}
+
+.activities-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.activity-btn {
+    padding: 10px 18px;
+    background: var(--mp-bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.activity-btn:hover {
+    background: var(--mp-primary);
+    border-color: var(--mp-primary);
+    transform: translateY(-2px);
+}
+
+.reservation-cancel-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 10px 30px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reservation-cancel-btn:hover {
+    border-color: var(--mp-danger);
+    color: var(--mp-danger);
+}

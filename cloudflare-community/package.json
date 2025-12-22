@@ -1,0 +1,23 @@
+{
+    "name": "gomoku-community-api",
+    "version": "1.0.0",
+    "description": "Cloudflare Worker API for Gomoku Community",
+    "main": "src/index.js",
+    "scripts": {
+        "dev": "wrangler dev",
+        "deploy": "wrangler deploy",
+        "db:init": "wrangler d1 execute gomoku-community --file=./schema.sql",
+        "db:init:local": "wrangler d1 execute gomoku-community --local --file=./schema.sql"
+    },
+    "keywords": [
+        "cloudflare",
+        "workers",
+        "gomoku",
+        "community"
+    ],
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "wrangler": "^3.0.0"
+    }
+}

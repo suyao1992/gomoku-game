@@ -1,0 +1,26 @@
+name = "gomoku-community-api"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# D1 数据库绑定
+[[d1_databases]]
+binding = "DB"
+database_name = "gomoku-community"
+database_id = "66f3498f-8137-4543-9294-95e140d4c21e"
+
+# R2 存储桶绑定
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "gomoku-images"
+
+# 环境变量
+[vars]
+ADMIN_SECRET = "gomoku-admin-2024-secret"
+ALLOWED_ORIGINS = "*"
+MAX_IMAGE_SIZE = "5242880"  # 5MB
+RATE_LIMIT_WINDOW = "60"    # 60秒
+RATE_LIMIT_MAX = "30"       # 每分钟最多30次请求
+
+# 开发环境配置
+[env.dev]
+vars = { ALLOWED_ORIGINS = "*" }

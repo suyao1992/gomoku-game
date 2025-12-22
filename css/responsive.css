@@ -1,0 +1,595 @@
+/* ============================================================
+   RESPONSIVE.CSS - 统一响应式规则
+   使用 pointer/hover 检测设备类型，而不仅仅依赖屏幕宽度
+   ============================================================ */
+
+/* ============================================================
+   TIER 1: 手机端 - 触屏设备 + 小屏幕
+   ============================================================ */
+@media screen and (max-width: 600px) and (pointer: coarse) {
+
+    /* === 全局 === */
+    body {
+        padding: var(--spacing-sm);
+        padding-top: max(var(--spacing-sm), env(safe-area-inset-top));
+        padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+
+    h1 {
+        font-size: var(--font-size-xl);
+        margin-top: 15px;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    /* === 模式选择菜单 === */
+    .mode-select-content {
+        width: 95vw !important;
+        min-width: 0 !important;
+        max-height: 80vh;
+        padding: 15px;
+    }
+
+    .mode-section:not(.collapsed) .section-content {
+        max-height: none !important;
+        overflow-y: auto;
+    }
+
+    .mode-btn {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 15px var(--spacing-sm);
+        min-height: 70px;
+        width: 100%;
+    }
+
+    .mode-btn .btn-icon {
+        font-size: var(--font-size-xl);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .mode-btn .btn-title {
+        font-size: var(--font-size-base);
+    }
+
+    .mode-btn .btn-subtitle {
+        font-size: var(--font-size-xs);
+        opacity: 0.7;
+    }
+
+    /* === 游戏布局 === */
+    .game-layout {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+        width: 100%;
+    }
+
+    .game-container {
+        width: 100%;
+        max-width: 100%;
+        order: 1;
+    }
+
+    #board {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1/1;
+        touch-action: none;
+    }
+
+    /* === 角色区域 === */
+    .character-wrapper {
+        width: 100%;
+        max-width: 100%;
+        order: 2;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm);
+        background: var(--color-surface);
+        border-radius: var(--radius-md);
+    }
+
+    /* 确保hidden类在移动端也生效 */
+    .character-wrapper.hidden {
+        display: none !important;
+    }
+
+    .char-frame {
+        width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+    }
+
+    .dialogue-box {
+        position: static;
+        flex: 1;
+        height: auto;
+        min-height: 50px;
+        padding: var(--spacing-sm);
+        font-size: var(--font-size-sm);
+    }
+
+    /* === 底部固定控制栏 === */
+    .controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        padding: var(--spacing-sm) 15px;
+        padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+        background: rgba(10, 10, 30, 0.95);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+        gap: var(--spacing-sm);
+    }
+
+    .controls .btn {
+        flex: 1;
+        max-width: none;
+        padding: 12px var(--spacing-sm);
+        font-size: var(--font-size-sm);
+    }
+
+    /* === 弹窗 === */
+    .modal-content,
+    .rps-content,
+    .winner-content {
+        width: 95vw !important;
+        max-width: none !important;
+        padding: var(--spacing-md);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    /* === 猜拳游戏 === */
+    .rps-game {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .rps-player {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .rps-btn {
+        font-size: 1.8em;
+        padding: var(--spacing-sm);
+    }
+
+    /* === 角色区域完全重写 (P0修复) === */
+    .character-wrapper {
+        /* 完全覆盖桌面端的固定高度 */
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        /* 关键：覆盖600px固定高度 */
+        max-height: none !important;
+        min-height: 80px;
+
+        /* 改为横向紧凑布局 */
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 10px;
+        padding: 10px !important;
+
+        background: rgba(15, 15, 26, 0.95) !important;
+        border-radius: 12px !important;
+        overflow: visible !important;
+    }
+
+    /* 确保联机模式下hidden类生效 */
+    .character-wrapper.hidden {
+        display: none !important;
+    }
+
+    .char-frame {
+        /* 取消绝对定位，改为正常流 */
+        position: relative !important;
+        width: 60px !important;
+        height: 60px !important;
+        min-width: 60px;
+        flex-shrink: 0;
+        border-radius: 50% !important;
+        overflow: hidden;
+        border: 2px solid rgba(0, 212, 255, 0.3);
+    }
+
+    .char-sprite {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center top !important;
+    }
+
+    .char-name {
+        position: relative !important;
+        font-size: 0.9em !important;
+        padding: 4px 8px !important;
+        background: transparent !important;
+        color: #a855f7 !important;
+        white-space: nowrap;
+    }
+
+    .dialogue-box {
+        position: relative !important;
+        flex: 1;
+        height: auto !important;
+        min-height: 40px;
+        padding: 8px 12px !important;
+        background: rgba(0, 0, 0, 0.4) !important;
+        border-radius: 8px;
+        font-size: 0.85em;
+    }
+
+    .dialogue-box p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* VFX层在手机端隐藏 */
+    .vfx-overlay {
+        display: none !important;
+    }
+
+    /* === 任务卡片完全重写 (P0修复) === */
+    .mission-card {
+        display: flex !important;
+        flex-direction: column !important;
+        height: auto !important;
+        min-height: auto !important;
+    }
+
+    .mission-thumb {
+        width: 100% !important;
+        height: 120px !important;
+        min-height: 120px !important;
+        flex-shrink: 0;
+    }
+
+    .mission-info {
+        display: flex !important;
+        /* 确保可见 */
+        flex-direction: column !important;
+        flex: none !important;
+        /* 不压缩 */
+        width: 100% !important;
+        padding: 12px !important;
+        gap: 4px;
+    }
+
+    .mission-title {
+        display: block !important;
+        font-size: 1em !important;
+        color: #fff !important;
+    }
+
+    .mission-tagline {
+        display: block !important;
+        font-size: 0.85em !important;
+        color: #aaa !important;
+        line-height: 1.4;
+    }
+
+    .mission-status {
+        position: static !important;
+        display: inline-block !important;
+        margin-top: 6px;
+    }
+
+    .mission-action {
+        display: flex !important;
+        width: 100% !important;
+        padding: 10px 12px !important;
+        border-left: none !important;
+        border-top: 1px solid rgba(168, 85, 247, 0.2);
+        justify-content: center !important;
+    }
+
+    .mission-action-btn {
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    /* === 联机对战UI === */
+
+    /* 联机大厅弹窗 */
+    .online-lobby-content {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        padding: 15px !important;
+    }
+
+    .online-lobby-content h2 {
+        font-size: 1.2em !important;
+    }
+
+    .lobby-buttons {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .lobby-buttons .btn {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 0.9em !important;
+    }
+
+    /* 房间等待界面 */
+    .room-wait-content {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        padding: 15px !important;
+    }
+
+    .room-players {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .room-player-card {
+        width: 100% !important;
+        min-width: unset !important;
+        padding: 12px !important;
+    }
+
+    .room-player-card .player-name {
+        font-size: 0.9em !important;
+    }
+
+    .room-code-display {
+        font-size: 1.2em !important;
+        padding: 8px 12px !important;
+    }
+
+    .room-actions {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .room-actions .btn {
+        width: 100% !important;
+    }
+
+    /* 再来一局邀请弹窗 */
+    .rematch-content {
+        width: 90vw !important;
+        max-width: 90vw !important;
+        padding: 20px !important;
+    }
+
+    .rematch-content h2 {
+        font-size: 1.2em !important;
+    }
+
+    .rematch-buttons {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .rematch-buttons .btn {
+        width: 100% !important;
+        padding: 12px !important;
+    }
+
+    /* 联机游戏HUD */
+    .online-hud {
+        padding: 8px !important;
+        font-size: 0.85em !important;
+    }
+
+    .surrender-btn {
+        padding: 8px 12px !important;
+        font-size: 0.8em !important;
+    }
+
+    /* 快捷聊天面板 */
+    .chat-panel {
+        width: 90vw !important;
+        right: 5vw !important;
+    }
+
+    .chat-option {
+        padding: 10px !important;
+        font-size: 1.1em !important;
+    }
+}
+
+/* ============================================================
+   TIER 2: 平板端 - 触屏设备 + 中等屏幕
+   ============================================================ */
+@media screen and (min-width: 601px) and (max-width: 1024px) and (pointer: coarse) {
+    body {
+        padding: var(--spacing-sm);
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    h1 {
+        font-size: var(--font-size-2xl);
+        margin-top: 40px;
+    }
+
+    /* === 游戏布局 === */
+    .game-layout {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-md);
+        width: 100%;
+    }
+
+    .game-container {
+        width: 100%;
+        max-width: 550px;
+        padding: 0 var(--spacing-sm);
+    }
+
+    #board {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1/1;
+        touch-action: none;
+    }
+
+    /* === 角色区域 === */
+    .character-wrapper {
+        /* 覆盖桌面端固定高度 */
+        position: relative !important;
+        width: 100%;
+        max-width: 550px;
+        height: auto !important;
+        /* 关键：覆盖600px */
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--spacing-md);
+        padding: 15px;
+
+        background: rgba(15, 15, 26, 0.95);
+        border-radius: 12px;
+        overflow: visible !important;
+    }
+
+    /* 确保联机模式下hidden类生效 */
+    .character-wrapper.hidden {
+        display: none !important;
+    }
+
+    .char-frame {
+        /* 取消绝对定位 */
+        position: relative !important;
+        width: 80px;
+        height: 80px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .char-sprite {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    .char-name {
+        position: relative !important;
+        background: transparent;
+    }
+
+    .dialogue-box {
+        position: relative !important;
+        flex: 1;
+        height: auto;
+        min-height: 60px;
+    }
+
+    .vfx-overlay {
+        display: none;
+    }
+
+    /* === 任务卡片优化 === */
+    .mission-card {
+        display: flex;
+        flex-direction: row;
+        /* 平板保持横向 */
+        height: auto !important;
+    }
+
+    .mission-info {
+        display: flex !important;
+        flex-direction: column;
+        flex: 1;
+        padding: 12px 15px;
+        gap: 4px;
+    }
+
+    .mission-title {
+        font-size: 0.95em;
+        color: #fff;
+    }
+
+    .mission-tagline {
+        display: block !important;
+        font-size: 0.85em;
+        color: #999;
+        line-height: 1.4;
+    }
+
+    /* === 控制按钮 === */
+    .controls {
+        width: 100%;
+        max-width: 550px;
+        display: flex;
+        justify-content: center;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+        padding-top: var(--spacing-sm);
+    }
+
+    .controls .btn {
+        flex: 1 1 45%;
+        max-width: 48%;
+        padding: 12px 15px;
+    }
+
+    /* === 弹窗 === */
+    .modal-content {
+        width: 90%;
+        max-width: 550px;
+        padding: 25px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .mode-select-content {
+        width: min(500px, 90vw);
+    }
+}
+
+/* ============================================================
+   TIER 3: 桌面端 - PC设备（有鼠标）或大屏幕
+   PC无论屏幕大小都使用此样式
+   ============================================================ */
+@media screen and (pointer: fine),
+screen and (min-width: 1025px) {
+    .game-layout {
+        flex-direction: row;
+        justify-content: center;
+        align-items: stretch;
+        gap: var(--spacing-sm);
+    }
+
+    .game-container {
+        width: 500px;
+        height: 500px;
+    }
+
+    .character-wrapper {
+        width: 280px;
+        min-width: 280px;
+        max-width: 350px;
+    }
+
+    /* 确保联机模式下hidden类生效 */
+    .character-wrapper.hidden {
+        display: none !important;
+    }
+}

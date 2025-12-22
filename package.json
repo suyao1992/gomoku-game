@@ -1,0 +1,23 @@
+{
+  "name": "gomoku-game-1",
+  "version": "1.0.0",
+  "description": "一款融合故事剧情与AI对弈的五子棋游戏。跟随AI助手\"弈·零\"一起成长，从入门到进阶，体验禁手规则、限时对局等多样玩法。",
+  "main": "compress-images.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/suyao1992/gomoku-game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/suyao1992/gomoku-game/issues"
+  },
+  "homepage": "https://github.com/suyao1992/gomoku-game#readme",
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}

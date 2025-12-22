@@ -1,0 +1,54 @@
+{
+    "rules": {
+        "rooms": {
+            "$roomId": {
+                ".read": "data.child('players').child(auth.uid).exists() || data.child('spectators').child(auth.uid).exists()",
+                ".write": "!data.exists() || data.child('players').child(auth.uid).exists()",
+                "players": {
+                    ".validate": "newData.hasChildren(['black', 'white'])"
+                },
+                "game": {
+                    "board": {
+                        ".validate": "newData.isString() || newData.hasChildren()"
+                    },
+                    "currentTurn": {
+                        ".validate": "newData.val() === 'black' || newData.val() === 'white'"
+                    }
+                },
+                "status": {
+                    ".validate": "newData.val() === 'waiting' || newData.val() === 'playing' || newData.val() === 'finished'"
+                }
+            }
+        },
+        "leaderboard": {
+            ".read": true,
+            "$userId": {
+                ".write": "auth != null && $userId === auth.uid",
+                ".validate": "newData.hasChildren(['id', 'name', 'elo', 'wins', 'losses'])",
+                "elo": {
+                    ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10000"
+                },
+                "wins": {
+                    ".validate": "newData.isNumber() && newData.val() >= 0"
+                },
+                "losses": {
+                    ".validate": "newData.isNumber() && newData.val() >= 0"
+                }
+            }
+        },
+        "matchmaking": {
+            ".read": true,
+            "$userId": {
+                ".write": "auth != null && $userId === auth.uid",
+                ".validate": "newData.hasChildren(['name', 'elo', 'timestamp'])"
+            }
+        },
+        "feedback": {
+            ".read": "auth != null",
+            ".write": "auth != null",
+            "$feedbackId": {
+                ".validate": "newData.hasChildren(['from', 'text', 'timestamp'])"
+            }
+        }
+    }
+}

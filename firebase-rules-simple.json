@@ -1,0 +1,22 @@
+{
+    "rules": {
+        "rooms": {
+            "$roomId": {
+                ".read": true,
+                ".write": true
+            }
+        },
+        "leaderboard": {
+            ".read": true,
+            ".write": true
+        },
+        "matchmaking": {
+            ".read": true,
+            ".write": true
+        },
+        "feedback": {
+            ".read": true,
+            ".write": true
+        }
+    }
+}

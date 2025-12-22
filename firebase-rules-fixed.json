@@ -1,0 +1,47 @@
+{
+    "rules": {
+        ".read": false,
+        ".write": false,
+        "rooms": {
+            ".read": true,
+            ".indexOn": [
+                "status",
+                "createdAt"
+            ],
+            "$roomId": {
+                ".read": true,
+                ".write": true
+            }
+        },
+        "online": {
+            ".read": true,
+            ".write": true
+        },
+        "leaderboard": {
+            ".read": true,
+            ".write": true,
+            ".indexOn": [
+                "totalWinRate",
+                "elo",
+                "totalGames",
+                "lastUpdated"
+            ]
+        },
+        "matchmaking": {
+            ".read": true,
+            ".write": true
+        },
+        "robustMatchQueue": {
+            ".read": true,
+            ".write": true
+        },
+        "robustMatchResults": {
+            ".read": true,
+            ".write": true
+        },
+        "feedback": {
+            ".read": true,
+            ".write": true
+        }
+    }
+}

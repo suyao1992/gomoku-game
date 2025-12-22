@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>棋友圈 - 管理后台</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+    <!-- 登录界面 -->
+    <div id="login-view" class="login-container">
+        <div class="login-card">
+            <h1>🎮 棋友圈管理后台</h1>
+            <div class="login-form">
+                <input type="password" id="admin-password" placeholder="请输入管理密钥" autocomplete="off">
+                <button id="login-btn" onclick="AdminApp.login()">登录</button>
+            </div>
+            <div id="login-error" class="error-message hidden"></div>
+        </div>
+    </div>
+
+    <!-- 管理面板 -->
+    <div id="admin-view" class="admin-container hidden">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🎮 棋友圈</h2>
+                <span class="subtitle">管理后台</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>仪表盘</span>
+                </a>
+                <a href="#" class="nav-item" data-view="posts">
+                    <span class="nav-icon">📝</span>
+                    <span>内容管理</span>
+                </a>
+                <a href="#" class="nav-item" data-view="reports">
+                    <span class="nav-icon">🚩</span>
+                    <span>举报处理</span>
+                </a>
+                <a href="#" class="nav-item" data-view="words">
+                    <span class="nav-icon">🔒</span>
+                    <span>敏感词</span>
+                </a>
+                <a href="#" class="nav-item" data-view="analytics">
+                    <span class="nav-icon">🎮</span>
+                    <span>游戏分析</span>
+                </a>
+                <a href="#" class="nav-item" data-view="announcements">
+                    <span class="nav-icon">📢</span>
+                    <span>发布公告</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="AdminApp.logout()">退出登录</button>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 仪表盘 -->
+            <section id="view-dashboard" class="view-section">
+                <h1>📊 仪表盘</h1>
+
+                <!-- 概览统计 -->
+                <h3 style="color: rgba(255,255,255,0.6); margin-bottom: 15px; font-weight: normal;">📈 数据概览</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-total-views">-</div>
+                        <div class="stat-label">👁️ 总浏览量</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-total-posts">-</div>
+                        <div class="stat-label">📝 总帖子数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-total-comments">-</div>
+                        <div class="stat-label">💬 总评论数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-total-likes">-</div>
+                        <div class="stat-label">❤️ 总点赞数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-total-users">-</div>
+                        <div class="stat-label">👤 注册用户</div>
+                    </div>
+                </div>
+
+                <!-- 今日统计 -->
+                <h3 style="color: rgba(255,255,255,0.6); margin: 25px 0 15px; font-weight: normal;">📅 今日数据</h3>
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-left: 3px solid #00d4ff;">
+                        <div class="stat-value" id="stat-today-posts">-</div>
+                        <div class="stat-label">今日新帖</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 3px solid #a855f7;">
+                        <div class="stat-value" id="stat-today-comments">-</div>
+                        <div class="stat-label">今日评论</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 3px solid #00ff88;">
+                        <div class="stat-value" id="stat-today-active-users">-</div>
+                        <div class="stat-label">今日活跃</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-value" id="stat-pending-reports">-</div>
+                        <div class="stat-label">🚩 待处理举报</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 3px solid #ffc107;">
+                        <div class="stat-value" id="stat-pending-posts">-</div>
+                        <div class="stat-label">⏳ 待审核</div>
+                    </div>
+                </div>
+
+                <!-- 7日趋势 -->
+                <h3 style="color: rgba(255,255,255,0.6); margin: 25px 0 15px; font-weight: normal;">📊 近7日发帖趋势</h3>
+                <div id="trend-chart" class="trend-chart">
+                    <!-- 由 JS 渲染 -->
+                </div>
+            </section>
+
+            <!-- 内容管理 -->
+            <section id="view-posts" class="view-section hidden">
+                <h1>📝 内容管理</h1>
+                <div class="toolbar">
+                    <div class="filter-group">
+                        <select id="filter-status">
+                            <option value="all">全部状态</option>
+                            <option value="active">正常</option>
+                            <option value="pending">待审核</option>
+                            <option value="hidden">已隐藏</option>
+                            <option value="deleted">已删除</option>
+                        </select>
+                        <select id="filter-type">
+                            <option value="">全部类型</option>
+                            <option value="discussion">讨论</option>
+                            <option value="battle">约战</option>
+                            <option value="replay">棋谱</option>
+                            <option value="announcement">公告</option>
+                        </select>
+                        <input type="text" id="filter-search" placeholder="搜索标题或内容...">
+                        <button onclick="AdminApp.loadPosts()">搜索</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>类型</th>
+                                <th>标题</th>
+                                <th>作者</th>
+                                <th>状态</th>
+                                <th>时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="posts-table-body">
+                            <!-- 由 JS 渲染 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="posts-pagination" class="pagination"></div>
+            </section>
+
+            <!-- 举报处理 -->
+            <section id="view-reports" class="view-section hidden">
+                <h1>🚩 举报处理</h1>
+                <div class="toolbar">
+                    <select id="report-status-filter">
+                        <option value="pending">待处理</option>
+                        <option value="reviewed">已审核</option>
+                        <option value="actioned">已处理</option>
+                        <option value="dismissed">已驳回</option>
+                    </select>
+                    <button onclick="AdminApp.loadReports()">刷新</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>类型</th>
+                                <th>举报原因</th>
+                                <th>举报人</th>
+                                <th>时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reports-table-body">
+                            <!-- 由 JS 渲染 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 敏感词管理 -->
+            <section id="view-words" class="view-section hidden">
+                <h1>🔒 敏感词管理</h1>
+                <div class="toolbar">
+                    <input type="text" id="new-word" placeholder="添加新敏感词...">
+                    <select id="word-level">
+                        <option value="block">拦截</option>
+                        <option value="warn">警告</option>
+                        <option value="replace">替换</option>
+                    </select>
+                    <input type="text" id="word-replacement" placeholder="替换为 (可选)">
+                    <button onclick="AdminApp.addSensitiveWord()">添加</button>
+                </div>
+                <div class="words-list" id="words-list">
+                    <!-- 由 JS 渲染 -->
+                </div>
+            </section>
+
+            <!-- 游戏分析 -->
+            <section id="view-analytics" class="view-section hidden">
+                <h1>🎮 游戏分析</h1>
+
+                <!-- 流量统计 -->
+                <h3 style="color: rgba(255,255,255,0.6); margin-bottom: 15px; font-weight: normal;">👁️ 流量统计</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="ga-total-pv">-</div>
+                        <div class="stat-label">总访问量 (PV)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="ga-total-uv">-</div>
+                        <div class="stat-label">总独立访客 (UV)</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 3px solid #00d4ff;">
+                        <div class="stat-value" id="ga-today-pv">-</div>
+                        <div class="stat-label">今日 PV</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 3px solid #a855f7;">
+                        <div class="stat-value" id="ga-today-uv">-</div>
+                        <div class="stat-label">今日 UV</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 3px solid #00ff88;">
+                        <div class="stat-value" id="ga-today-new">-</div>
+                        <div class="stat-label">今日新访客</div>
+                    </div>
+                </div>
+
+                <!-- 对局统计 -->
+                <h3 style="color: rgba(255,255,255,0.6); margin: 25px 0 15px; font-weight: normal;">🎯 对局统计</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="ga-total-games">-</div>
+                        <div class="stat-label">总对局数</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 3px solid #00d4ff;">
+                        <div class="stat-value" id="ga-today-games">-</div>
+                        <div class="stat-label">今日对局</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="ga-avg-duration">-</div>
+                        <div class="stat-label">平均时长</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 3px solid #00ff88;">
+                        <div class="stat-value" id="ga-win-rate">-</div>
+                        <div class="stat-label">胜率</div>
+                    </div>
+                </div>
+
+                <!-- 模式分布 -->
+                <h3 style="color: rgba(255,255,255,0.6); margin: 25px 0 15px; font-weight: normal;">🎲 模式分布</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="ga-games-pve">-</div>
+                        <div class="stat-label">🤖 人机对战</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="ga-games-pvp">-</div>
+                        <div class="stat-label">👥 双人对战</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="ga-games-online">-</div>
+                        <div class="stat-label">🌐 联机对战</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="ga-games-quick">-</div>
+                        <div class="stat-label">⚡ 快速匹配</div>
+                    </div>
+                </div>
+
+                <!-- 7日趋势 -->
+                <h3 style="color: rgba(255,255,255,0.6); margin: 25px 0 15px; font-weight: normal;">📊 7日趋势</h3>
+                <div id="ga-trend-chart" class="trend-chart">
+                    <!-- 由 JS 渲染 -->
+                </div>
+
+                <!-- 设备分布 -->
+                <h3 style="color: rgba(255,255,255,0.6); margin: 25px 0 15px; font-weight: normal;">📱 设备分布</h3>
+                <div id="ga-device-stats" class="device-stats">
+                    <!-- 由 JS 渲染 -->
+                </div>
+            </section>
+
+            <!-- 发布公告 -->
+            <section id="view-announcements" class="view-section hidden">
+                <h1>📢 发布公告</h1>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>公告标题</label>
+                        <input type="text" id="announcement-title" placeholder="输入公告标题...">
+                    </div>
+                    <div class="form-group">
+                        <label>公告内容</label>
+                        <textarea id="announcement-content" placeholder="输入公告内容..." rows="8"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="announcement-pinned"> 置顶此公告
+                        </label>
+                    </div>
+                    <button class="primary-btn" onclick="AdminApp.publishAnnouncement()">发布公告</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 弹窗容器 -->
+    <div id="modal-container" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">标题</h3>
+                <button onclick="AdminApp.closeModal()">✕</button>
+            </div>
+            <div id="modal-body" class="modal-body">
+                <!-- 动态内容 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,747 @@
+/* ============================================================
+   ADAPTIVE RESPONSIVE DESIGN - GOMOKU GAME
+   Tier 1: Desktop (Default in style.css)
+   Tier 2: Tablet (600-1024px) - Touch + Landscape Focus
+   Tier 3: Mobile (<600px) - Thumb + Portrait Focus
+   ============================================================ */
+
+/* ============================================================
+   TIER 2: TABLET (600-1024px)
+   ============================================================ */
+@media screen and (max-width: 1024px) {
+    body {
+        padding: 10px;
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 100%;
+        padding-bottom: 60px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+
+    .mode-select-content {
+        width: 95%;
+        max-width: 600px;
+        padding: 25px 20px;
+    }
+
+    .mode-section {
+        margin-bottom: 15px;
+    }
+
+    .section-title {
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+
+    /* Buttons: 2-Column Grid */
+    .story-mode-buttons,
+    .free-mode-buttons {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .history-mode-buttons {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mode-btn {
+        padding: 15px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        min-height: 80px;
+    }
+
+    .btn-icon {
+        font-size: 1.8em;
+        margin-bottom: 5px;
+    }
+
+    .btn-subtitle {
+        font-size: 0.75em;
+        opacity: 0.8;
+        margin-top: 3px;
+    }
+
+    /* === IN-GAME LAYOUT === */
+    .game-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+    }
+
+    .game-container {
+        width: 100%;
+        max-width: 550px;
+        padding: 0 10px;
+        order: 2;
+    }
+
+    #board {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1/1;
+        touch-action: none;
+        border-radius: 8px;
+    }
+
+    /* Character Panel: Horizontal Bar */
+    .character-wrapper {
+        display: flex !important;
+        flex-direction: row;
+        width: 100%;
+        max-width: 550px;
+        height: auto;
+        min-height: 90px;
+        background: linear-gradient(135deg, rgba(20, 20, 50, 0.95), rgba(30, 30, 60, 0.9));
+        border: 1px solid rgba(168, 85, 247, 0.4);
+        border-radius: 12px;
+        padding: 12px;
+        align-items: center;
+        gap: 15px;
+        order: 1;
+        position: relative;
+        overflow: visible;
+    }
+
+    .char-frame {
+        width: 65px;
+        height: 65px;
+        min-width: 65px;
+        border-radius: 50%;
+        border: 2px solid #a855f7;
+        overflow: hidden;
+        position: static;
+    }
+
+    .char-sprite {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        transform: scale(1.15);
+    }
+
+    .char-name {
+        position: static;
+        background: transparent;
+        color: #a855f7;
+        box-shadow: none;
+        font-size: 1.1em;
+        padding: 0;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .char-name::after {
+        display: none;
+    }
+
+    .dialogue-box {
+        position: static;
+        flex: 1;
+        height: auto;
+        min-height: 50px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin: 0;
+    }
+
+    .dialogue-box p {
+        text-align: left;
+        font-size: 0.9em;
+        line-height: 1.4;
+    }
+
+    /* === HUD === */
+    .game-info {
+        width: 100%;
+        max-width: 550px;
+        order: 0;
+    }
+
+    .story-hud {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 15px;
+        background: rgba(10, 10, 30, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+
+    .story-hud-left,
+    .story-hud-center,
+    .story-hud-right {
+        width: auto;
+        border: none;
+        padding: 0;
+    }
+
+    .story-hud-center {
+        display: none;
+    }
+
+    /* === CONTROLS === */
+    .controls {
+        order: 3;
+        width: 100%;
+        max-width: 550px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding-top: 10px;
+    }
+
+    .controls .btn {
+        flex: 1 1 45%;
+        max-width: 48%;
+        padding: 12px 15px;
+    }
+
+    /* === MODALS === */
+    .modal-content {
+        width: 90%;
+        max-width: 550px;
+        padding: 25px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    /* === STORY DIALOG === */
+    .story-dialog-wrapper {
+        flex-direction: row;
+        align-items: stretch;
+    }
+
+    .story-portrait-area {
+        width: 40%;
+        max-width: 250px;
+    }
+
+    .story-dialog-content {
+        flex: 1;
+        padding: 20px;
+    }
+}
+
+/* ============================================================
+   TIER 3: MOBILE (<600px)
+   ============================================================ */
+@media screen and (max-width: 600px) {
+
+    h1 {
+        font-size: 1.5em;
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+
+    /* === MAIN MENU (Mobile) === */
+    .mode-select-content {
+        width: 100%;
+        max-width: none;
+        padding: 20px 15px;
+        border-radius: 15px;
+    }
+
+    .mode-select-content h2 {
+        font-size: 1.3em;
+        margin-bottom: 15px;
+    }
+
+    .story-rank-display {
+        font-size: 0.85em;
+        padding: 8px 12px;
+    }
+
+    .mode-section {
+        margin-bottom: 15px;
+        width: 100%;
+    }
+
+    .section-title {
+        font-size: 0.95em;
+    }
+
+    /* 移动端也保持折叠手风琴模式 */
+    .section-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* 主界面按钮：折叠区域内的布局 */
+    .story-mode-buttons {
+        display: flex !important;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .free-mode-buttons {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        width: 100%;
+    }
+
+    .history-mode-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .mode-btn {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 15px 10px;
+        min-height: 70px;
+        width: 100%;
+    }
+
+    .mode-btn .btn-icon {
+        font-size: 1.5em;
+        margin-bottom: 5px;
+        width: auto;
+    }
+
+    .mode-btn .btn-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .mode-btn .btn-title {
+        font-size: 0.85em;
+        font-weight: bold;
+    }
+
+    .mode-btn .btn-subtitle {
+        display: none;
+    }
+
+    /* === IN-GAME LAYOUT === */
+    .game-layout {
+        gap: 10px;
+    }
+
+    .game-container {
+        max-width: 100%;
+        padding: 0 5px;
+    }
+
+    /* Character: Compact Header */
+    .character-wrapper {
+        max-width: 100%;
+        min-height: 70px;
+        padding: 10px;
+        gap: 10px;
+        border-radius: 10px;
+    }
+
+    .char-frame {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+    }
+
+    .char-name {
+        font-size: 0.95em;
+    }
+
+    .dialogue-box {
+        padding: 8px 12px;
+        min-height: 40px;
+    }
+
+    .dialogue-box p {
+        font-size: 0.85em;
+    }
+
+    /* HUD: Minimalist */
+    .story-hud {
+        padding: 8px 12px;
+        font-size: 0.85em;
+    }
+
+    .story-hud-title {
+        font-size: 1em;
+    }
+
+    /* === FIXED BOTTOM CONTROLS === */
+    .controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: none;
+        padding: 10px 15px;
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+        background: rgba(10, 16, 30, 0.98);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        z-index: 100;
+        gap: 10px;
+        flex-wrap: nowrap;
+        justify-content: space-around;
+    }
+
+    .controls .btn {
+        flex: 1;
+        max-width: none;
+        padding: 10px 8px;
+        font-size: 0.85em;
+        border-radius: 8px;
+    }
+
+    .container {
+        padding-bottom: 80px;
+    }
+
+    /* === INFO DISPLAYS === */
+    .player-info {
+        gap: 8px;
+    }
+
+    .player {
+        padding: 6px 10px;
+        font-size: 0.85em;
+    }
+
+    .vs {
+        font-size: 1em;
+    }
+
+    .current-turn {
+        font-size: 0.9em;
+        padding: 6px 12px;
+    }
+
+    .game-timer {
+        font-size: 1em;
+        padding: 5px 12px;
+    }
+
+    /* === MODALS === */
+    .modal-content {
+        width: 95%;
+        padding: 20px 15px;
+    }
+
+    /* === STORY DIALOG: PORTRAIT LAYOUT (Mobile) === */
+    /* 提高位置，符合阅读视觉 */
+    .story-dialog-wrapper {
+        bottom: 15vh;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .story-portrait-area {
+        position: relative;
+        width: 100%;
+        height: auto;
+        max-height: 35vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        margin-bottom: 0;
+        z-index: 1002;
+        overflow: visible;
+    }
+
+    .story-portrait {
+        width: auto;
+        height: 32vh;
+        min-height: 150px;
+        max-height: 35vh;
+        max-width: 85vw;
+        object-fit: contain;
+        object-position: bottom center;
+        filter: drop-shadow(0 0 25px rgba(0, 212, 255, 0.5)) drop-shadow(0 8px 30px rgba(0, 0, 0, 0.8));
+    }
+
+    .story-dialog-content {
+        width: 95%;
+        max-width: 500px;
+        padding: 18px 15px;
+        min-height: 100px;
+        background: linear-gradient(180deg, rgba(10, 10, 20, 0.98) 0%, rgba(20, 20, 40, 1) 100%);
+        border-top: 2px solid rgba(0, 212, 255, 0.4);
+        border-radius: 12px 12px 0 0;
+        z-index: 1003;
+    }
+
+    .story-dialog-speaker {
+        font-size: 0.95em;
+        margin-bottom: 6px;
+    }
+
+    .story-dialog-text {
+        font-size: 0.9em;
+        line-height: 1.5;
+    }
+
+    .skip-dialog-btn {
+        top: 8px;
+        right: 8px;
+        font-size: 0.8em;
+        padding: 5px 10px;
+    }
+
+    .skip-dialog-btn {
+        top: 10px;
+        right: 10px;
+        font-size: 0.85em;
+        padding: 6px 12px;
+    }
+
+    /* === RPS GAME === */
+    .rps-content {
+        width: 95%;
+        padding: 20px 15px;
+    }
+
+    .rps-game {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .rps-vs {
+        font-size: 1.2em;
+    }
+
+    .rps-player {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .rps-btn {
+        font-size: 1.8em;
+        padding: 10px;
+    }
+
+    /* === MISSION SELECT === */
+    .mission-select-content {
+        width: 95%;
+        max-height: 85vh;
+        padding: 15px;
+    }
+
+    .mission-select-header h2 {
+        font-size: 1.2em;
+        margin-bottom: 8px;
+    }
+
+    .progress-text {
+        font-size: 0.85em;
+    }
+
+    .mission-list {
+        max-height: 55vh;
+        gap: 10px;
+    }
+
+    /* 关卡卡片 - 移动端垂直布局 */
+    .mission-card {
+        flex-direction: column;
+        border-radius: 10px;
+    }
+
+    .mission-thumb {
+        width: 100%;
+        height: 100px;
+        min-height: 100px;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .mission-thumb::after {
+        background: linear-gradient(180deg, transparent 60%, rgba(26, 26, 53, 0.95) 100%);
+    }
+
+    .mission-info {
+        width: 100%;
+        padding: 12px;
+        padding-right: 12px;
+    }
+
+    .mission-title {
+        font-size: 0.95em;
+    }
+
+    .mission-tagline {
+        font-size: 0.8em;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .mission-status {
+        position: static;
+        display: inline-block;
+        margin-top: 8px;
+    }
+
+    .mission-action {
+        width: 100%;
+        padding: 10px 12px;
+        border-left: none;
+        border-top: 1px solid rgba(168, 85, 247, 0.2);
+        justify-content: center;
+    }
+
+    .mission-action-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* === 主菜单手风琴优化 === */
+    .section-header {
+        padding: 12px 15px;
+    }
+
+    .section-title {
+        font-size: 1em;
+    }
+
+    .section-content {
+        padding: 10px 12px 12px;
+    }
+
+    /* === 个人战绩页面优化 === */
+    .stats-modal-content {
+        padding: 15px 12px;
+        width: 95%;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    .stats-header {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .stats-avatar {
+        width: 60px;
+        height: 60px;
+    }
+
+    .stats-player-info {
+        text-align: center;
+    }
+
+    .stats-player-name {
+        font-size: 1.1em;
+    }
+
+    .stats-total-games {
+        font-size: 0.9em;
+    }
+
+    /* 战绩卡片改为两列 */
+    .stats-modes-grid,
+    .stats-modes {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .stats-mode-card,
+    .stats-mode {
+        padding: 12px 10px;
+        min-width: 0;
+        text-align: center;
+    }
+
+    .stats-mode-card:last-child,
+    .stats-mode:last-child {
+        grid-column: span 2;
+    }
+
+    .stats-mode-title,
+    .stats-mode-label {
+        font-size: 0.8em;
+        margin-bottom: 6px;
+    }
+
+    .stats-mode-icon {
+        font-size: 1.3em;
+    }
+
+    .stats-mode-record,
+    .stats-mode-detail {
+        font-size: 0.7em;
+    }
+
+    .stats-mode-rate {
+        font-size: 1em;
+        margin-top: 5px;
+    }
+
+    /* 段位进度条 */
+    .rank-progress {
+        padding: 10px;
+    }
+
+    .rank-progress-text {
+        font-size: 0.8em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    /* 总胜率卡片 */
+    .stats-winrate,
+    .stats-total-winrate {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+}
+
+/* ============================================================
+   iPhone 安全区域适配 (刘海屏/灵动岛)
+   ============================================================ */
+@supports (padding: max(0px)) {
+    .modal-content {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+
+    .controls {
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+
+    .mode-select-content {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+
+    .story-dialog-content {
+        padding-bottom: max(18px, env(safe-area-inset-bottom));
+    }
+}
