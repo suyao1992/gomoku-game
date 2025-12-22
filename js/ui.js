@@ -272,7 +272,7 @@ class UIManager {
         this.elements.p1Selected.classList.add('hidden');
         this.elements.p2Selected.classList.add('hidden');
         this.elements.rpsResult.classList.add('hidden');
-        this.elements.rpsWaiting.textContent = '等待玩家1选择...';
+        this.elements.rpsWaiting.textContent = Localization.get('rps.waiting_p1');
         this.elements.rpsWaiting.classList.remove('hidden');
         this.elements.rpsP1.classList.remove('winner');
         this.elements.rpsP2.classList.remove('winner');
@@ -284,7 +284,7 @@ class UIManager {
             btn.classList.remove('selected');
         });
 
-        this.elements.p2Label.textContent = gameMode === 'pve' ? 'AI' : '玩家2';
+        this.elements.p2Label.textContent = gameMode === 'pve' ? 'AI' : Localization.get('game.player2');
     }
 
     hideRPS() {
@@ -301,12 +301,12 @@ class UIManager {
     showRPSPlayer2Choices() {
         this.elements.p2Choices.classList.remove('hidden');
         this.elements.rpsP2.classList.add('active');
-        this.elements.rpsWaiting.textContent = '等待玩家2选择...';
+        this.elements.rpsWaiting.textContent = Localization.get('rps.waiting_p2');
     }
 
     showRPSAIWaiting() {
         this.elements.rpsP2.classList.add('active');
-        this.elements.rpsWaiting.textContent = 'AI选择中...';
+        this.elements.rpsWaiting.textContent = Localization.get('rps.waiting_ai');
     }
 
     updateRPSPlayer2(symbol) {
@@ -322,10 +322,10 @@ class UIManager {
         resultEl.classList.remove('hidden', 'draw');
 
         if (winner === 0) {
-            resultEl.textContent = '🤝 平局！重新猜拳...';
+            resultEl.textContent = Localization.get('rps.draw');
             resultEl.classList.add('draw');
         } else {
-            resultEl.textContent = `🎉 ${winnerName} 获胜！执黑先手！`;
+            resultEl.textContent = Localization.get('rps.winner').replace('{NAME}', winnerName);
             this.elements[winner === 1 ? 'rpsP1' : 'rpsP2'].classList.add('winner');
         }
     }
@@ -347,7 +347,7 @@ class UIManager {
 
     updateCountdown(count) {
         this.elements.countdownNumber.textContent = count;
-        if (count === '开始!') {
+        if (count === Localization.get('game.go')) {
             this.elements.countdownNumber.style.color = '#00ff88';
         } else {
             this.elements.countdownNumber.style.animation = 'none';
@@ -363,16 +363,16 @@ class UIManager {
     // 游戏状态
     updateCurrentPlayer(player) {
         if (this.elements.currentPlayer) {
-            this.elements.currentPlayer.textContent = player === 1 ? '黑棋 ⚫' : '白棋 ⚪';
+            this.elements.currentPlayer.textContent = player === 1 ? Localization.get('game.color_black') : Localization.get('game.color_white');
         }
     }
 
     updateGameMode(mode) {
         const modeTexts = {
-            'eve': '🎬 AI观战模式',
-            'pve': '🤖 人机对战模式',
-            'pvp': '👥 双人对战模式',
-            'online': '🌐 联机对战模式'
+            'eve': Localization.get('game.mode.eve'),
+            'pve': Localization.get('game.mode.pve'),
+            'pvp': Localization.get('game.mode.pvp'),
+            'online': Localization.get('game.mode.online')
         };
         if (this.elements.gameModeDisplay) {
             this.elements.gameModeDisplay.textContent = modeTexts[mode] || '';
@@ -388,7 +388,7 @@ class UIManager {
     updateLabels(gameMode, firstPlayer) {
         const { blackLabel, whiteLabel } = this.elements;
         if (!blackLabel || !whiteLabel) return; // Null safety
-        const playerName = window.Onboarding?.getPlayerName() || '玩家';
+        const playerName = window.Onboarding?.getPlayerName() || Localization.get('mp.player');
 
         if (gameMode === 'pvp') {
             blackLabel.textContent = firstPlayer === 1 ? `⚫ ${playerName} 1(黑)` : `⚫ ${playerName} 2(黑)`;
@@ -506,12 +506,12 @@ class UIManager {
     // 获取胜利者名称
     getWinnerName(gameMode, player, firstPlayer) {
         if (gameMode === 'eve') {
-            return player === 1 ? 'AI-1 (黑棋)' : 'AI-2 (白棋)';
+            return player === 1 ? 'AI-1 (Black)' : 'AI-2 (White)';
         } else if (gameMode === 'pve') {
             const isHuman = player === (firstPlayer === 1 ? 1 : 2);
-            return (isHuman ? '玩家' : '弈·零') + (player === 1 ? ' (黑棋)' : ' (白棋)');
+            return (isHuman ? Localization.get('mp.player') : '弈·零') + (player === 1 ? ` (${Localization.get('game.color_black')})` : ` (${Localization.get('game.color_white')})`);
         } else {
-            return (player === firstPlayer ? '玩家1' : '玩家2') + (player === 1 ? ' (黑棋)' : ' (白棋)');
+            return (player === firstPlayer ? 'Player 1' : Localization.get('game.player2')) + (player === 1 ? ` (${Localization.get('game.color_black')})` : ` (${Localization.get('game.color_white')})`);
         }
     }
 
@@ -643,10 +643,11 @@ class UIManager {
     // 个性化文本处理 - 替换占位符
     personalizeText(text) {
         if (!text) return text;
-        const playerName = window.Onboarding?.getPlayerName() || '玩家';
+        const playerName = window.Onboarding?.getPlayerName() || Localization.t('mp.me');
         return text
             .replace(/{PLAYER}/g, playerName)
-            .replace(/{player}/g, playerName);
+            .replace(/{player}/g, playerName)
+            .replace(/{GOMOKU}/g, Localization.t('app.title'));
     }
 
 
@@ -750,10 +751,12 @@ class UIManager {
         if (speakerConfig) {
             // 如果是玩家说话，显示玩家姓名
             if (line.speaker === 'PLR') {
-                const playerName = window.Onboarding?.getPlayerName() || '你';
+                const playerName = window.Onboarding?.getPlayerName() || Localization.t('mp.me');
                 speakerEl.textContent = playerName;
             } else {
-                speakerEl.textContent = speakerConfig.name;
+                // 优先使用 nameKey，否则使用 name
+                const speakerNameKey = speakerConfig.nameKey || `char.${line.speaker.toLowerCase()}.name`;
+                speakerEl.textContent = Localization.t(speakerNameKey) || speakerConfig.name;
             }
             speakerEl.className = 'story-dialog-speaker speaker-' + line.speaker.toLowerCase();
         } else {
@@ -761,8 +764,9 @@ class UIManager {
             speakerEl.className = 'story-dialog-speaker';
         }
 
-        // 更新对话文本（支持个性化占位符替换）
-        this.elements.storyText.textContent = this.personalizeText(line.text);
+        // 更新对话文本（支持国际化和个性化占位符替换）
+        const localizedText = Localization.t(line.text);
+        this.elements.storyText.textContent = this.personalizeText(localizedText);
 
         // 添加动画效果
         this.elements.storyText.style.animation = 'none';
@@ -891,20 +895,21 @@ class UIManager {
             let statusHtml = '';
             if (mission.unlocked) {
                 if (mission.current) {
-                    statusHtml = '<span class="mission-status current">进行中</span>';
+                    const statusText = window.Localization ? Localization.get('mission.status.current') : 'Current';
+                    statusHtml = `<span class="mission-status current">${statusText}</span>`;
                 } else if (mission.finished) {
-                    statusHtml = '<span class="mission-status finished">已通关</span>';
+                    const statusText = window.Localization ? Localization.get('mission.status.finished') : 'Completed';
+                    statusHtml = `<span class="mission-status finished">${statusText}</span>`;
                 }
             }
 
             // 按钮文案
-            const btnText = mission.unlocked ? '重新体验' : '未解锁';
+            const btnTextKey = mission.unlocked ? 'mission.re_experience' : 'mission.not_unlocked';
+            const btnText = window.Localization ? Localization.get(btnTextKey) : (mission.unlocked ? 'Retry' : 'Locked');
 
-            // 安全: 转义文本和验证URL
-            const safeTitle = window.SecurityUtils ?
-                SecurityUtils.escapeHTML(mission.title) : mission.title;
-            const safeTagline = window.SecurityUtils ?
-                SecurityUtils.escapeHTML(mission.tagline) : mission.tagline;
+            // 安全: 翻译标题和语录
+            const safeTitle = window.Localization ? Localization.t(mission.titleKey) : mission.title;
+            const safeTagline = window.Localization ? Localization.t(mission.taglineKey) : mission.tagline;
             const safeThumb = window.SecurityUtils ?
                 SecurityUtils.sanitizeImageURL(mission.thumb, 'assets/missions/default.jpg') :
                 mission.thumb;
@@ -1179,7 +1184,7 @@ class UIManager {
             // 显示复制成功提示
             const copyBtn = document.querySelector('.copy-btn');
             const originalText = copyBtn.textContent;
-            copyBtn.textContent = '✓ 已复制';
+            copyBtn.textContent = Localization.get('copy.success');
             setTimeout(() => {
                 copyBtn.textContent = originalText;
             }, 2000);
@@ -1206,12 +1211,12 @@ class UIManager {
         // 1. 更新等待大厅 UI (Waiting Modal)
         if (hostPlayer) {
             const hostNameEl = document.getElementById('host-name');
-            if (hostNameEl) hostNameEl.textContent = (hostPlayer.name || '玩家') + ` (${hostPlayer.elo || 1000})`;
+            if (hostNameEl) hostNameEl.textContent = (hostPlayer.name || Localization.get('mp.player')) + ` (${hostPlayer.elo || 1000})`;
             const hostAvatarEl = document.getElementById('host-avatar');
             if (hostAvatarEl) hostAvatarEl.textContent = hostPlayer.avatar || '👤';
             const hostStatusEl = document.getElementById('host-status');
             if (hostStatusEl) {
-                hostStatusEl.textContent = hostPlayer.ready ? '已准备' : '未准备';
+                hostStatusEl.textContent = hostPlayer.ready ? Localization.get('room.ready') : Localization.get('room.not_ready');
                 hostStatusEl.className = 'player-status' + (hostPlayer.ready ? ' ready' : '');
             }
             if (hostCard) hostCard.classList.toggle('ready', hostPlayer.ready);
@@ -1221,12 +1226,12 @@ class UIManager {
 
         if (guestPlayer) {
             const guestNameEl = document.getElementById('guest-name');
-            if (guestNameEl) guestNameEl.textContent = (guestPlayer.name || '玩家') + ` (${guestPlayer.elo || 1000})`;
+            if (guestNameEl) guestNameEl.textContent = (guestPlayer.name || Localization.get('mp.player')) + ` (${guestPlayer.elo || 1000})`;
             const guestAvatarEl = document.getElementById('guest-avatar')
             if (guestAvatarEl) guestAvatarEl.textContent = guestPlayer.avatar || '👤';
             const guestStatusEl = document.getElementById('guest-status');
             if (guestStatusEl) {
-                guestStatusEl.textContent = guestPlayer.ready ? '已准备' : '未准备';
+                guestStatusEl.textContent = guestPlayer.ready ? Localization.get('room.ready') : Localization.get('room.not_ready');
                 guestStatusEl.className = 'player-status' + (guestPlayer.ready ? ' ready' : '');
             }
             if (guestCard) {
@@ -1237,7 +1242,7 @@ class UIManager {
             // 没有房客
             if (guestCard) guestCard.classList.add('empty');
             const guestNameEl = document.getElementById('guest-name');
-            if (guestNameEl) guestNameEl.textContent = '等待加入...';
+            if (guestNameEl) guestNameEl.textContent = Localization.get('room.waiting_join');
             const guestAvatarEl = document.getElementById('guest-avatar');
             if (guestAvatarEl) guestAvatarEl.textContent = '❓';
             const guestStatusEl = document.getElementById('guest-status');
@@ -1249,8 +1254,8 @@ class UIManager {
         // 确保即使在游戏中，玩家信息也能实时更新
         if (hostPlayer || guestPlayer) {
             this.updatePlayerInfo(
-                hostPlayer ? hostPlayer.name : '等待中...',
-                guestPlayer ? guestPlayer.name : '等待中...',
+                hostPlayer ? hostPlayer.name : Localization.get('mp.waiting'),
+                guestPlayer ? guestPlayer.name : Localization.get('mp.waiting'),
                 hostPlayer ? hostPlayer.avatar : '👤',
                 guestPlayer ? guestPlayer.avatar : '❓',
                 hostPlayer ? hostPlayer.elo : '1000',
@@ -1263,7 +1268,7 @@ class UIManager {
     updateReadyButton(isReady) {
         const readyBtn = document.getElementById('ready-btn');
         if (readyBtn) {
-            readyBtn.textContent = isReady ? '取消准备' : '准备';
+            readyBtn.textContent = isReady ? Localization.get('room.cancel_ready') : Localization.get('room.prepare');
             readyBtn.classList.toggle('is-ready', isReady);
         }
     }
@@ -1290,12 +1295,12 @@ class UIManager {
         this.initElementBindings();
 
         const messages = {
-            'greeting': '👋 你好',
-            'hurry': '⏰ 快点',
-            'praise': '👍 厉害',
-            'gg': '🤝 承让',
-            'oops': '😱 失误',
-            'again': '🔄 再来'
+            'greeting': Localization.get('chat.phrase.greeting'),
+            'hurry': Localization.get('chat.phrase.hurry'),
+            'praise': Localization.get('chat.phrase.praise'),
+            'gg': Localization.get('chat.phrase.gg'),
+            'oops': Localization.get('chat.phrase.oops'),
+            'again': Localization.get('chat.phrase.again')
         };
 
         const text = messages[msgId] || msgId;
@@ -1540,11 +1545,11 @@ class UIManager {
     requestRematch() {
         if (window.Network) {
             Network.requestRematch();
-            this.showToast('已发送再来一局请求...');
+            this.showToast(Localization.get('toast.rematch_request_sent'));
 
             const btn = document.getElementById('winner-confirm-btn');
             if (btn) {
-                btn.textContent = '等待对方...';
+                btn.textContent = Localization.get('toast.waiting_opponent');
                 btn.disabled = true;
             }
         }

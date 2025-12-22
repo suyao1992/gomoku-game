@@ -111,6 +111,15 @@ const GameAnalytics = (function () {
             referrer: document.referrer || null,
             ...deviceInfo
         });
+
+        // Google Analytics
+        if (typeof gtag === 'function') {
+            gtag('event', 'page_view', {
+                page_title: page,
+                page_location: window.location.href,
+                page_path: window.location.pathname
+            });
+        }
     }
 
     /**
@@ -140,6 +149,14 @@ const GameAnalytics = (function () {
             })
             .catch(() => { });
 
+        // Google Analytics
+        if (typeof gtag === 'function') {
+            gtag('event', 'game_start', {
+                game_mode: mode,
+                difficulty: subMode
+            });
+        }
+
         return mode; // 返回 mode 以便链式调用
     }
 
@@ -162,6 +179,16 @@ const GameAnalytics = (function () {
             duration
         });
 
+        // Google Analytics
+        if (typeof gtag === 'function') {
+            gtag('event', 'game_end', {
+                result: result,
+                winner: winner,
+                moves_count: movesCount,
+                duration_seconds: duration
+            });
+        }
+
         console.log('[Analytics] Game ended:', result, 'duration:', duration + 's');
 
         // 重置
@@ -180,6 +207,11 @@ const GameAnalytics = (function () {
             eventName,
             eventData
         });
+
+        // Google Analytics
+        if (typeof gtag === 'function') {
+            gtag('event', eventName, eventData || {});
+        }
     }
 
     /**
@@ -190,6 +222,13 @@ const GameAnalytics = (function () {
             eventType: 'click',
             eventName: elementName
         });
+
+        // Google Analytics
+        if (typeof gtag === 'function') {
+            gtag('event', 'click', {
+                element_name: elementName
+            });
+        }
     }
 
     /**
@@ -201,6 +240,14 @@ const GameAnalytics = (function () {
             eventName: 'js_error',
             eventData: { message: errorMessage, stack: errorStack }
         });
+
+        // Google Analytics
+        if (typeof gtag === 'function') {
+            gtag('event', 'exception', {
+                description: errorMessage,
+                fatal: false
+            });
+        }
     }
 
     // ==================== 公开 API ====================

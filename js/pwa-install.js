@@ -159,8 +159,8 @@ const PWAInstall = {
             return;
         }
 
-        // 其他情况 - 可能已经安装或浏览器不支持
-        this.showToast('💡 请使用浏览器菜单 → 添加到主屏幕');
+        // Other cases - may already be installed or browser doesn't support
+        this.showToast(Localization.get('pwa.add_to_homescreen'));
     },
 
     // 显示简单提示

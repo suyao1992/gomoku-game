@@ -38,7 +38,7 @@ const CloudSync = {
         try {
             const playerStats = window.PlayerStats?.data;
             const storyProgress = window.getStoryProgress?.() || { lastMission: 1 };
-            const playerName = window.Onboarding?.getPlayerName() || '玩家';
+            const playerName = window.Onboarding?.getPlayerName() || Localization.get('mp.player');
 
             const cloudData = {
                 name: playerName,

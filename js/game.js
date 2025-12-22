@@ -205,7 +205,7 @@ class GomokuGame {
             // Trigger refresh if available, assuming window.leaderboardManager or similar
             // For now just show logic
         } else {
-            this.ui.showToast('排行榜功能暂不可用', 'info');
+            this.ui.showToast(Localization.get('toast.leaderboard_unavailable'), 'info');
         }
     }
 
@@ -215,7 +215,7 @@ class GomokuGame {
             // Open Online Lobby first if needed, or directly trigger quick match
             // Since quick match usually requires being connected, let's open lobby or trigger if connected
             if (!Network.connected) {
-                this.ui.showToast('正在连接服务器...', 'info');
+                this.ui.showToast(Localization.get('toast.connecting'), 'info');
                 Network.connect();
                 // Wait for connection? For now, open lobby is safer
                 this.openOnlineLobby();
@@ -223,7 +223,7 @@ class GomokuGame {
                 this.startQuickMatchAction(); // Call actual logic
             }
         } else {
-            this.ui.showToast('联机模块未加载', 'error');
+            this.ui.showToast(Localization.get('toast.mp_module_missing'), 'error');
         }
     }
 
@@ -265,12 +265,12 @@ class GomokuGame {
                 const result = await Network.joinMatchmaking();
                 if (!result.success) {
                     this.ui.showMatchmaking(false);
-                    this.ui.showToast(result.error || '匹配失败', 'error');
+                    this.ui.showToast(result.error || Localization.get('toast.match_failed'), 'error');
                 }
             } catch (e) {
                 console.error(e);
                 this.ui.showMatchmaking(false);
-                this.ui.showToast('匹配系统异常', 'error');
+                this.ui.showToast(Localization.get('toast.mp_system_error'), 'error');
             }
         }
     }
@@ -289,11 +289,11 @@ class GomokuGame {
                 // Pre-fill room code or wait for listener?
                 // Network.currentRoom should be set
             } else {
-                this.ui.showToast(result.error || '创建房间失败', 'error');
+                this.ui.showToast(result.error || Localization.get('toast.room_create_failed'), 'error');
             }
         } catch (e) {
             console.error(e);
-            this.ui.showToast('创建房间异常', 'error');
+            this.ui.showToast(Localization.get('toast.room_create_error'), 'error');
         }
     }
 
@@ -511,7 +511,7 @@ class GomokuGame {
                 this.ui.hideRematchInvitation();
                 if (window.Network) {
                     Network.respondRematch(true);
-                    this.ui.showToast('已接受再来一局', 'success');
+                    this.ui.showToast(Localization.get('toast.rematch_accepted'), 'success');
                 }
             });
         }
@@ -520,7 +520,7 @@ class GomokuGame {
                 this.ui.hideRematchInvitation();
                 if (window.Network) {
                     Network.respondRematch(false);
-                    this.ui.showToast('已拒绝再来一局', 'info');
+                    this.ui.showToast(Localization.get('toast.rematch_rejected'), 'info');
                 }
             });
         }
@@ -630,7 +630,7 @@ class GomokuGame {
         const validation = NameGenerator.validate(name);
 
         if (validation.valid) {
-            statusEl.textContent = '✅ 昵称可用';
+            statusEl.textContent = Localization.get('toast.nickname_available');
             statusEl.className = 'name-status success';
             confirmBtn.disabled = false;
             suggestionsEl?.classList.add('hidden');
@@ -807,7 +807,7 @@ class GomokuGame {
 
     // 根据模式设置玩家信息
     setupPlayerInfoForMode(mode, firstPlayer) {
-        const playerName = window.Onboarding?.getPlayerName() || '玩家';
+        const playerName = window.Onboarding?.getPlayerName() || Localization.get('mp.player');
         const playerAvatar = window.PlayerStats?.getAvatar?.() || '🦊';
         const playerElo = window.PlayerStats?.getElo?.() || 1000;
 
@@ -880,7 +880,7 @@ class GomokuGame {
                 this.ui.updateCountdown(count);
                 this.audio.playCountdown();
             } else if (count === 0) {
-                this.ui.updateCountdown('开始!');
+                this.ui.updateCountdown(Localization.get('game.go'));
                 this.audio.playStart();
             } else {
                 clearInterval(interval);
@@ -950,13 +950,13 @@ class GomokuGame {
 
             // 超时警告 (仅显示提示，不判负)
             if (this.state.moveTimeLeft <= 0 && this.isHumanTurn()) {
-                this.ui.showToast('⏰ 时间到！请尽快落子', 'warning');
+                this.ui.showToast(Localization.get('toast.move_time_warning'), 'warning');
                 this.state.moveTimeLeft = 20; // 重置单步计时
             }
 
             // 总时间用尽时的警告 (本地模式不强制判负)
             if (totalTime <= 0 && this.isHumanTurn()) {
-                this.ui.showToast('⚠️ 总时间已用尽，请抓紧落子', 'warning');
+                this.ui.showToast(Localization.get('toast.total_time_warning'), 'warning');
             }
         }, 1000);
     }
@@ -1015,7 +1015,7 @@ class GomokuGame {
     handleClick(e) {
         // 观战模式下禁止落子
         if (this.state.isSpectating) {
-            this.ui.showToast('观战模式下无法落子', 'info');
+            this.ui.showToast(Localization.get('toast.spectate_no_move'), 'info');
             return;
         }
 
@@ -1049,7 +1049,7 @@ class GomokuGame {
             });
 
             if (!isMyTurn) {
-                this.ui.showToast('还没轮到你', 'warning');
+                this.ui.showToast(Localization.get('toast.not_your_turn'), 'warning');
                 return;
             }
             // 发送到服务器，实际落子由onGameUpdate回调处理
@@ -1155,6 +1155,11 @@ class GomokuGame {
             const missionId = this.storyState.missionId;
             const levelConfig = this.storyState.levelConfig;
 
+            // 埋点
+            if (window.GameAnalytics) {
+                GameAnalytics.trackGameEnd('lose', 'forbidden', this.state.history.length);
+            }
+
             // 获取禁手失败文案
             const textCfg = window.FORBIDDEN_LOSE_TEXT ? FORBIDDEN_LOSE_TEXT[type] : null;
             const extraText = window.FORBIDDEN_LEVEL_EXTRA ? FORBIDDEN_LEVEL_EXTRA[missionId] : '';
@@ -1247,6 +1252,13 @@ class GomokuGame {
                 }
             }
 
+            // Game Analytics 埋点
+            if (window.GameAnalytics) {
+                const result = isAI ? 'lose' : 'win';
+                const winner = this.state.currentPlayer === 1 ? 'black' : 'white';
+                GameAnalytics.trackGameEnd(result, winner, this.state.history.length);
+            }
+
             // 更新角色状态（故事模式下同步背景）
             if (this.state.gameMode === 'pve') {
                 // PVE模式：AI赢了显示WIN，玩家赢了显示LOSE
@@ -1297,6 +1309,11 @@ class GomokuGame {
             if (window.PlayerStats && this.state.gameMode !== 'eve') {
                 const mode = this.storyState.isStoryMode ? 'story' : this.state.gameMode;
                 PlayerStats.recordResult(mode, 'draw');
+            }
+
+            // Game Analytics 埋点
+            if (window.GameAnalytics) {
+                GameAnalytics.trackGameEnd('draw', null, this.state.history.length);
             }
 
             // 角色状态：平局
@@ -1498,7 +1515,7 @@ class GomokuGame {
             if (window.Network) {
                 Network.requestRematch();
                 this.ui.hideWinner();
-                this.ui.showToast('已发送再来一局请求，等待对方确认...', 'info');
+                this.ui.showToast(Localization.get('toast.rematch_sent'), 'info');
             }
             return;
         }
@@ -1696,16 +1713,16 @@ class GomokuGame {
             return;
         }
 
-        // 更新面板内容
+        // Update panel content with localized strings
         const titleEl = document.getElementById('mission-brief-title');
         const subtitleEl = document.getElementById('mission-brief-subtitle');
         const ruleEl = document.getElementById('mission-rule-text');
         const goalEl = document.getElementById('mission-goal-text');
 
-        if (titleEl) titleEl.textContent = levelConfig.name;
-        if (subtitleEl) subtitleEl.textContent = levelConfig.subtitle;
-        if (ruleEl) ruleEl.textContent = levelConfig.ui.ruleSummary;
-        if (goalEl) goalEl.textContent = levelConfig.ui.goalSummary;
+        if (titleEl) titleEl.textContent = Localization.get(levelConfig.nameKey);
+        if (subtitleEl) subtitleEl.textContent = Localization.get(levelConfig.subtitleKey);
+        if (ruleEl) ruleEl.textContent = Localization.get(levelConfig.ui.ruleSummaryKey);
+        if (goalEl) goalEl.textContent = Localization.get(levelConfig.ui.goalSummaryKey);
 
         // 显示面板
         const modal = document.getElementById('mission-brief-modal');
@@ -1901,7 +1918,7 @@ class GomokuGame {
 
         const tc = this.storyState.timeControl;
         if (!tc || tc.mode === 'none') {
-            timerMain.textContent = '自由对局';
+            timerMain.textContent = Localization.get('game.free_mode');
             timerMain.classList.remove('urgent');
             return;
         }
@@ -2177,7 +2194,7 @@ class GomokuGame {
         // 左侧：关卡信息
         const hudTitle = document.getElementById('story-hud-title');
         if (hudTitle) {
-            hudTitle.textContent = hudConfig ? hudConfig.left.line1 : (levelConfig ? levelConfig.name : '故事模式');
+            hudTitle.textContent = hudConfig ? hudConfig.left.line1 : (levelConfig ? levelConfig.name : Localization.get('game.story_mode'));
         }
 
         // 中间：规则标签
@@ -2207,7 +2224,7 @@ class GomokuGame {
 
         if (hudConfig && hudConfig.right) {
             const right = hudConfig.right;
-            if (timerMain) timerMain.textContent = right.mainText || '自由对局';
+            if (timerMain) timerMain.textContent = right.mainText || Localization.get('game.free_mode');
             if (timerSub) timerSub.textContent = right.subText || '';
 
             // 徽章显示
@@ -2359,7 +2376,7 @@ class GomokuGame {
         if (this.storyState.currentRankTitle) {
             return `当前段位：${this.storyState.currentRankTitle}`;
         }
-        return '当前段位：尚未取得';
+        return `${Localization.get('game.rank_status', { RANK: Localization.get('rank.unranked') })}`;
     }
 
     // 故事模式结束处理（旧版兼容）
@@ -2433,7 +2450,7 @@ class GomokuGame {
                             ◀ 上一页
                         </button>
                         <button class="lesson-btn lesson-btn-next" id="lesson-next-btn">
-                            ${isLast ? '开始对局 ▶' : '下一页 ▶'}
+                            ${isLast ? Localization.get('game.start_match') : Localization.get('game.next_page')}
                         </button>
                     </div>
                 </div>
@@ -2699,7 +2716,7 @@ class GomokuGame {
     // 创建房间
     async createOnlineRoom() {
         if (!window.Network) {
-            alert('网络模块未加载');
+            alert(Localization.get('toast.mp_module_missing'));
             return;
         }
 
@@ -2713,7 +2730,7 @@ class GomokuGame {
             this.setupOnlineGameListeners();
 
             // 显示自己的信息
-            const playerName = localStorage.getItem('gomoku_player_name') || '玩家';
+            const playerName = localStorage.getItem('gomoku_player_name') || Localization.get('mp.player');
             this.ui.updateRoomPlayers({
                 [Network.myPlayerId]: {
                     name: playerName,
@@ -2722,7 +2739,7 @@ class GomokuGame {
                 }
             });
         } else {
-            alert('创建房间失败: ' + result.error);
+            alert(Localization.get('toast.room_create_failed') + ': ' + result.error);
         }
     }
 
@@ -2732,7 +2749,7 @@ class GomokuGame {
         if (!lastRoom) return;
 
         // 简单检查：询问用户
-        if (confirm(`检测到上次异常退出房间 ${lastRoom}，是否重连？`)) {
+        if (confirm(Localization.get('toast.reconnect_confirm', { ROOM: lastRoom }))) {
             if (!window.Network) return;
 
             // 确保网络初始化
@@ -2751,7 +2768,7 @@ class GomokuGame {
                 if (result.reconnected) {
                     this.setupOnlineGameListeners();
                     this.startOnlineGame();
-                    this.ui.showToast('重连成功', 'success');
+                    this.ui.showToast(Localization.get('toast.reconnect_success'), 'success');
                 } else {
                     // 如果房间还在waiting状态（虽然不太可能，因为异常退出通常意味着playing）
                     this.ui.showRoomWaiting(lastRoom);
@@ -2759,7 +2776,7 @@ class GomokuGame {
                 }
 
             } else {
-                this.ui.showToast('重连失败: ' + result.error, 'error');
+                this.ui.showToast(Localization.get('toast.reconnect_failed', { ERROR: result.error }), 'error');
                 localStorage.removeItem('gomoku_last_room');
             }
         } else {
@@ -2770,14 +2787,14 @@ class GomokuGame {
     // 加入房间
     async joinOnlineRoom() {
         if (!window.Network) {
-            alert('网络模块未加载');
+            alert(Localization.get('toast.mp_module_missing'));
             return;
         }
 
         const roomCode = document.getElementById('room-code-input').value.trim();
 
         if (roomCode.length !== 6) {
-            this.ui.showJoinRoomError('请输入6位房间码');
+            this.ui.showJoinRoomError(Localization.get('toast.room_code_6_digits'));
             return;
         }
 
@@ -2794,7 +2811,7 @@ class GomokuGame {
             if (result.reconnected) {
                 this.setupOnlineGameListeners();
                 this.startOnlineGame();
-                this.ui.showToast('重连成功', 'success');
+                this.ui.showToast(Localization.get('toast.reconnect_success'), 'success');
             } else {
                 this.ui.showRoomWaiting(roomCode);
                 this.setupOnlineGameListeners();
@@ -2811,11 +2828,11 @@ class GomokuGame {
     // 切换准备状态
     async toggleReady() {
         if (!window.Network || !Network.connected) {
-            this.ui.showToast('未连接到服务器', 'error');
+            this.ui.showToast(Localization.get('toast.not_connected'), 'error');
             return;
         }
         if (!Network.currentRoom) {
-            this.ui.showToast('不在房间中', 'error');
+            this.ui.showToast(Localization.get('toast.not_in_room'), 'error');
             return;
         }
 
@@ -2823,7 +2840,7 @@ class GomokuGame {
             // 获取当前准备状态
             const roomSnapshot = await Network.currentRoomRef.child('players').child(Network.myPlayerId).once('value');
             if (!roomSnapshot.exists()) {
-                this.ui.showToast('玩家数据异常', 'error');
+                this.ui.showToast(Localization.get('toast.invalid_player_data'), 'error');
                 return;
             }
             const playerData = roomSnapshot.val();
@@ -2982,10 +2999,10 @@ class GomokuGame {
                         }, 3000);
                     }
                 } else {
-                    this.ui.showRoomMessage('等待对手加入...');
+                    this.ui.showRoomMessage(Localization.get('room.waiting_opponent'));
                 }
             } else {
-                this.ui.showRoomMessage('等待对手加入...');
+                this.ui.showRoomMessage(Localization.get('room.waiting_opponent'));
             }
         };
 
@@ -3594,13 +3611,14 @@ function getRelativeTime(timestamp) {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (seconds < 60) return '刚刚';
-    if (minutes < 60) return `${minutes}分钟前`;
-    if (hours < 24) return `${hours}小时前`;
-    if (days < 7) return `${days}天前`;
+    if (seconds < 60) return Localization.get('time.just_now');
+    if (minutes < 60) return Localization.get('time.minutes_ago').replace('{COUNT}', minutes);
+    if (hours < 24) return Localization.get('time.hours_ago').replace('{COUNT}', hours);
+    if (days < 7) return Localization.get('time.days_ago').replace('{COUNT}', days);
 
-    // 超过7天显示具体日期
-    return new Date(timestamp).toLocaleDateString('zh-CN');
+    // Beyond 7 days show specific date
+    const locale = Localization.currentLang === 'en' ? 'en-US' : 'zh-CN';
+    return new Date(timestamp).toLocaleDateString(locale);
 }
 
 function showFeedbackModal() {
@@ -3744,7 +3762,7 @@ GomokuGame.prototype.openSpectateLobby = async function () {
 
     // 确保网络模块已初始化
     if (!window.Network) {
-        alert('网络模块未加载');
+        alert(Localization.get('toast.mp_module_missing'));
         return;
     }
 
@@ -3782,20 +3800,20 @@ GomokuGame.prototype.refreshSpectateGames = async function () {
         return;
     }
 
-    // 显示加载状态
-    gameListEl.innerHTML = '<div class="empty-games">正在加载...</div>';
+    // Display loading state
+    gameListEl.innerHTML = `<div class="empty-games">${Localization.get('spectate.loading')}</div>`;
 
     try {
         const games = await Network.getActiveGames();
         console.log('[Game] Loaded games:', games);
 
-        // 更新对局数量
+        // Update game count
         if (countEl) {
-            countEl.textContent = `正在进行的对局: ${games.length}`;
+            countEl.textContent = Localization.get('spectate.active_count').replace('{COUNT}', games.length);
         }
 
         if (games.length === 0) {
-            gameListEl.innerHTML = '<div class="empty-games">暂无进行中的对局</div>';
+            gameListEl.innerHTML = `<div class="empty-games">${Localization.get('spectate.empty')}</div>`;
             return;
         }
 
@@ -3888,21 +3906,21 @@ GomokuGame.prototype.joinSpectator = async function (roomCode) {
         // 设置观战回调
         this.setupSpectatorCallbacks();
 
-        // 初始化棋盘
+        // Initialize board
         this.initSpectatorBoard(result.roomData);
 
-        // 显示观战指示器
+        // Show spectate indicator
         this.showSpectatingIndicator();
 
-        this.ui.showToast('已进入观战模式', 'success');
+        this.ui.showToast(Localization.get('spectate.toast.entered'), 'success');
     } else {
-        this.ui.showToast('进入观战失败: ' + result.error, 'error');
+        this.ui.showToast(Localization.get('spectate.toast.failed') + ': ' + result.error, 'error');
         this.ui.showOnlineLobby();
     }
 };
 
 GomokuGame.prototype.setupSpectatorCallbacks = function () {
-    // 监听棋盘更新
+    // Listen for board updates
     Network.onSpectatorUpdate = (roomData) => {
         this.updateSpectatorBoard(roomData);
     };
@@ -3912,7 +3930,7 @@ GomokuGame.prototype.setupSpectatorCallbacks = function () {
         this.ui.showToast(message, 'info');
     };
 
-    // 监听消息
+    // Listen for messages
     Network.onMessage = (msg) => {
         if (!this.spectatorData) return;
 
@@ -3933,7 +3951,7 @@ GomokuGame.prototype.initSpectatorBoard = function (roomData) {
 
     const gameData = roomData.game;
 
-    // 🔥 关键：隐藏主菜单，显示游戏界面
+    // CRITICAL: Hide main menu, show game board
     this.ui.hideMainMenu();
 
     // 同步棋盘状态
@@ -3964,10 +3982,10 @@ GomokuGame.prototype.initSpectatorBoard = function (roomData) {
         };
 
         this.ui.updatePlayerInfo(
-            p1.name || '玩家1',
-            p2.name || '玩家2',
-            p1.avatar || '🎮',  // 使用玩家真实头像
-            p2.avatar || '🎮',  // 使用玩家真实头像
+            p1.name || Localization.get('mp.player'),
+            p2.name || Localization.get('mp.player'),
+            p1.avatar || '🎮',  // Use actual player avatar
+            p2.avatar || '🎮',  // Use actual player avatar
             p1.elo || 1000,
             p2.elo || 1000
         );
@@ -4071,7 +4089,7 @@ GomokuGame.prototype.updateSpectatorBoard = function (roomData) {
     // 检查游戏是否结束
     if (gameData.winner) {
         this.state.gameOver = true;
-        const winnerText = gameData.winner === 'black' ? '⚫ 黑方获胜' : '⚪ 白方获胜';
+        const winnerText = gameData.winner === 'black' ? Localization.get('game.win.black') : Localization.get('game.win.white');
         this.ui.showToast(winnerText, 'success');
     }
 
@@ -4137,8 +4155,8 @@ GomokuGame.prototype.showSpectatingIndicator = function () {
 
     indicator.innerHTML = `
         <span class="spectating-indicator-icon">👁️</span>
-        <span>观战模式</span>
-        <button class="btn spectate-exit-btn" onclick="game.exitSpectatorMode()">退出</button>
+        <span data-i18n="menu.spectate">${Localization.get('menu.spectate')}</span>
+        <button class="btn spectate-exit-btn" onclick="game.exitSpectatorMode()" data-i18n="mission.back">${Localization.get('mission.back')}</button>
     `;
 
     indicator.style.display = 'flex';

@@ -5,17 +5,17 @@ const PlayerStats = {
 
     // 段位配置
     RANKS: [
-        { id: 'unranked', name: '尚未取得', icon: '🎯', minStory: 0 },
-        { id: 'bronze', name: '铜阶棋士', icon: '🥉', minStory: 1 },
-        { id: 'silver', name: '银阶棋士', icon: '🥈', minStory: 3 },
-        { id: 'gold', name: '金阶棋士', icon: '🥇', minStory: 5 },
-        { id: 'platinum', name: '铂金棋士', icon: '💎', minStory: 7 },
-        { id: 'master', name: '大师棋士', icon: '👑', minStory: 10 }
+        { id: 'unranked', name: Localization.get('rank.unranked'), icon: '🎯', minStory: 0 },
+        { id: 'bronze', name: Localization.get('rank.bronze'), icon: '🥉', minStory: 1 },
+        { id: 'silver', name: Localization.get('rank.silver'), icon: '🥈', minStory: 3 },
+        { id: 'gold', name: Localization.get('rank.gold'), icon: '🥇', minStory: 5 },
+        { id: 'platinum', name: Localization.get('rank.platinum'), icon: '💎', minStory: 7 },
+        { id: 'master', name: Localization.get('rank.master'), icon: '👑', minStory: 10 }
     ],
 
     // 默认数据结构
     defaultData: {
-        playerName: '玩家',
+        playerName: Localization.get('mp.player'),
         // 基础统计
         stats: {
             pve: { wins: 0, losses: 0, draws: 0 },
@@ -213,7 +213,7 @@ const PlayerStats = {
             ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
             ctx.font = '12px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('暂无足够数据', width / 2, height / 2);
+            ctx.fillText(Localization.get('stats.no_data'), width / 2, height / 2);
             return;
         }
 
@@ -359,7 +359,7 @@ const PlayerStats = {
 
     // 获取竞技段位 (Competitive Rank)
     getCompetitiveRank() {
-        if (!window.EloSystem) return { name: '未知', icon: '❓', color: '#999' };
+        if (!window.EloSystem) return { name: Localization.get('rank.title.unknown'), icon: '❓', color: '#999' };
         return EloSystem.getRank(this.data.competitive.elo);
     },
 
@@ -376,7 +376,7 @@ const PlayerStats = {
     // 获取汇总数据
     getSummary() {
         // 始终从 Onboarding 获取最新玩家名
-        const playerName = window.Onboarding?.getPlayerName() || this.data.playerName || '玩家';
+        const playerName = window.Onboarding?.getPlayerName() || this.data.playerName || Localization.get('mp.player');
 
         // 同步更新本地数据
         if (playerName !== this.data.playerName) {
@@ -682,7 +682,7 @@ const PlayerStats = {
         }
 
         // 更新名字
-        const playerName = window.Onboarding?.getPlayerName() || this.data?.playerName || '玩家';
+        const playerName = window.Onboarding?.getPlayerName() || this.data?.playerName || Localization.get('mp.player');
         const menuName = document.getElementById('menu-user-name');
         if (menuName) {
             menuName.textContent = playerName;
@@ -693,11 +693,6 @@ const PlayerStats = {
         if (rankStatus) {
             const elo = this.data.competitive.elo || 1000;
 
-            // Get Meta (Name, Icon, Color)
-            let rankName = '倔强青铜';
-            let rankIcon = '🥉';
-            let rankColor = '#cd7f32';
-
             if (window.Leaderboard && Leaderboard.getRankName && Leaderboard.getRankMeta) {
                 rankName = Leaderboard.getRankName(elo);
                 const meta = Leaderboard.getRankMeta(elo);
@@ -705,12 +700,13 @@ const PlayerStats = {
                 rankColor = meta.color;
             } else {
                 // Fallback local logic
-                if (elo >= 2000) { rankName = '最强王者'; rankIcon = '👑'; rankColor = '#ffb700'; }
-                else if (elo >= 1800) { rankName = '至尊星耀'; rankIcon = '💎'; rankColor = '#e91e63'; }
-                else if (elo >= 1600) { rankName = '永恒钻石'; rankIcon = '✨'; rankColor = '#9c27b0'; }
-                else if (elo >= 1400) { rankName = '尊贵铂金'; rankIcon = '🏆'; rankColor = '#00bcd4'; }
-                else if (elo >= 1200) { rankName = '荣耀黄金'; rankIcon = '🥇'; rankColor = '#ffc107'; }
-                else if (elo >= 1000) { rankName = '秩序白银'; rankIcon = '🥈'; rankColor = '#9e9e9e'; }
+                if (elo >= 2000) { rankName = Localization.get('rank.title.king'); rankIcon = '👑'; rankColor = '#ffb700'; }
+                else if (elo >= 1800) { rankName = Localization.get('rank.title.star'); rankIcon = '💎'; rankColor = '#e91e63'; }
+                else if (elo >= 1600) { rankName = Localization.get('rank.title.diamond'); rankIcon = '✨'; rankColor = '#9c27b0'; }
+                else if (elo >= 1400) { rankName = Localization.get('rank.title.platinum'); rankIcon = '🏆'; rankColor = '#00bcd4'; }
+                else if (elo >= 1200) { rankName = Localization.get('rank.title.gold'); rankIcon = '🥇'; rankColor = '#ffc107'; }
+                else if (elo >= 1000) { rankName = Localization.get('rank.title.silver'); rankIcon = '🥈'; rankColor = '#9e9e9e'; }
+                else { rankName = Localization.get('rank.title.bronze'); rankIcon = '🥉'; rankColor = '#cd7f32'; }
             }
 
             // Update Display

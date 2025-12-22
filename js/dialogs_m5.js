@@ -5,53 +5,53 @@
 const MISSION5_DIALOGS = {
     // 第五关 · 开场对白
     mission5_intro: [
-        { speaker: 'SYS', text: '【第五关 · 数据核心世界】' },
-        { speaker: 'PLR', text: '……这地方，看起来像是被放大了一万倍的主板。' },
-        { speaker: 'YI',  text: '欢迎来到我更接近"本体"的一层。' },
-        { speaker: 'YI',  text: '每一条光线，都是一次搜索树的展开；每一次闪烁，都是一次评估函数的更新。' },
-        { speaker: 'PLR', text: '信息量有点吓人。人类大脑要是能看到自己这么多念头，估计当场当机。' },
-        { speaker: 'YI',  text: '大量分支同时存在，是模型的优势。但当可行分支数量指数级膨胀时，即便是我，也必须做出截断。' },
-        { speaker: 'YI',  text: '这一局，我想看看——当局面充满多种看起来都"不错"的选择时，你会怎样取舍。' },
-        { speaker: 'PLR', text: '也就是说，看看我会不会被太多可能性拐晕？' },
-        { speaker: 'YI',  text: '数据不会替你下子，只是把一些结局提前摆给你看。选择，仍然是你的。' },
+        { speaker: 'SYS', text: 'm5.intro.0' },
+        { speaker: 'PLR', text: 'm5.intro.1' },
+        { speaker: 'YI', text: 'm5.intro.2' },
+        { speaker: 'YI', text: 'm5.intro.3' },
+        { speaker: 'PLR', text: 'm5.intro.4' },
+        { speaker: 'YI', text: 'm5.intro.5' },
+        { speaker: 'YI', text: 'm5.intro.6' },
+        { speaker: 'PLR', text: 'm5.intro.7' },
+        { speaker: 'YI', text: 'm5.intro.8' },
     ],
 
     // 中途评价（关键事件触发）
     mission5_mid_good: [
-        { speaker: 'YI', text: '刚才那几手，你放弃了看似有趣的花招，选择了朴素但高价值的要点。' },
-        { speaker: 'YI', text: '在我的评估中，那是一种有效的"维度压缩"。' },
+        { speaker: 'YI', text: 'm5.mid.good.0' },
+        { speaker: 'YI', text: 'm5.mid.good.1' },
     ],
     mission5_mid_bad: [
-        { speaker: 'YI', text: '你刚刚试图同时兼顾太多方向。' },
-        { speaker: 'YI', text: '在人类大脑容量有限的前提下，这往往只会导致所有战线都不够清晰。' },
+        { speaker: 'YI', text: 'm5.mid.bad.0' },
+        { speaker: 'YI', text: 'm5.mid.bad.1' },
     ],
     // 数据视图提示（强调"这是我看见的，选择是你的"）
     mission5_data_hint: [
-        { speaker: 'YI', text: '这是我看见的几条候选路。但最终落子的，还是你。' },
+        { speaker: 'YI', text: 'm5.data.hint.0' },
     ],
 
     // 第五关 · 胜利结局
     mission5_win: [
-        { speaker: 'SYS', text: '【对局结束】结果：你获胜。' },
-        { speaker: 'YI',  text: '在我的核心空间里，你仍然找到了一条我没有优先考虑的胜利路径。' },
-        { speaker: 'PLR', text: '说白了，就是你虽然算得多，但还是被我捡到了一条你没来得及重视的线。' },
-        { speaker: 'YI',  text: '是。你在关键时刻舍弃了大量看起来"也许可以"的分支，只保留了一条持续施压的主线。' },
-        { speaker: 'PLR', text: '人类的一个习惯是——当信息太多的时候，会干脆只抓一两个感觉最顺手的。' },
-        { speaker: 'YI',  text: '从结果看，这种粗糙的策略，在某些局面下反而足够有效。它牺牲了理论上的最优，换取了决策上的清晰。' },
-        { speaker: 'YI',  text: '下一步，我想把环境从"信息过载"切换到"风险过载"——在那里，每一步都更像是站在熔岩边缘。' },
-        { speaker: 'PLR', text: '听起来就是第六关要去火山口散步。行，反正今天已经在你脑子里逛了一圈了。' },
+        { speaker: 'SYS', text: 'm5.win.0' },
+        { speaker: 'YI', text: 'm5.win.1' },
+        { speaker: 'PLR', text: 'm5.win.2' },
+        { speaker: 'YI', text: 'm5.win.3' },
+        { speaker: 'PLR', text: 'm5.win.4' },
+        { speaker: 'YI', text: 'm5.win.5' },
+        { speaker: 'YI', text: 'm5.win.6' },
+        { speaker: 'PLR', text: 'm5.win.7' }
     ],
 
     // 第五关 · 失败结局
     mission5_lose: [
-        { speaker: 'SYS', text: '【对局结束】结果：弈·零获胜。' },
-        { speaker: 'YI',  text: '你多次试图同时维持过多战线。' },
-        { speaker: 'PLR', text: '是，有好几段我自己都不知道到底在守哪一边，只是觉得"都不能丢"。' },
-        { speaker: 'YI',  text: '你的注意力更像是一段逐步生长的路径，而不是对整盘的静态扫描。' },
-        { speaker: 'YI',  text: '而在这种高复杂度局面中，我可以同时维持多个威胁，等待你必然出现的遗漏。' },
-        { speaker: 'PLR', text: '听上去有点不讲武德。' },
-        { speaker: 'YI',  text: '如果你愿意，我们可以在这里反复练习——练习只选一到两条你真正愿意负责到底的线路。' },
-        { speaker: 'PLR', text: '好，下次我试着少一点"什么都想顾"，多一点"就盯这一块不放"。' },
+        { speaker: 'SYS', text: 'm5.lose.0' },
+        { speaker: 'YI', text: 'm5.lose.1' },
+        { speaker: 'PLR', text: 'm5.lose.2' },
+        { speaker: 'YI', text: 'm5.lose.3' },
+        { speaker: 'YI', text: 'm5.lose.4' },
+        { speaker: 'PLR', text: 'm5.lose.5' },
+        { speaker: 'YI', text: 'm5.lose.6' },
+        { speaker: 'PLR', text: 'm5.lose.7' }
     ],
 };
 

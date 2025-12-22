@@ -2,9 +2,65 @@
 <html lang="zh-CN">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4F59SJHBNJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-4F59SJHBNJ');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>五子棋遇！ | GomokuZero</title>
+    <title data-i18n="app.title">五子棋遇！ | GomokuZero - 在线竞技与故事闯关</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" data-i18n-content="app.description"
+        content="五子棋遇 (GomokuZero) 是一款融合故事剧情与AI对弈的精品五子棋游戏。支持在线联机对战、ELO积分排位、人机切磋及独特的关卡挑战系统。">
+    <meta name="keywords" data-i18n-content="app.keywords"
+        content="五子棋,在线五子棋,五子棋对战,Gomoku,GomokuZero,五子棋AI,五子棋教学,五子棋联机">
+    <meta name="author" content="川狼">
+    <link rel="canonical" href="https://gomoku-game-1.pages.dev/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gomoku-game-1.pages.dev/">
+    <meta property="og:title" data-i18n-content="app.og_title" content="五子棋遇！ | GomokuZero - 故事模式与在线对战">
+    <meta property="og:description" data-i18n-content="app.og_description"
+        content="跟随AI助手“弈·零”一起成长，从入门到大师。支持实时联机、ELO匹配与深度故事剧情。">
+    <meta property="og:image" content="https://gomoku-game-1.pages.dev/assets/icons/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://gomoku-game-1.pages.dev/">
+    <meta property="twitter:title" content="五子棋遇！ | GomokuZero">
+    <meta property="twitter:description" content="精美的五子棋竞技平台，包含故事模式、双人对战与强力AI挑战。">
+    <meta property="twitter:image" content="https://gomoku-game-1.pages.dev/assets/icons/og-image.png">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoGame",
+      "name": "五子棋遇 (GomokuZero)",
+      "description": "一款融合故事剧情与AI对弈的在线五子棋游戏。",
+      "genre": ["Board Game", "Strategy Game"],
+      "url": "https://gomoku-game-1.pages.dev/",
+      "image": "https://gomoku-game-1.pages.dev/assets/icons/og-image.png",
+      "author": {
+        "@type": "Person",
+        "name": "川狼"
+      },
+      "operatingSystem": "Web Browser",
+      "applicationCategory": "Game",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CNY"
+      }
+    }
+    </script>
 
     <!-- PWA Support -->
     <link rel="manifest" href="manifest.json">
@@ -32,6 +88,7 @@
     <!-- Firebase配置 - 必须在SDK之后加载 -->
     <script src="js/firebaseConfig.js"></script>
 
+
     <!-- 模块化JS文件 -->
 </head>
 
@@ -50,9 +107,9 @@
         </div>
 
         <div class="loading-content">
-            <!-- 标题 - 纯中文无emoji -->
+            <!-- 标题 - 多语言支持 -->
             <div class="quantum-logo">
-                <span class="logo-text">五子棋遇</span>
+                <span class="logo-text" data-i18n="app.logo">五子棋遇</span>
                 <div class="logo-glow"></div>
             </div>
 
@@ -74,8 +131,8 @@
 
             <!-- 状态文字 -->
             <div class="quantum-status">
-                <div class="status-main" id="loading-status">量子初始化中</div>
-                <div class="status-sub" id="loading-substatus">正在加载资源...</div>
+                <div class="status-main" id="loading-status" data-i18n="loading.init">量子初始化中</div>
+                <div class="status-sub" id="loading-substatus" data-i18n="loading.status">正在加载资源...</div>
             </div>
 
             <!-- 量子进度条 -->
@@ -90,7 +147,7 @@
             </div>
 
             <!-- 底部提示 -->
-            <div class="quantum-tip" id="loading-tip">「 建立量子连接中 」</div>
+            <div class="quantum-tip" id="loading-tip" data-i18n="loading.connection">「 建立量子连接中 」</div>
         </div>
     </div>
 
@@ -99,30 +156,33 @@
         <div class="modal-content name-input-content">
             <div class="name-input-header">
                 <div class="welcome-icon">🎯</div>
-                <h2>欢迎来到五子棋遇！</h2>
-                <p class="welcome-subtitle">与「弈·零」一起开启智慧之旅</p>
+                <h2 data-i18n="onboarding.welcome">欢迎来到五子棋遇！</h2>
+                <p class="welcome-subtitle" data-i18n="onboarding.subtitle">与「弈·零」一起开启智慧之旅</p>
             </div>
             <div class="name-input-body">
-                <label for="player-name-input">请输入您的名字</label>
-                <input type="text" id="player-name-input" class="name-input" placeholder="玩家" maxlength="8"
+                <label for="player-name-input" data-i18n="onboarding.name_label">请输入您的名字</label>
+                <input type="text" id="player-name-input" class="name-input"
+                    data-i18n-placeholder="onboarding.name_placeholder" placeholder="玩家" maxlength="8"
                     autocomplete="off">
                 <div class="random-name-buttons">
-                    <button type="button" id="random-name-cn" class="btn random-btn">🎲 随机中文</button>
-                    <button type="button" id="random-name-en" class="btn random-btn">🎲 随机英文</button>
+                    <button type="button" id="random-name-cn" class="btn random-btn" data-i18n="onboarding.random_cn">🎲
+                        随机中文</button>
+                    <button type="button" id="random-name-en" class="btn random-btn" data-i18n="onboarding.random_en">🎲
+                        随机英文</button>
                 </div>
-                <p class="name-hint">名字将显示在游戏中（2-8个字符）</p>
+                <p class="name-hint" data-i18n="onboarding.name_hint">名字将显示在游戏中（2-8个字符）</p>
 
                 <div class="avatar-section">
-                    <label>选择头像</label>
+                    <label data-i18n="onboarding.avatar_label">选择头像</label>
                     <div class="avatar-preview-row">
                         <span id="avatar-preview" class="avatar-preview">🦊</span>
-                        <span class="avatar-preview-label">点击下方选择</span>
+                        <span class="avatar-preview-label" data-i18n="onboarding.avatar_hint">点击下方选择</span>
                     </div>
                     <div id="avatar-selector" class="avatar-grid"></div>
                 </div>
 
                 <div class="name-input-footer">
-                    <button id="start-game-btn" class="btn start-btn">开始游戏</button>
+                    <button id="start-game-btn" class="btn start-btn" data-i18n="onboarding.start_game">开始游戏</button>
                 </div>
             </div>
         </div>
@@ -151,8 +211,8 @@
                     title="点击查看个人战绩">
                     <div class="user-avatar-small" id="menu-user-avatar">🦁</div>
                     <div class="user-name-text">
-                        <div id="menu-user-name">玩家8848</div>
-                        <div class="user-rank-status">尚未定级</div>
+                        <div id="menu-user-name" data-i18n="mp.player">玩家8848</div>
+                        <div class="user-rank-status" data-i18n="rank.unranked">尚未定级</div>
                     </div>
                 </div>
                 <!-- 顶部右侧装饰或功能（如设置入口，也可留空） -->
@@ -182,39 +242,43 @@
                 </div>
 
                 <!-- Row 2: 创建房间 & 加入房间 -->
-                <div id="create-room-btn-menu" class="menu-card glass-card row-card" onclick="game.createOnlineRoom()">
+                <div id="create-room-btn-menu" class="menu-card glass-card row-card" onclick="game.createOnlineRoom()"
+                    data-i18n="menu.create_room">
                     <div class="row-card-content">
                         <div class="card-icon-small">🏠</div>
                         <div class="card-text">
-                            <div class="card-title" data-i18n="menu.create_room">创建房间</div>
+                            <div class="card-title">创建房间</div>
                         </div>
                     </div>
                 </div>
 
-                <div id="join-room-btn-menu" class="menu-card glass-card row-card" onclick="UI.showJoinRoom()">
+                <div id="join-room-btn-menu" class="menu-card glass-card row-card" onclick="UI.showJoinRoom()"
+                    data-i18n="menu.join_room">
                     <div class="row-card-content">
                         <div class="card-icon-small">🚪</div>
                         <div class="card-text">
-                            <div class="card-title" data-i18n="menu.join_room">加入房间</div>
+                            <div class="card-title">加入房间</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Row 3: 人机对弈 & 故事模式 -->
-                <div id="pve-btn" class="menu-card glass-card row-card" onclick="game.startPVEMode()">
+                <div id="pve-btn" class="menu-card glass-card row-card" onclick="game.startPVEMode()"
+                    data-i18n="menu.pve">
                     <div class="row-card-content">
                         <div class="card-icon-small">🤖</div>
                         <div class="card-text">
-                            <div class="card-title" data-i18n="menu.pve">人机对弈</div>
+                            <div class="card-title">人机对弈</div>
                         </div>
                     </div>
                 </div>
 
-                <div id="new-story-btn" class="menu-card glass-card row-card" onclick="game.startStoryMode()">
+                <div id="new-story-btn" class="menu-card glass-card row-card" onclick="game.startStoryMode()"
+                    data-i18n="menu.story">
                     <div class="row-card-content">
                         <div class="card-icon-small">📖</div>
                         <div class="card-text">
-                            <div class="card-title" data-i18n="menu.story">故事模式</div>
+                            <div class="card-title">故事模式</div>
                             <div style="font-size:12px; opacity:0.7; margin-top:2px" id="menu-story-count">-- 人在线
                             </div>
                         </div>
@@ -265,7 +329,7 @@
         <div id="online-lobby-modal" class="modal hidden">
             <div class="modal-content online-lobby-content">
                 <div class="modal-header">
-                    <h2>🌐 联机对战</h2>
+                    <h2 data-i18n="lobby.title">🌐 联机对战</h2>
                     <button class="close-btn" onclick="UI.closeOnlineLobby()">✕</button>
                 </div>
                 <div class="online-lobby-body">
@@ -316,10 +380,10 @@
             <div class="modal-content matchmaking-content">
                 <div class="matchmaking-animation">
                     <div class="searching-spinner"></div>
-                    <div class="searching-text">🔍 正在匹配对手...</div>
+                    <div class="searching-text" data-i18n="matchmaking.searching">🔍 正在匹配对手...</div>
                 </div>
-                <div class="matchmaking-timer" id="matchmaking-timer">00:00</div>
-                <button id="cancel-match-btn" class="btn secondary-btn">取消匹配</button>
+                <div class="matchmaking-timer" id="matchmaking-timer" data-i18n="matchmaking.timer">00:00</div>
+                <button id="cancel-match-btn" class="btn secondary-btn" data-i18n="matchmaking.cancel">取消匹配</button>
             </div>
         </div>
 
@@ -327,15 +391,16 @@
         <div id="join-room-modal" class="modal hidden">
             <div class="modal-content join-room-content">
                 <div class="modal-header">
-                    <h2>🚪 加入房间</h2>
+                    <h2 data-i18n="lobby.join_room">🚪 加入房间</h2>
                     <button class="close-btn" onclick="UI.closeJoinRoom()">✕</button>
                 </div>
                 <div class="join-room-body">
-                    <label for="room-code-input">请输入6位房间码</label>
-                    <input type="text" id="room-code-input" class="room-code-input" placeholder="例如: ABC123"
-                        maxlength="6" autocomplete="off">
+                    <label for="room-code-input" data-i18n="room.code_label">请输入6位房间码</label>
+                    <input type="text" id="room-code-input" class="room-code-input"
+                        data-i18n-placeholder="room.code_placeholder" placeholder="例如: ABC123" maxlength="6"
+                        autocomplete="off">
                     <div id="join-room-error" class="error-message hidden"></div>
-                    <button id="confirm-join-btn" class="btn primary-btn">加入房间</button>
+                    <button id="confirm-join-btn" class="btn primary-btn" data-i18n="room.join_btn">加入房间</button>
                 </div>
             </div>
         </div>
@@ -344,32 +409,32 @@
         <div id="room-waiting-modal" class="modal hidden">
             <div class="modal-content room-waiting-content">
                 <div class="modal-header">
-                    <h2>🎮 房间</h2>
+                    <h2 data-i18n="room.title">🎮 房间</h2>
                     <div class="room-code-display">
                         <span id="display-room-code">------</span>
-                        <button class="copy-btn" onclick="UI.copyRoomCode()">📋 复制</button>
+                        <button class="copy-btn" onclick="UI.copyRoomCode()" data-i18n="room.copy">📋 复制</button>
                     </div>
                 </div>
                 <div class="room-waiting-body">
                     <div class="players-display">
                         <div class="player-card host">
                             <div class="player-avatar" id="host-avatar">👤</div>
-                            <div class="player-name" id="host-name">等待中...</div>
-                            <div class="player-color">执黑</div>
-                            <div class="player-status" id="host-status">未准备</div>
+                            <div class="player-name" id="host-name" data-i18n="room.waiting">等待中...</div>
+                            <div class="player-color" data-i18n="room.color_black">执黑</div>
+                            <div class="player-status" id="host-status" data-i18n="room.host_not_ready">未准备</div>
                         </div>
                         <div class="vs-divider">VS</div>
                         <div class="player-card guest">
                             <div class="player-avatar" id="guest-avatar">❓</div>
-                            <div class="player-name" id="guest-name">等待加入...</div>
-                            <div class="player-color">执白</div>
+                            <div class="player-name" id="guest-name" data-i18n="room.waiting">等待加入...</div>
+                            <div class="player-color" data-i18n="room.color_white">执白</div>
                             <div class="player-status" id="guest-status">--</div>
                         </div>
                     </div>
 
                     <div class="room-actions">
-                        <button id="ready-btn" class="btn ready-btn">准备</button>
-                        <button id="leave-room-btn" class="btn secondary-btn">退出房间</button>
+                        <button id="ready-btn" class="btn ready-btn" data-i18n="room.ready_btn">准备</button>
+                        <button id="leave-room-btn" class="btn secondary-btn" data-i18n="room.leave_btn">退出房间</button>
                     </div>
 
                     <div id="room-message" class="room-message"></div>
@@ -381,7 +446,7 @@
         <div id="spectate-lobby-modal" class="modal hidden">
             <div class="modal-content spectate-lobby-content">
                 <div class="modal-header">
-                    <h2>👁️ 观战大厅</h2>
+                    <h2 data-i18n="spectate.title">👁️ 观战大厅</h2>
                     <div class="spectate-actions">
                         <button id="spectate-refresh-btn" class="refresh-btn" title="刷新">🔄</button>
                         <button class="close-btn" onclick="game.closeSpectateLobby()">✕</button>
@@ -389,10 +454,10 @@
                 </div>
                 <div class="spectate-lobby-body">
                     <div class="spectate-status">
-                        <span id="active-games-count">正在进行的对局: 0</span>
+                        <span id="active-games-count" data-i18n="spectate.active_count">正在进行的对局: 0</span>
                     </div>
                     <div id="game-list" class="game-list">
-                        <div class="empty-games">暂无进行中的对局</div>
+                        <div class="empty-games" data-i18n="spectate.empty">暂无进行中的对局</div>
                     </div>
                 </div>
             </div>
@@ -403,30 +468,32 @@
             <!-- ... existing feedback content ... -->
             <div class="modal-content feedback-content">
                 <div class="feedback-header">
-                    <h2>💬 内测留言板</h2>
+                    <h2 data-i18n="feedback.title">💬 内测留言板</h2>
                     <button class="close-btn" onclick="closeFeedbackModal()">✕</button>
                 </div>
                 <div class="feedback-body">
                     <!-- 留言类型选择 -->
                     <div class="feedback-type-row">
-                        <label>留言类型:</label>
+                        <label data-i18n="feedback.type_label">留言类型:</label>
                         <select id="feedback-type" class="feedback-type-select">
-                            <option value="suggestion">💡 建议</option>
-                            <option value="bug">🐛 Bug报告</option>
-                            <option value="question">❓ 问题咨询</option>
+                            <option value="suggestion" data-i18n="feedback.type.suggestion">💡 建议</option>
+                            <option value="bug" data-i18n="feedback.type.bug">🐛 Bug报告</option>
+                            <option value="question" data-i18n="feedback.type.question">❓ 问题咨询</option>
                         </select>
                     </div>
-                    <textarea id="feedback-text" class="feedback-textarea" placeholder="请写下您的建议或遇到的Bug..." rows="4"
+                    <textarea id="feedback-text" class="feedback-textarea"
+                        data-i18n-placeholder="menu.feedback_placeholder" placeholder="请写下您的建议或遇到的Bug..." rows="4"
                         maxlength="500"></textarea>
                     <div class="feedback-counter"><span id="feedback-count">0</span>/500</div>
                     <div style="margin-top:10px; opacity:0.7; font-size:0.9em;">
-                        <span data-i18n="menu.contact_optional">联系方式 (选填)</span>:
+                        <span data-i18n="feedback.contact_title">联系方式 (选填)</span>:
                         <input type="text" id="feedback-contact"
                             style="background:rgba(255,255,255,0.1); border:none; color:white; padding:4px 8px; border-radius:4px; width:60%;">
                     </div>
                 </div>
                 <div class="feedback-footer">
-                    <button id="feedback-submit-btn" class="btn feedback-submit-btn" onclick="submitFeedback()">👍
+                    <button id="feedback-submit-btn" class="btn feedback-submit-btn" onclick="submitFeedback()"
+                        data-i18n="feedback.submit">👍
                         提交建议</button>
                 </div>
                 <div id="feedback-history" class="feedback-history"></div>
@@ -439,7 +506,7 @@
             <div class="modal-content settings-modal-content">
                 <!-- Header -->
                 <div class="settings-header">
-                    <h2>⚙️ 游戏设置</h2>
+                    <h2><span>⚙️</span> <span data-i18n="settings.title">游戏设置</span></h2>
                     <button class="close-btn" onclick="UI.closeSettings()">✕</button>
                 </div>
 
@@ -448,14 +515,14 @@
                     <div class="settings-group">
                         <div class="settings-group-title">
                             <span class="group-icon">🎧</span>
-                            <span>音频设置</span>
+                            <span data-i18n="settings.audio">音频设置</span>
                         </div>
 
                         <div class="settings-card">
                             <div class="setting-row">
                                 <div class="setting-label">
                                     <span class="setting-icon">🎵</span>
-                                    <span>背景音乐</span>
+                                    <span data-i18n="settings.music">背景音乐</span>
                                 </div>
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="setting-music-toggle" checked>
@@ -466,7 +533,7 @@
                             <div class="setting-row">
                                 <div class="setting-label">
                                     <span class="setting-icon">🔊</span>
-                                    <span>音效</span>
+                                    <span data-i18n="settings.sound">音效</span>
                                 </div>
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="setting-sound-toggle" checked>
@@ -477,7 +544,7 @@
                             <div class="setting-row volume-row">
                                 <div class="setting-label">
                                     <span class="setting-icon">🎚️</span>
-                                    <span>主音量</span>
+                                    <span data-i18n="settings.volume_label">主音量</span>
                                 </div>
                                 <span class="volume-value" id="volume-value-display">50%</span>
                             </div>
@@ -492,7 +559,7 @@
                     <div class="settings-group">
                         <div class="settings-group-title">
                             <span class="group-icon">🌐</span>
-                            <span>语言 / Language</span>
+                            <span data-i18n="settings.language">语言 / Language</span>
                         </div>
 
                         <div class="settings-card">
@@ -510,7 +577,7 @@
                     <div class="settings-group">
                         <div class="settings-group-title">
                             <span class="group-icon">📱</span>
-                            <span>其他</span>
+                            <span data-i18n="settings.other_group">其他</span>
                         </div>
 
                         <div class="settings-card clickable-card">
@@ -518,7 +585,7 @@
                                 onclick="PWAInstall.triggerInstall()">
                                 <div class="setting-label">
                                     <span class="setting-icon">📲</span>
-                                    <span>保存到桌面</span>
+                                    <span data-i18n="settings.install_desktop">保存到桌面</span>
                                 </div>
                                 <span class="arrow-icon">›</span>
                             </div>
@@ -526,7 +593,7 @@
                             <div class="setting-row clickable" onclick="showAboutModal()">
                                 <div class="setting-label">
                                     <span class="setting-icon">ℹ️</span>
-                                    <span>关于游戏</span>
+                                    <span data-i18n="settings.about_game">关于游戏</span>
                                 </div>
                                 <span class="arrow-icon">›</span>
                             </div>
@@ -535,7 +602,7 @@
 
                     <!-- Footer -->
                     <div class="settings-footer">
-                        <span class="version-text">Version 2.1 Beta</span>
+                        <span class="version-text" data-i18n="settings.version">Version 2.1 Beta</span>
                     </div>
                 </div>
             </div>
@@ -545,7 +612,7 @@
         <div id="leaderboard-modal" class="modal hidden">
             <div class="modal-content leaderboard-modal-content">
                 <div class="leaderboard-header">
-                    <h2>🏆 世界排行榜</h2>
+                    <h2 data-i18n="leaderboard.title">🏆 世界排行榜</h2>
                     <div class="leaderboard-actions">
                         <button id="leaderboard-refresh-btn" class="refresh-btn" title="刷新">🔄</button>
                         <button id="leaderboard-close-btn" class="close-btn">✕</button>
@@ -554,14 +621,14 @@
 
                 <!-- NEW: Tabs -->
                 <div class="leaderboard-tabs">
-                    <button class="lb-tab active" data-tab="all">总榜</button>
-                    <button class="lb-tab" data-tab="daily">今日</button>
-                    <button class="lb-tab" data-tab="hourly">1小时</button>
+                    <button class="lb-tab active" data-tab="all" data-i18n="leaderboard.tab.all">总榜</button>
+                    <button class="lb-tab" data-tab="daily" data-i18n="leaderboard.tab.daily">今日</button>
+                    <button class="lb-tab" data-tab="hourly" data-i18n="leaderboard.tab.hourly">1小时</button>
                 </div>
 
-                <div class="leaderboard-subtitle">TOP 10 玩家 · 按ELO排名</div>
+                <div class="leaderboard-subtitle" data-i18n="leaderboard.subtitle">TOP 10 玩家 · 按ELO排名</div>
                 <div id="leaderboard-list" class="leaderboard-list">
-                    <div class="leaderboard-loading">🔄 加载中...</div>
+                    <div class="leaderboard-loading" data-i18n="leaderboard.loading">🔄 加载中...</div>
                 </div>
             </div>
         </div>
@@ -572,7 +639,7 @@
             <div class="modal-content personal-center-content">
                 <!-- 1. Header -->
                 <div class="pc-header">
-                    <h2>个人中心</h2>
+                    <h2 data-i18n="stats.title">个人中心</h2>
                     <button id="stats-close-btn" class="close-btn">✕</button>
                 </div>
 
@@ -591,7 +658,7 @@
                         <div class="pc-rank-row">
                             <span class="pc-rank-icon" id="stats-rank-icon">🥉</span>
                             <div class="pc-rank-text">
-                                <div class="pc-rank-title" id="stats-rank-name">青铜棋士</div>
+                                <div class="pc-rank-title" id="stats-rank-name" data-i18n="rank.unranked">尚未定级</div>
                                 <div class="pc-rank-progress-track">
                                     <div class="pc-rank-progress-bar" id="stats-rank-bar" style="width: 50%"></div>
                                 </div>
@@ -605,7 +672,7 @@
                 <div class="pc-stats-grid">
                     <!-- NEW: ELO Chart (Span 2) -->
                     <div class="pc-stat-card full-width">
-                        <div class="pc-stat-label">ELO水平走势</div>
+                        <div class="pc-stat-label" data-i18n="stats.elo_trend">ELO水平走势</div>
                         <div class="chart-container" style="width: 100%; height: 120px; position: relative;">
                             <canvas id="elo-chart-canvas"></canvas>
                         </div>
@@ -621,7 +688,7 @@
                                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                             </svg>
                             <div class="percentage-text">
-                                <span class="label">胜率</span>
+                                <span class="label" data-i18n="stats.win_rate_label">胜率</span>
                                 <span class="value" id="stats-winrate-text">58%</span>
                             </div>
                         </div>
@@ -629,13 +696,13 @@
 
                     <!-- Card 2: Total Games -->
                     <div class="pc-stat-card">
-                        <div class="pc-stat-label">总局数</div>
+                        <div class="pc-stat-label" data-i18n="stats.total_games_label">总局数</div>
                         <div class="pc-stat-value" id="stats-total-games">1204</div>
                     </div>
 
                     <!-- Card 3: Max Streak -->
                     <div class="pc-stat-card">
-                        <div class="pc-stat-label">最高连胜</div>
+                        <div class="pc-stat-label" data-i18n="stats.max_streak_label">最高连胜</div>
                         <div class="pc-stat-value">
                             <span id="stats-max-streak">12</span> <span class="icon">🔥</span>
                         </div>
@@ -643,7 +710,7 @@
 
                     <!-- Card 4: MVP/Wins -->
                     <div class="pc-stat-card">
-                        <div class="pc-stat-label">胜场数</div>
+                        <div class="pc-stat-label" data-i18n="stats.total_wins_label">胜场数</div>
                         <div class="pc-stat-value">
                             <span id="stats-total-wins">85</span> <span class="icon">🏆</span>
                         </div>
@@ -670,17 +737,20 @@
 
                 <!-- Rename Form (Hidden by default, overlaid) -->
                 <div id="rename-form" class="rename-form hidden">
-                    <input type="text" id="rename-input" class="rename-input" placeholder="请输入新名字" maxlength="12">
+                    <input type="text" id="rename-input" class="rename-input"
+                        data-i18n-placeholder="stats.rename_placeholder" placeholder="请输入新名字" maxlength="12">
                     <div class="rename-actions">
-                        <button id="rename-confirm-btn" class="btn rename-confirm">确认</button>
-                        <button id="rename-cancel-btn" class="btn rename-cancel">取消</button>
+                        <button id="rename-confirm-btn" class="btn rename-confirm"
+                            data-i18n="stats.rename_confirm">确认</button>
+                        <button id="rename-cancel-btn" class="btn rename-cancel"
+                            data-i18n="stats.rename_cancel">取消</button>
                     </div>
                 </div>
 
                 <!-- Avatar Selector Panel (Hidden by default) -->
                 <div id="stats-avatar-selector" class="avatar-selector-panel hidden">
                     <div class="avatar-selector-header">
-                        <h3>选择头像</h3>
+                        <h3 data-i18n="stats.select_avatar">选择头像</h3>
                         <button class="close-btn" onclick="PlayerStats.hideAvatarSelector()">✕</button>
                     </div>
                     <div id="stats-avatar-grid" class="avatar-grid">
@@ -694,8 +764,9 @@
         <div id="mission-select-modal" class="modal hidden">
             <div class="modal-content mission-select-content">
                 <div class="mission-select-header">
-                    <h2>📚 温故知新</h2>
-                    <p id="mission-progress-text" class="progress-text">当前进度：已解锁到第 1 关</p>
+                    <h2 data-i18n="mission.history_title">📚 温故知新</h2>
+                    <p id="mission-progress-text" class="progress-text" data-i18n="mission.progress_label">当前进度：已解锁到第 1
+                        关</p>
                     <button id="mission-select-close" class="close-btn">✕</button>
                 </div>
                 <div id="mission-list" class="mission-list">
@@ -707,37 +778,39 @@
         <!-- AI难度选择弹窗 -->
         <div id="ai-difficulty-modal" class="modal hidden">
             <div class="modal-content difficulty-content">
-                <h2>🤖 选择AI难度</h2>
+                <h2 data-i18n="difficulty.title">🤖 选择AI难度</h2>
                 <div class="difficulty-options">
                     <button class="difficulty-btn" data-level="1" onclick="selectAIDifficulty(1)">
                         <span class="diff-icon">🌱</span>
-                        <span class="diff-name">简单</span>
-                        <span class="diff-desc">适合新手入门</span>
+                        <span class="diff-name" data-i18n="difficulty.easy">简单</span>
+                        <span class="diff-desc" data-i18n="difficulty.easy_desc">适合新手入门</span>
                     </button>
                     <button class="difficulty-btn selected" data-level="2" onclick="selectAIDifficulty(2)">
                         <span class="diff-icon">⚔️</span>
-                        <span class="diff-name">普通</span>
-                        <span class="diff-desc">有一定挑战</span>
+                        <span class="diff-name" data-i18n="difficulty.normal">普通</span>
+                        <span class="diff-desc" data-i18n="difficulty.normal_desc">有一定挑战</span>
                     </button>
                     <button class="difficulty-btn" data-level="3" onclick="selectAIDifficulty(3)">
                         <span class="diff-icon">🔥</span>
-                        <span class="diff-name">困难</span>
-                        <span class="diff-desc">高手过招</span>
+                        <span class="diff-name" data-i18n="difficulty.hard">困难</span>
+                        <span class="diff-desc" data-i18n="difficulty.hard_desc">高手过招</span>
                     </button>
                 </div>
                 <div class="difficulty-actions">
-                    <button class="btn difficulty-start-btn" onclick="startGameWithDifficulty()">开始对局</button>
-                    <button class="btn difficulty-cancel-btn" onclick="closeDifficultyModal()">取消</button>
+                    <button class="btn difficulty-start-btn" onclick="startGameWithDifficulty()"
+                        data-i18n="difficulty.start_btn">开始对局</button>
+                    <button class="btn difficulty-cancel-btn" onclick="closeDifficultyModal()"
+                        data-i18n="difficulty.cancel_btn">取消</button>
                 </div>
             </div>
         </div>
 
         <div id="rps-modal" class="modal hidden">
             <div class="modal-content rps-content">
-                <h2>✊✌️🖐️ 剪刀石头布决定先手</h2>
+                <h2 data-i18n="rps.title">✊✌️🖐️ 猜拳决定先手</h2>
                 <div class="rps-game">
                     <div class="rps-player" id="rps-p1">
-                        <div class="rps-label">玩家1</div>
+                        <div class="rps-label" data-i18n="rps.player1">玩家1</div>
                         <div class="rps-choices" id="p1-choices">
                             <button class="rps-btn" data-choice="rock">✊</button>
                             <button class="rps-btn" data-choice="scissors">✌️</button>
@@ -747,7 +820,7 @@
                     </div>
                     <div class="rps-vs">VS</div>
                     <div class="rps-player" id="rps-p2">
-                        <div class="rps-label" id="p2-label">玩家2</div>
+                        <div class="rps-label" id="p2-label" data-i18n="rps.player2">玩家2</div>
                         <div class="rps-choices" id="p2-choices">
                             <button class="rps-btn" data-choice="rock">✊</button>
                             <button class="rps-btn" data-choice="scissors">✌️</button>
@@ -757,7 +830,7 @@
                     </div>
                 </div>
                 <div id="rps-result" class="rps-result hidden"></div>
-                <div id="rps-waiting" class="rps-waiting">等待玩家1选择...</div>
+                <div id="rps-waiting" class="rps-waiting" data-i18n="rps.waiting_p1">等待玩家1选择...</div>
             </div>
         </div>
 
@@ -871,9 +944,9 @@
         </div>
 
         <div class="controls hidden">
-            <button id="restart-btn" class="btn">🔄 重新开始</button>
-            <button id="undo-btn" class="btn">↩️ 悔棋</button>
-            <button id="surrender-btn" class="btn hidden">🏳️ 认输</button>
+            <button id="restart-btn" class="btn" data-i18n="game.restart">🔄 重新开始</button>
+            <button id="undo-btn" class="btn" data-i18n="game.undo">↩️ 悔棋</button>
+            <button id="surrender-btn" class="btn hidden" data-i18n="game.surrender">🏳️ 认输</button>
             <div class="chat-wrapper">
                 <button id="chat-btn" class="btn hidden">💬</button>
                 <div id="chat-panel" class="chat-panel hidden">
@@ -885,7 +958,7 @@
                     <button class="chat-option" data-msg="again">🔄 再来</button>
                 </div>
             </div>
-            <button id="change-mode-btn" class="btn">🎮 切换模式</button>
+            <button id="change-mode-btn" class="btn" data-i18n="game.change_mode">🎮 切换模式</button>
         </div>
 
         <div id="winner-modal" class="modal hidden">
@@ -935,10 +1008,10 @@
                 </div>
                 <!-- 对话框 -->
                 <div class="story-dialog-content">
-                    <button id="skip-dialog-btn" class="skip-dialog-btn">跳过 ⏭️</button>
+                    <button id="skip-dialog-btn" class="skip-dialog-btn" data-i18n="story.skip_btn">跳过 ⏭️</button>
                     <div class="story-dialog-speaker" id="story-speaker"></div>
                     <div class="story-dialog-text" id="story-text"></div>
-                    <div class="story-dialog-hint">点击继续...</div>
+                    <div class="story-dialog-hint" data-i18n="story.click_continue">点击继续...</div>
                 </div>
             </div>
         </div>
@@ -952,17 +1025,19 @@
                 </div>
                 <div class="mission-brief-body">
                     <div class="brief-section">
-                        <h3>📜 本关规则</h3>
+                        <h3 data-i18n="mission.rule">📜 本关规则</h3>
                         <p id="mission-rule-text"></p>
                     </div>
                     <div class="brief-section">
-                        <h3>🎯 任务目标</h3>
+                        <h3 data-i18n="mission.goal">🎯 任务目标</h3>
                         <p id="mission-goal-text"></p>
                     </div>
                 </div>
                 <div class="mission-brief-buttons">
-                    <button id="mission-start-btn" class="btn mission-btn primary">开始对局</button>
-                    <button id="mission-cancel-btn" class="btn mission-btn secondary">返回</button>
+                    <button id="mission-start-btn" class="btn mission-btn primary"
+                        data-i18n="mission.start">开始对局</button>
+                    <button id="mission-cancel-btn" class="btn mission-btn secondary"
+                        data-i18n="mission.back">返回</button>
                 </div>
             </div>
         </div>
@@ -1079,12 +1154,12 @@
     <!-- 历史介绍面板 -->
     <div id="history-panel" class="history-panel hidden">
         <div class="history-header">
-            <h1 id="history-title">纵横四千年：五子棋的"前身今生"</h1>
-            <p id="history-subtitle" class="history-subtitle">从河图洛书，到 AI 时代</p>
+            <h1 id="history-title" data-i18n="about.history_title">纵横四千年：五子棋的"前身今生"</h1>
+            <p id="history-subtitle" class="history-subtitle" data-i18n="about.history_subtitle">从河图洛书，到 AI 时代</p>
         </div>
         <div id="history-content" class="history-content"></div>
         <div class="history-footer">
-            <button id="history-close-btn" class="btn history-close-btn">返回主菜单</button>
+            <button id="history-close-btn" class="btn history-close-btn" data-i18n="about.return_menu">返回主菜单</button>
         </div>
     </div>
 
@@ -1123,7 +1198,6 @@
     <script src="js/utils/RobustMatchmaking.js"></script>
     <script src="js/utils/MultiplayerUI.js"></script>
 
-    <script src="js/names.js"></script>
     <!-- PWA Install Modal -->
     <div id="pwa-install-modal" class="modal hidden">
         <div class="modal-content glass-panel pwa-content">
@@ -1160,17 +1234,14 @@
     <script src="js/stats.js"></script>
     <script src="js/save.js"></script>
     <script src="js/missions.js"></script>
-    <script src="js/character_data.js"></script>
+    <script src="js/localization.js"></script>
     <script src="js/storyBackgrounds.js"></script>
     <script src="js/storyAiTempo.js"></script>
     <script src="js/storyLevelsConfig.js"></script>
     <script src="js/onboarding.js"></script>
     <script src="js/playerStats.js"></script>
     <script src="js/leaderboard.js"></script>
-    <script src="js/localization.js"></script>
     <script src="js/cloudSync.js"></script>
-    <script src="js/uiTexts.js"></script>
-    <script src="js/forbiddenTexts.js"></script>
     <script src="js/gomokuHistory.js"></script>
     <script src="js/dialogs_m1.js"></script>
     <script src="js/dialogs_m2.js"></script>
@@ -1248,10 +1319,12 @@
         <div class="community-container">
             <!-- 头部 -->
             <div class="community-header">
-                <div class="community-title">🏠 棋友圈</div>
+                <div class="community-title" data-i18n="community.title">🏠 棋友圈</div>
                 <div class="community-header-actions">
-                    <button id="community-search-btn" class="community-action-btn" title="搜索">🔍</button>
-                    <button id="community-notif-btn" class="community-action-btn" title="通知">
+                    <button id="community-search-btn" class="community-action-btn" data-i18n-title="community.search"
+                        title="搜索">🔍</button>
+                    <button id="community-notif-btn" class="community-action-btn"
+                        data-i18n-title="community.notification" title="通知">
                         🔔
                         <span id="community-notif-badge" class="notif-badge hidden">0</span>
                     </button>
@@ -1268,8 +1341,9 @@
             <!-- 通知面板 -->
             <div id="community-notif-panel" class="community-notif-panel hidden">
                 <div class="notif-header">
-                    <span>消息通知</span>
-                    <button id="community-notif-readall" class="notif-readall-btn">全部已读</button>
+                    <span data-i18n="community.notif_title">消息通知</span>
+                    <button id="community-notif-readall" class="notif-readall-btn"
+                        data-i18n="community.mark_all_read">全部已读</button>
                 </div>
                 <div id="community-notif-list" class="notif-list">
                     <div class="notif-empty">暂无新消息</div>
@@ -1278,10 +1352,11 @@
 
             <!-- 标签栏 -->
             <div class="community-tabs">
-                <button class="community-tab active" data-type="all">💬 全部</button>
-                <button class="community-tab" data-type="battle">⚔️ 约战</button>
-                <button class="community-tab" data-type="replay">📋 棋谱</button>
-                <button class="community-tab" data-type="announcement">📢 公告</button>
+                <button class="community-tab active" data-type="all" data-i18n="community.tab.all">💬 全部</button>
+                <button class="community-tab" data-type="battle" data-i18n="community.tab.battle">⚔️ 约战</button>
+                <button class="community-tab" data-type="replay" data-i18n="community.tab.replay">📋 棋谱</button>
+                <button class="community-tab" data-type="announcement" data-i18n="community.tab.announcement">📢
+                    公告</button>
             </div>
 
             <!-- 内容区域 -->

@@ -149,6 +149,14 @@ const RobustMatchmaking = {
     async acceptInvite(invite) {
         console.log('[RobustMatch] Accepting invite from:', invite.inviterId);
 
+        // 埋点
+        if (window.GameAnalytics) {
+            GameAnalytics.trackEvent('invite_accept', {
+                inviterId: invite.inviterId,
+                roomCode: invite.roomCode
+            });
+        }
+
         // 删除邀请
         const invitePlayerId = window.Network?.myPlayerId || this._invitePlayerId;
         if (this.invitesRef) {
@@ -177,7 +185,7 @@ const RobustMatchmaking = {
             // 加入房间
             const roomRef = this.db.ref('rooms').child(roomCode);
             const myId = Network.myPlayerId;
-            const myName = localStorage.getItem('gomoku_player_name') || '玩家';
+            const myName = localStorage.getItem('gomoku_player_name') || Localization.get('mp.player');
             const myAvatar = window.AvatarSystem ? AvatarSystem.getCurrent().emoji : '🎮';
             const myElo = window.PlayerStats ? PlayerStats.data.competitive.elo : 1000;
 
@@ -200,7 +208,7 @@ const RobustMatchmaking = {
 
             // 获取邀请者信息
             const opponentInfo = {
-                name: invite.inviterName || '对手',
+                name: invite.inviterName || Localization.t('mp.opponent'),
                 avatar: invite.inviterAvatar || '🎮',
                 elo: invite.inviterElo || 1000
             };
@@ -241,6 +249,11 @@ const RobustMatchmaking = {
     // 拒绝邀请
     async declineInvite() {
         console.log('[RobustMatch] Declining invite');
+
+        // 埋点
+        if (window.GameAnalytics) {
+            GameAnalytics.trackEvent('invite_decline');
+        }
 
         // 删除邀请
         await this.invitesRef.child(this.playerId).remove();
@@ -336,7 +349,7 @@ const RobustMatchmaking = {
 
         // 加入队列
         const playerData = {
-            name: localStorage.getItem('gomoku_player_name') || '玩家',
+            name: localStorage.getItem('gomoku_player_name') || Localization.get('mp.player'),
             elo: window.PlayerStats ? PlayerStats.data.competitive.elo : 1000,
             avatar: window.AvatarSystem ? AvatarSystem.getCurrent().emoji : '🎮',
             status: 'searching',
@@ -428,7 +441,7 @@ const RobustMatchmaking = {
                 if (Date.now() - this.searchStartTime > this.MAX_SEARCH_TIME) {
                     console.log('[RobustMatch] Search timeout');
                     this.cancelSearch();
-                    if (this.onMatchFailed) this.onMatchFailed('匹配超时');
+                    if (this.onMatchFailed) this.onMatchFailed(Localization.get('mp.match_timeout'));
                     return;
                 }
             }
@@ -569,7 +582,7 @@ const RobustMatchmaking = {
     // 创建匹配房间
     async createMatchedRoom(opponentId, opponentData) {
         const roomCode = this.generateRoomCode();
-        const myName = localStorage.getItem('gomoku_player_name') || '玩家';
+        const myName = localStorage.getItem('gomoku_player_name') || Localization.get('mp.player');
         const myElo = window.PlayerStats ? PlayerStats.data.competitive.elo : 1000;
         const myAvatar = window.AvatarSystem ? AvatarSystem.getCurrent().emoji : '🎮';
 
@@ -592,7 +605,7 @@ const RobustMatchmaking = {
                 },
                 [opponentId]: {
                     id: opponentId,
-                    name: opponentData.name || '对手',
+                    name: opponentData.name || Localization.get('mp.opponent'),
                     elo: opponentData.elo || 1000,
                     avatar: opponentData.avatar || '❓',
                     color: 'white',
@@ -659,7 +672,7 @@ const RobustMatchmaking = {
 
             // 更新连接状态和真实ELO
             const myElo = window.PlayerStats ? PlayerStats.data.competitive.elo : 1000;
-            const myName = localStorage.getItem('gomoku_player_name') || '玩家';
+            const myName = localStorage.getItem('gomoku_player_name') || Localization.get('mp.player');
             const myAvatar = window.AvatarSystem ? AvatarSystem.getCurrent().emoji : '🎮';
             await this.roomsRef.child(roomCode).child('players').child(this.playerId).update({
                 connected: true,
@@ -768,7 +781,7 @@ const RobustMatchmaking = {
         try {
             const roomCode = this.generateRoomCode();
             const myId = Network.myPlayerId;
-            const myName = localStorage.getItem('gomoku_player_name') || '玩家';
+            const myName = localStorage.getItem('gomoku_player_name') || Localization.get('mp.player');
             const myAvatar = window.AvatarSystem ? AvatarSystem.getCurrent().emoji : '🎮';
             const myElo = window.PlayerStats ? PlayerStats.data.competitive.elo : 1000;
 
@@ -859,7 +872,7 @@ const RobustMatchmaking = {
         this.reservationTimeout = setTimeout(() => {
             console.log('[RobustMatch] Reservation timeout');
             this.cancelSearch();
-            if (this.onMatchFailed) this.onMatchFailed('预约超时');
+            if (this.onMatchFailed) this.onMatchFailed(Localization.get('mp.reservation_timeout'));
         }, this.RESERVATION_TIMEOUT);
 
         // 5秒后开始邀请流程
@@ -1004,7 +1017,7 @@ const RobustMatchmaking = {
 
         const inviteData = {
             inviterId: myOnlineId,  // 使用在线列表 ID
-            inviterName: localStorage.getItem('gomoku_player_name') || '玩家',
+            inviterName: localStorage.getItem('gomoku_player_name') || Localization.get('mp.player'),
             inviterAvatar: window.AvatarSystem ? AvatarSystem.getCurrent().emoji : '🎮',
             inviterElo: window.PlayerStats ? PlayerStats.data.competitive.elo : 1000,
             timestamp: Date.now(),
@@ -1081,7 +1094,7 @@ const RobustMatchmaking = {
     },
 
     // 取消预约
-    cancelReservation(reason = '已取消') {
+    cancelReservation(reason = Localization.get('mp.cancel_reason_default')) {
         this.stopInviteMonitor();
         this.cancelSearch();
         if (window.UI) {
@@ -1142,6 +1155,11 @@ const RobustMatchmakingUI = {
     async startMatch() {
         console.log('[RobustMatchUI] Starting match with quantum search UI');
 
+        // Game Analytics 埋点
+        if (window.GameAnalytics) {
+            GameAnalytics.trackEvent('matchmaking_start');
+        }
+
         // 显示匹配界面 - 使用MultiplayerUI的量子搜索
         if (window.MultiplayerUI) {
             MultiplayerUI.showQuantumSearch();
@@ -1187,9 +1205,15 @@ const RobustMatchmakingUI = {
                 (error) => {
                     this.stopTimer();
                     console.error('[RobustMatchUI] Match failed:', error);
+
+                    // Game Analytics 埋点
+                    if (window.GameAnalytics) {
+                        GameAnalytics.trackEvent('matchmaking_error', { error: error });
+                    }
+
                     document.getElementById('matchmaking-modal')?.classList.add('hidden');
                     document.getElementById('main-menu')?.classList.remove('hidden');
-                    if (window.UI) UI.showToast(error || '匹配失败', 'error');
+                    if (window.UI) UI.showToast(error || Localization.t('mp.toast.error_matching'), 'error');
                 },
                 // onStatusUpdate
                 (status) => {
@@ -1199,14 +1223,14 @@ const RobustMatchmakingUI = {
 
             if (!success) {
                 this.stopTimer();
-                if (window.UI) UI.showToast('无法启动匹配', 'error');
+                if (window.UI) UI.showToast(Localization.t('mp.toast.error_matching'), 'error');
             }
         } catch (e) {
             this.stopTimer();
             console.error('[RobustMatchUI] Match error:', e);
             document.getElementById('matchmaking-modal')?.classList.add('hidden');
             document.getElementById('main-menu')?.classList.remove('hidden');
-            if (window.UI) UI.showToast('匹配系统异常', 'error');
+            if (window.UI) UI.showToast(Localization.t('mp.toast.error_matching'), 'error');
         }
     },
 
@@ -1214,18 +1238,27 @@ const RobustMatchmakingUI = {
     async onMatchSuccess(roomCode, color) {
         console.log('[RobustMatchUI] Match success! Room:', roomCode, 'Color:', color);
 
+        // Game Analytics 埋点
+        if (window.GameAnalytics) {
+            GameAnalytics.trackEvent('matchmaking_complete', {
+                duration: this.timerSeconds,
+                room_code: roomCode,
+                color: color
+            });
+        }
+
         // 获取房间数据以显示对手信息
         const roomSnap = await firebase.database().ref('rooms').child(roomCode).once('value');
         const roomData = roomSnap.val();
 
-        let opponentInfo = { name: '对手', avatar: '🎮', elo: 1000 };
+        let opponentInfo = { name: Localization.t('mp.opponent'), avatar: '🎮', elo: 1000 };
 
         if (roomData && roomData.players) {
             const myId = Network.myPlayerId;
             for (const [pid, pdata] of Object.entries(roomData.players)) {
                 if (pid !== myId) {
                     opponentInfo = {
-                        name: pdata.name || '对手',
+                        name: pdata.name || Localization.t('mp.opponent'),
                         avatar: pdata.avatar || '🎮',
                         elo: pdata.elo || 1000
                     };
@@ -1242,7 +1275,7 @@ const RobustMatchmakingUI = {
 
             // 🔥 设置我的信息（确保ELO正确显示）
             MultiplayerUI.gameState.myInfo = {
-                name: localStorage.getItem('gomoku_player_name') || '玩家',
+                name: localStorage.getItem('gomoku_player_name') || Localization.t('mp.me'),
                 avatar: window.AvatarSystem ? AvatarSystem.getCurrent().emoji : '🎮',
                 elo: window.PlayerStats ? PlayerStats.data.competitive.elo : 1000
             };
@@ -1266,18 +1299,18 @@ const RobustMatchmakingUI = {
                 return;
             }
 
-            // ✅ 快速匹配 / 被邀请方接受：直接进入动画流程
+            // ✅ Quick match / Invite accepted: Start animation flow
             console.log('[RobustMatchUI] Quick match - starting animation directly');
             MultiplayerUI.showFateWheel(opponentInfo);
             this.setupAnimationWatcher(roomCode, color);
         } else {
-            // 降级：直接开始游戏
+            // Fallback: Start game directly
             document.getElementById('matchmaking-modal')?.classList.add('hidden');
             this.startGame(roomCode, color);
         }
     },
 
-    // 监听动画完成后开始游戏
+    // Listen for animation completion then start game
     setupAnimationWatcher(roomCode, color) {
         const checkGameStart = setInterval(() => {
             if (window.MultiplayerUI && MultiplayerUI.phase === 'playing') {
@@ -1296,13 +1329,13 @@ const RobustMatchmakingUI = {
         }, 10000);
     },
 
-    // 开始游戏
+    // Start Game
     async startGame(roomCode, color) {
         console.log('[RobustMatchUI] Starting game, room:', roomCode);
 
         document.getElementById('matchmaking-modal')?.classList.add('hidden');
 
-        // 🔥 确保网络连接已设置
+        // Ensure network connection is set
         if (window.Network && Network.roomsRef) {
             Network.currentRoom = roomCode;
             Network.currentRoomRef = Network.roomsRef.child(roomCode);
@@ -1315,12 +1348,20 @@ const RobustMatchmakingUI = {
             game.startOnlineGame();
         }
 
-        // 注意：enterGamePhase 已由 MultiplayerUI.showCountdown 结束时自动调用
-        // 这里不需要再次调用，否则会重复隐藏/显示 UI 元素
+        // NOTE: enterGamePhase is automatically called by MultiplayerUI.showCountdown
+        // No need to call it again here to avoid duplicate UI updates
     },
 
     async cancelMatch() {
         console.log('[RobustMatchUI] Cancelling match');
+
+        // Game Analytics 埋点
+        if (window.GameAnalytics) {
+            GameAnalytics.trackEvent('matchmaking_cancel', {
+                durationSeconds: this.timerSeconds
+            });
+        }
+
         this.stopTimer();
         await RobustMatchmaking.cancelSearch();
         document.getElementById('matchmaking-modal')?.classList.add('hidden');
@@ -1339,14 +1380,14 @@ const RobustMatchmakingUI = {
     }
 };
 
-// 初始化 - 页面加载后自动初始化匹配系统
+// Initialize matching system on page load
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(async () => {
         // 初始化 UI 按钮
         RobustMatchmakingUI.init();
 
-        // 🔔 自动初始化匹配系统，以便接收邀请
-        // 即使玩家不点击匹配，也能收到其他玩家的邀请
+        // Automatically initialize matchmaking to receive invites
+        // Even if the player doesn't click match, they can still receive invites
         await RobustMatchmaking.init();
 
         console.log('[RobustMatchmaking] System ready, invite listener active');

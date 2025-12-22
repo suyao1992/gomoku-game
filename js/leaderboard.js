@@ -1,4 +1,4 @@
-// ========== 世界排行榜模块 (Final Refactor) ==========
+// ========== World Leaderboard Module (Final Refactor) ==========
 
 const Leaderboard = {
     db: null,
@@ -48,7 +48,7 @@ const Leaderboard = {
 
         const entry = {
             id: playerId,
-            name: stats.playerName || '玩家',
+            name: stats.playerName || Localization.get('mp.player'),
             avatar: window.AvatarSystem?.getCurrent().emoji || '😐',
             elo: competitive.elo || 1000,
             winRate: winRate,
@@ -68,7 +68,7 @@ const Leaderboard = {
         } catch (e) {
             console.error('[Leaderboard] Submit failed:', e);
             if (e.code === 'PERMISSION_DENIED') {
-                alert('排行榜提交失败：权限不足。');
+                alert(Localization.get('leaderboard.sync_failed'));
             }
             return false;
         }
@@ -156,15 +156,13 @@ const Leaderboard = {
 
     // Helper: Get Rank Name
     getRankName(elo) {
-        const t = window.Localization ? (k) => Localization.t(k) : (k) => k; // Safe translation
-
-        if (elo >= 2000) return t('rank.challenger') === 'rank.challenger' ? '最强王者' : t('rank.challenger');
-        if (elo >= 1800) return t('rank.master') === 'rank.master' ? '至尊星耀' : t('rank.master');
-        if (elo >= 1600) return t('rank.diamond') === 'rank.diamond' ? '永恒钻石' : t('rank.diamond');
-        if (elo >= 1400) return t('rank.platinum') === 'rank.platinum' ? '尊贵铂金' : t('rank.platinum');
-        if (elo >= 1200) return t('rank.gold') === 'rank.gold' ? '荣耀黄金' : t('rank.gold');
-        if (elo >= 1000) return t('rank.silver') === 'rank.silver' ? '秩序白银' : t('rank.silver');
-        return t('rank.bronze') === 'rank.bronze' ? '倔强青铜' : t('rank.bronze');
+        if (elo >= 2000) return Localization.get('rank.title.king');
+        if (elo >= 1800) return Localization.get('rank.title.star');
+        if (elo >= 1600) return Localization.get('rank.title.diamond');
+        if (elo >= 1400) return Localization.get('rank.title.platinum');
+        if (elo >= 1200) return Localization.get('rank.title.gold');
+        if (elo >= 1000) return Localization.get('rank.title.silver');
+        return Localization.get('rank.title.bronze');
     },
 
     // Helper: Get Rank Icon/Color
@@ -210,7 +208,7 @@ const Leaderboard = {
     // UI: Join (Force Submit)
     async joinLeaderboard() {
         const btn = document.querySelector('.leaderboard-empty button');
-        if (btn) btn.textContent = '正在加入...';
+        if (btn) btn.textContent = Localization.get('leaderboard.joining');
 
         await this.submitScore();
         await this.refresh();
@@ -218,7 +216,7 @@ const Leaderboard = {
 
     renderLoading() {
         const list = document.getElementById('leaderboard-list');
-        if (list) list.innerHTML = '<div class="leaderboard-loading">🔄 正在同步数据...</div>';
+        if (list) list.innerHTML = `<div class="leaderboard-loading">${Localization.get('leaderboard.syncing')}</div>`;
     },
 
     render(data) {
@@ -228,9 +226,9 @@ const Leaderboard = {
         if (!data || data.length === 0) {
             list.innerHTML = `
                 <div class="leaderboard-empty">
-                    <p>暂无数据</p>
-                    <button class="btn-small" onclick="Leaderboard.joinLeaderboard()">加入排行榜</button>
-                    ${this.currentTab !== 'all' ? '<p style="font-size:12px; margin-top:5px">该时间段没人玩游戏...</p>' : ''}
+                    <p>${Localization.get('leaderboard.empty')}</p>
+                    <button class="btn-small" onclick="Leaderboard.joinLeaderboard()">${Localization.get('leaderboard.join_btn')}</button>
+                    ${this.currentTab !== 'all' ? `<p style="font-size:12px; margin-top:5px">${Localization.get('leaderboard.empty_hint')}</p>` : ''}
                 </div>`;
             return;
         }
@@ -251,14 +249,14 @@ const Leaderboard = {
                     <div class="lb-rank">${rankIcon}</div>
                     <div class="lb-player">
                         <div class="lb-name">
-                            ${p.avatar || '😐'} ${p.name || '玩家'} 
-                            ${isMe ? '<span class="me-tag">(我)</span>' : ''}
+                            ${p.avatar || '😐'} ${p.name || Localization.get('mp.player')} 
+                            ${isMe ? `<span class="me-tag">${Localization.get('leaderboard.me')}</span>` : ''}
                         </div>
                         <div class="lb-tier" style="color:${meta.color}">${meta.icon} ELO ${elo}</div>
                     </div>
                     <div class="lb-stats">
-                        <div class="lb-winrate">胜率 ${p.winRate || 0}%</div>
-                        <div class="lb-games">${p.totalGames || 0}场</div>
+                        <div class="lb-winrate">${Localization.get('leaderboard.winrate')} ${p.winRate || 0}%</div>
+                        <div class="lb-games">${Localization.get('leaderboard.matches', { COUNT: p.totalGames || 0 })}</div>
                     </div>
                 </div>
             `;

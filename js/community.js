@@ -227,8 +227,8 @@ const Community = (function () {
             container.innerHTML = `
                 <div class="community-empty">
                     <div class="empty-icon">📭</div>
-                    <div class="empty-text">暂无帖子</div>
-                    <div class="empty-hint">来发布第一条吧！</div>
+                    <div class="empty-text">${Localization.get('community.empty_title')}</div>
+                    <div class="empty-hint">${Localization.get('community.empty_hint')}</div>
                 </div>
             `;
             return;
@@ -406,7 +406,7 @@ const Community = (function () {
             <div class="comments-section">
                 <h3 class="comments-title">💬 评论 (${post.commentsCount})</h3>
                 <div id="comments-list" class="comments-list">
-                    <div class="comments-loading">加载中...</div>
+                    <div class="comments-loading">${Localization.get('community.loading')}</div>
                 </div>
                 <div class="comment-input-section">
                     <textarea id="comment-input" class="comment-input" placeholder="写下你的评论..." maxlength="500"></textarea>
@@ -432,7 +432,7 @@ const Community = (function () {
         } catch (error) {
             console.error('Load comments error:', error);
             if (container) {
-                container.innerHTML = '<div class="no-comments">加载评论失败</div>';
+                container.innerHTML = `<div class="no-comments">${Localization.get('community.load_comments_failed')}</div>`;
             }
         }
     }
@@ -442,7 +442,7 @@ const Community = (function () {
      */
     function renderComments(comments, depth = 0) {
         if (!comments || comments.length === 0) {
-            return '<div class="no-comments">暂无评论，快来抢沙发！</div>';
+            return `<div class="no-comments">${Localization.get('community.no_comments')}</div>`;
         }
 
         return comments.map(comment => {
@@ -721,12 +721,13 @@ const Community = (function () {
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
 
-        if (seconds < 60) return '刚刚';
-        if (minutes < 60) return `${minutes}分钟前`;
-        if (hours < 24) return `${hours}小时前`;
-        if (days < 7) return `${days}天前`;
+        if (seconds < 60) return Localization.get('time.just_now');
+        if (minutes < 60) return Localization.get('time.minutes_ago').replace('{COUNT}', minutes);
+        if (hours < 24) return Localization.get('time.hours_ago').replace('{COUNT}', hours);
+        if (days < 7) return Localization.get('time.days_ago').replace('{COUNT}', days);
 
-        return new Date(timestamp).toLocaleDateString('zh-CN');
+        const locale = Localization.currentLang === 'en' ? 'en-US' : 'zh-CN';
+        return new Date(timestamp).toLocaleDateString(locale);
     }
 
     function escapeHtml(text) {
@@ -774,7 +775,7 @@ const Community = (function () {
         const list = document.getElementById('community-notif-list');
         if (!list) return;
 
-        list.innerHTML = '<div class="notif-empty">加载中...</div>';
+        list.innerHTML = `<div class="notif-empty">${Localization.get('community.loading')}</div>`;
 
         try {
             const result = await CommunityAPI.getNotifications({ limit: 20 });
@@ -783,7 +784,7 @@ const Community = (function () {
             }
         } catch (err) {
             console.error('Load notifications error:', err);
-            list.innerHTML = '<div class="notif-empty">加载失败</div>';
+            list.innerHTML = `<div class="notif-empty">${Localization.get('community.load_failed')}</div>`;
         }
     }
 
@@ -792,7 +793,7 @@ const Community = (function () {
      */
     function renderNotifications(notifications, container) {
         if (!notifications || notifications.length === 0) {
-            container.innerHTML = '<div class="notif-empty">暂无新消息</div>';
+            container.innerHTML = `<div class="notif-empty">${Localization.get('community.no_notifications')}</div>`;
             return;
         }
 

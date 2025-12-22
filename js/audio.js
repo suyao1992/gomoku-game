@@ -72,7 +72,7 @@ class AudioManager {
 
         this.bgmPlaying = true;
         if (this.musicBtn) {
-            this.musicBtn.textContent = '🔊 音乐';
+            this.musicBtn.textContent = Localization.get('audio.music_on');
             this.musicBtn.classList.add('playing');
         }
         this.currentTrack = Math.floor(Math.random() * this.bgmTracks.length);
@@ -101,7 +101,7 @@ class AudioManager {
         this.bgmPlaying = false;
 
         if (this.musicBtn) {
-            this.musicBtn.textContent = '🔇 音乐';
+            this.musicBtn.textContent = Localization.get('audio.music_off');
             this.musicBtn.classList.remove('playing');
         }
 

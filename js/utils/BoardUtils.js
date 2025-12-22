@@ -1,23 +1,23 @@
-// 棋盘工具函数 - 统一坐标系统和边界检查
+// Board Utility Functions - Unified coordinate system and boundary checking
 class BoardUtils {
     /**
-     * 检查坐标是否在棋盘范围内
-     * @param {number} x - X坐标
-     * @param {number} y - Y坐标
-     * @param {number} gridSize - 棋盘大小，默认15
-     * @returns {boolean} 是否安全
+     * Check if coordinates are within board bounds
+     * @param {number} x - X coordinate
+     * @param {number} y - Y coordinate
+     * @param {number} gridSize - Board size, default 15
+     * @returns {boolean} Whether position is safe
      */
     static isSafePosition(x, y, gridSize = 15) {
         return x >= 0 && x < gridSize && y >= 0 && y < gridSize;
     }
 
     /**
-     * 安全地获取棋盘位置的值
-     * @param {Array} board - 棋盘数组
-     * @param {number} x - X坐标
-     * @param {number} y - Y坐标
-     * @param {number} defaultValue - 越界时的默认值
-     * @returns {number} 该位置的值或默认值
+     * Safely get board value at position
+     * @param {Array} board - Board array
+     * @param {number} x - X coordinate
+     * @param {number} y - Y coordinate
+     * @param {number} defaultValue - Default value if out of bounds
+     * @returns {number} Value at position or default
      */
     static safeGet(board, x, y, defaultValue = 0) {
         if (!board || !Array.isArray(board)) {
@@ -35,12 +35,12 @@ class BoardUtils {
     }
 
     /**
-     * 安全地设置棋盘位置的值
-     * @param {Array} board - 棋盘数组
-     * @param {number} x - X坐标
-     * @param {number} y - Y坐标
-     * @param {number} value - 要设置的值
-     * @returns {boolean} 是否成功设置
+     * Safely set board value at position
+     * @param {Array} board - Board array
+     * @param {number} x - X coordinate
+     * @param {number} y - Y coordinate
+     * @param {number} value - Value to set
+     * @returns {boolean} Whether operation was successful
      */
     static safeSet(board, x, y, value) {
         if (!board || !Array.isArray(board)) {
@@ -60,19 +60,19 @@ class BoardUtils {
     }
 
     /**
-     * 创建空棋盘
-     * @param {number} gridSize - 棋盘大小
-     * @returns {Array} 初始化的棋盘
+     * Create empty board
+     * @param {number} gridSize - Board size
+     * @returns {Array} Initialized board
      */
     static createEmptyBoard(gridSize = 15) {
         return Array(gridSize).fill(null).map(() => Array(gridSize).fill(0));
     }
 
     /**
-     * 验证棋盘数据完整性
-     * @param {Array} board - 棋盘数组
-     * @param {number} expectedSize - 期望的棋盘大小
-     * @returns {boolean} 是否有效
+     * Validate board data integrity
+     * @param {Array} board - Board array
+     * @param {number} expectedSize - Expected board size
+     * @returns {boolean} Whether board is valid
      */
     static validateBoard(board, expectedSize = 15) {
         if (!board || !Array.isArray(board)) {
@@ -90,5 +90,5 @@ class BoardUtils {
     }
 }
 
-// 导出到全局
+// Export to global scope
 window.BoardUtils = BoardUtils;

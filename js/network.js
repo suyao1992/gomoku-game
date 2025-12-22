@@ -453,6 +453,14 @@ const Network = {
     async leaveRoom(forceDelete = false) {
         if (!this.currentRoom) return;
 
+        // 埋点
+        if (window.GameAnalytics) {
+            GameAnalytics.trackEvent('multiplayer_leave', {
+                roomCode: this.currentRoom,
+                isHost: this.isHost
+            });
+        }
+
         const roomRef = this.currentRoomRef;
         const roomCode = this.currentRoom;
 
@@ -685,6 +693,13 @@ const Network = {
      * 认输
      */
     async surrender() {
+        // 埋点
+        if (window.GameAnalytics) {
+            GameAnalytics.trackEvent('multiplayer_surrender', {
+                roomCode: this.currentRoom
+            });
+        }
+
         const winner = this.myColor === 'black' ? 'white' : 'black';
         await this.setWinner(winner);
     },
@@ -724,6 +739,13 @@ const Network = {
     async requestRematch() {
         if (!this.currentRoomRef) return { success: false, error: '未在房间中' };
 
+        // 埋点
+        if (window.GameAnalytics) {
+            GameAnalytics.trackEvent('multiplayer_rematch_request', {
+                roomCode: this.currentRoom
+            });
+        }
+
         try {
             await this.currentRoomRef.child('rematchRequest').set({
                 from: this.myPlayerId,
@@ -746,6 +768,14 @@ const Network = {
      */
     async respondRematch(accept) {
         if (!this.currentRoomRef) return;
+
+        // 埋点
+        if (window.GameAnalytics) {
+            GameAnalytics.trackEvent('multiplayer_rematch_response', {
+                roomCode: this.currentRoom,
+                accepted: accept
+            });
+        }
 
         try {
             if (accept) {
@@ -801,6 +831,14 @@ const Network = {
 
     async sendMessage(msgId) {
         if (!this.currentRoomRef) return;
+
+        // 埋点
+        if (window.GameAnalytics) {
+            GameAnalytics.trackEvent('multiplayer_chat', {
+                roomCode: this.currentRoom,
+                messageId: msgId
+            });
+        }
 
         // 限制消息频率（可选，这里简单实现）
         const msg = {

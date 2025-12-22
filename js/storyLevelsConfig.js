@@ -32,7 +32,7 @@ const PRESET_POSITIONS = {
         ],
         nextToMove: 'black'  // 下一步该黑棋走
     },
-    
+
     // 第6关：火山劣势局面
     'volcano_bad_shape': {
         description: '火山口边缘劣势局',
@@ -57,9 +57,9 @@ const STORY_LEVEL_CONFIG = {
     // ==================== 第1关：居家书房 ====================
     1: {
         id: 1,
-        name: '第一关 · 居家书房',
-        subtitle: '初识弈·零',
-        
+        nameKey: 'story.mission1.name',
+        subtitleKey: 'story.mission1.subtitle',
+
         rules: {
             playerColor: 'black',           // 玩家执黑先手
             aiLevel: 1,                     // 最简单AI
@@ -70,7 +70,7 @@ const STORY_LEVEL_CONFIG = {
             hintsEnabled: true,             // 可以用提示
             dataView: { enabled: false }    // 无数据视图技能
         },
-        
+
         story: {
             requireWinToClear: true,
             unlocksNextLevelId: 2,
@@ -79,13 +79,13 @@ const STORY_LEVEL_CONFIG = {
                 description: '完成了和弈·零的第一盘对局。'
             }
         },
-        
-        // 任务简报面板内容
+
+        // Mission brief panel content
         ui: {
-            ruleSummary: '执黑先手，无禁手规则，不限时，可悔棋5次。',
-            goalSummary: '在棋盘上先连成五子获胜，完成与弈·零的第一次对局。'
+            ruleSummaryKey: 'story.mission1.rules',
+            goalSummaryKey: 'story.mission1.goal'
         },
-        
+
         // HUD显示配置
         hud: {
             left: { line1: '第一关 · 居家书房', line2: '初识弈·零' },
@@ -105,27 +105,27 @@ const STORY_LEVEL_CONFIG = {
             }
         }
     },
-    
+
     // ==================== 第2关：雨夜天台 ====================
     2: {
         id: 2,
-        name: '第二关 · 雨夜天台',
-        subtitle: '霓虹下的快棋',
-        
+        nameKey: 'story.mission2.name',
+        subtitleKey: 'story.mission2.subtitle',
+
         rules: {
             playerColor: 'black',
             aiLevel: 2,
             startPresetId: null,
             forbiddenRule: 'none',
-            timeControl: { 
-                mode: 'perMove', 
-                perMoveSeconds: 30 
+            timeControl: {
+                mode: 'perMove',
+                perMoveSeconds: 30
             },
             maxUndo: 2,
             hintsEnabled: true,
             dataView: { enabled: false }
         },
-        
+
         story: {
             requireWinToClear: true,
             unlocksNextLevelId: 3,
@@ -134,12 +134,12 @@ const STORY_LEVEL_CONFIG = {
                 description: '习惯了在雨夜霓虹下快速落子。'
             }
         },
-        
+
         ui: {
-            ruleSummary: '执黑先手，每步限时30秒，无禁手规则，可悔棋2次。',
-            goalSummary: '在时间压力下快速决策，击败弈·零完成本关。'
+            ruleSummaryKey: 'story.mission2.rules',
+            goalSummaryKey: 'story.mission2.goal'
         },
-        
+
         hud: {
             left: { line1: '第二关 · 雨夜天台', line2: '霓虹下的快棋' },
             center: {
@@ -157,13 +157,13 @@ const STORY_LEVEL_CONFIG = {
             }
         }
     },
-    
+
     // ==================== 第3关：失落遗迹（禁手教学） ====================
     3: {
         id: 3,
-        name: '第三关 · 失落遗迹',
-        subtitle: '禁手的真意',
-        
+        nameKey: 'story.mission3.name',
+        subtitleKey: 'story.mission3.subtitle',
+
         rules: {
             playerColor: 'black',
             aiLevel: 2,
@@ -174,7 +174,7 @@ const STORY_LEVEL_CONFIG = {
             hintsEnabled: false,
             dataView: { enabled: false }
         },
-        
+
         story: {
             requireWinToClear: true,
             unlocksNextLevelId: 4,
@@ -183,12 +183,12 @@ const STORY_LEVEL_CONFIG = {
                 description: '理解了三三、四四与长连禁手的真正含义。'
             }
         },
-        
+
         ui: {
-            ruleSummary: '执黑先手，禁手教学模式（阻止但不判负），古谱残局开局，不限时，可悔棋1次。',
-            goalSummary: '学习识别三三、四四、长连禁手，并在残局中击败对手。'
+            ruleSummaryKey: 'story.mission3.rules',
+            goalSummaryKey: 'story.mission3.goal'
         },
-        
+
         hud: {
             left: { line1: '第三关 · 失落遗迹', line2: '禁手的真意' },
             center: {
@@ -207,13 +207,13 @@ const STORY_LEVEL_CONFIG = {
             }
         }
     },
-    
+
     // ==================== 第4关：海底神殿（长考局） ====================
     4: {
         id: 4,
-        name: '第四关 · 海底神殿',
-        subtitle: '深海的耐心',
-        
+        nameKey: 'story.mission4.name',
+        subtitleKey: 'story.mission4.subtitle',
+
         rules: {
             playerColor: 'white',           // AI先手，玩家后手
             aiLevel: 3,
@@ -224,7 +224,7 @@ const STORY_LEVEL_CONFIG = {
             hintsEnabled: false,
             dataView: { enabled: false }
         },
-        
+
         story: {
             requireWinToClear: true,
             unlocksNextLevelId: 5,
@@ -233,12 +233,12 @@ const STORY_LEVEL_CONFIG = {
                 description: '在深海静压中学会了慢棋中的耐心与全局观。'
             }
         },
-        
+
         ui: {
-            ruleSummary: '执白后手，AI先下黑棋，无禁手规则，不限时，可悔棋1次。',
-            goalSummary: '学会后手布局思维，在深海静压中耐心寻找反击机会。'
+            ruleSummaryKey: 'story.mission4.rules',
+            goalSummaryKey: 'story.mission4.goal'
         },
-        
+
         hud: {
             left: { line1: '第四关 · 海底神殿', line2: '深海的耐心' },
             center: {
@@ -257,13 +257,13 @@ const STORY_LEVEL_CONFIG = {
             }
         }
     },
-    
+
     // ==================== 第5关：数据核心（总时间+数据视图） ====================
     5: {
         id: 5,
-        name: '第五关 · 数据核心',
-        subtitle: '信息洪流',
-        
+        nameKey: 'story.mission5.name',
+        subtitleKey: 'story.mission5.subtitle',
+
         rules: {
             playerColor: 'white',
             aiLevel: 4,
@@ -282,7 +282,7 @@ const STORY_LEVEL_CONFIG = {
                 candidatesPerUse: 3      // 每次展示3个候选点
             }
         },
-        
+
         story: {
             requireWinToClear: true,
             unlocksNextLevelId: 6,
@@ -291,12 +291,12 @@ const STORY_LEVEL_CONFIG = {
                 description: '在时间与信息洪流中找到了自己的节奏。'
             }
         },
-        
+
         ui: {
-            ruleSummary: '执白后手，总时限3分钟（每步+5秒），无禁手，不可悔棋，可用数据视图技能3次。',
-            goalSummary: '在有限时间和AI辅助下击败对手，体验信息洪流中的决策。'
+            ruleSummaryKey: 'story.mission5.rules',
+            goalSummaryKey: 'story.mission5.goal'
         },
-        
+
         hud: {
             left: { line1: '第五关 · 数据核心', line2: '信息洪流' },
             center: {
@@ -314,13 +314,13 @@ const STORY_LEVEL_CONFIG = {
             }
         }
     },
-    
+
     // ==================== 第6关：火山口边缘（劣势局+严格禁手） ====================
     6: {
         id: 6,
-        name: '第六关 · 火山口边缘',
-        subtitle: '熔岩中的禁忌',
-        
+        nameKey: 'story.mission6.name',
+        subtitleKey: 'story.mission6.subtitle',
+
         rules: {
             playerColor: 'black',
             aiLevel: 4,
@@ -334,7 +334,7 @@ const STORY_LEVEL_CONFIG = {
             hintsEnabled: false,
             dataView: { enabled: false }
         },
-        
+
         story: {
             requireWinToClear: true,
             unlocksNextLevelId: 7,
@@ -343,12 +343,12 @@ const STORY_LEVEL_CONFIG = {
                 description: '在火山边缘接住了每一手不容犯错的黑棋。'
             }
         },
-        
+
         ui: {
-            ruleSummary: '执黑先手，劣势残局开局，严格禁手（禁手即负），每步限时25秒，不可悔棋。',
-            goalSummary: '在劣势局面下逆转取胜，同时避免任何禁手，一招不慎满盘皆输！'
+            ruleSummaryKey: 'story.mission6.rules',
+            goalSummaryKey: 'story.mission6.goal'
         },
-        
+
         hud: {
             left: { line1: '第六关 · 火山口边缘', line2: '熔岩中的禁忌' },
             center: {
@@ -367,13 +367,13 @@ const STORY_LEVEL_CONFIG = {
             }
         }
     },
-    
+
     // ==================== 第7关：雪山之巅（终章段位考核） ====================
     7: {
         id: 7,
-        name: '第七关 · 雪山之巅',
-        subtitle: '最终答案',
-        
+        nameKey: 'story.mission7.name',
+        subtitleKey: 'story.mission7.subtitle',
+
         rules: {
             playerColor: 'black',
             aiLevel: 5,
@@ -388,7 +388,7 @@ const STORY_LEVEL_CONFIG = {
             hintsEnabled: false,
             dataView: { enabled: false }
         },
-        
+
         story: {
             requireWinToClear: true,
             unlocksNextLevelId: null,    // 最后一关
@@ -397,12 +397,12 @@ const STORY_LEVEL_CONFIG = {
                 description: '在雪山之巅给出了属于自己的最终答案。'
             }
         },
-        
+
         ui: {
-            ruleSummary: '执黑先手，严格禁手（禁手即负），总时限5分钟（每步+5秒），不可悔棋。',
-            goalSummary: '这是最终考核！面对最强AI，在时间和禁手的双重压力下取胜，证明你的实力！'
+            ruleSummaryKey: 'story.mission7.rules',
+            goalSummaryKey: 'story.mission7.goal'
         },
-        
+
         hud: {
             left: { line1: '第七关 · 雪山之巅', line2: '最终答案' },
             center: {

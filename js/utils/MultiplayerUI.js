@@ -58,16 +58,16 @@ const MultiplayerUI = {
                         <span class="player-card-avatar" id="mp-my-avatar">🎮</span>
                         <span class="move-timer-text" id="mp-my-move-time">30</span>
                     </div>
-                    <span class="player-card-name" id="mp-my-name">我</span>
+                    <span class="player-card-name" id="mp-my-name">${Localization.t('mp.me')}</span>
                 </div>
                 <div class="player-card-info">
                     <span class="player-card-elo" id="mp-my-elo">ELO: 1000</span>
-                    <span class="player-card-color" id="mp-my-color">⚫ 执黑</span>
-                    <span class="player-card-moves" id="mp-my-moves">落子: 0</span>
+                    <span class="player-card-color" id="mp-my-color">${Localization.t('mp.color_black')}</span>
+                    <span class="player-card-moves" id="mp-my-moves">${Localization.t('mp.moves_count', { COUNT: 0 })}</span>
                     <span class="player-card-chat hidden" id="mp-my-chat">💬</span>
                     <span class="player-card-time" id="mp-my-time">05:00</span>
                 </div>
-                <div class="player-card-status hidden" id="mp-my-status">👆 你的回合</div>
+                <div class="player-card-status hidden" id="mp-my-status">${Localization.t('mp.waiting_for_turn')}</div>
             `;
             document.body.appendChild(myCard);
         }
@@ -89,16 +89,16 @@ const MultiplayerUI = {
                         <span class="player-card-avatar" id="mp-opponent-avatar">❓</span>
                         <span class="move-timer-text" id="mp-opponent-move-time">30</span>
                     </div>
-                    <span class="player-card-name" id="mp-opponent-name">对手</span>
+                    <span class="player-card-name" id="mp-opponent-name">${Localization.t('mp.opponent')}</span>
                 </div>
                 <div class="player-card-info">
                     <span class="player-card-elo" id="mp-opponent-elo">ELO: 1000</span>
-                    <span class="player-card-color" id="mp-opponent-color">⚪ 执白</span>
-                    <span class="player-card-moves" id="mp-opponent-moves">落子: 0</span>
+                    <span class="player-card-color" id="mp-opponent-color">${Localization.t('mp.color_white')}</span>
+                    <span class="player-card-moves" id="mp-opponent-moves">${Localization.t('mp.moves_count', { COUNT: 0 })}</span>
                     <span class="player-card-chat hidden" id="mp-opponent-chat">💬</span>
                     <span class="player-card-time" id="mp-opponent-time">05:00</span>
                 </div>
-                <div class="player-card-status hidden" id="mp-opponent-status">💭 思考中...</div>
+                <div class="player-card-status hidden" id="mp-opponent-status">${Localization.t('mp.thinking')}</div>
             `;
             document.body.appendChild(oppCard);
         }
@@ -109,10 +109,10 @@ const MultiplayerUI = {
             actions.id = 'mp-game-actions';
             actions.className = 'game-actions hidden';
             actions.innerHTML = `
-                <button class="action-btn" id="mp-undo-btn">⏪ 悔棋 <span id="mp-undo-count">(3)</span></button>
-                <button class="action-btn" id="mp-draw-btn">🤝 求和</button>
-                <button class="action-btn danger" id="mp-surrender-btn">🏳️ 认输</button>
-                <button class="action-btn" id="mp-chat-btn">💬 聊天</button>
+                <button class="action-btn" id="mp-undo-btn">${Localization.t('mp.undo')} <span id="mp-undo-count">(3)</span></button>
+                <button class="action-btn" id="mp-draw-btn">${Localization.t('mp.draw')}</button>
+                <button class="action-btn danger" id="mp-surrender-btn">${Localization.t('mp.surrender')}</button>
+                <button class="action-btn" id="mp-chat-btn">${Localization.t('mp.chat')}</button>
             `;
             document.body.appendChild(actions);
         }
@@ -122,7 +122,7 @@ const MultiplayerUI = {
             const turn = document.createElement('div');
             turn.id = 'mp-turn-indicator';
             turn.className = 'turn-indicator hidden';
-            turn.textContent = '轮到你了';
+            turn.textContent = Localization.t('mp.turn_mine');
             document.body.appendChild(turn);
         }
 
@@ -148,18 +148,18 @@ const MultiplayerUI = {
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             `;
             chatPopup.innerHTML = `
-                <div style="font-size: 1.2rem; font-weight: bold; color: white; margin-bottom: 15px; text-align: center;">💬 快捷聊天</div>
+                <div style="font-size: 1.2rem; font-weight: bold; color: white; margin-bottom: 15px; text-align: center;">${Localization.t('mp.chat_title')}</div>
                 <div class="chat-options" id="mp-chat-options" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                    <button class="chat-option-btn" data-msg="你好！">👋 你好！</button>
-                    <button class="chat-option-btn" data-msg="下得好！">👍 下得好！</button>
-                    <button class="chat-option-btn" data-msg="请稍等">⏳ 请稍等</button>
-                    <button class="chat-option-btn" data-msg="我想想...">🤔 我想想...</button>
-                    <button class="chat-option-btn" data-msg="厉害！">🔥 厉害！</button>
-                    <button class="chat-option-btn" data-msg="GG">🤝 GG</button>
-                    <button class="chat-option-btn" data-msg="再来一局？">🔄 再来一局？</button>
-                    <button class="chat-option-btn" data-msg="下次再战">👋 下次再战</button>
+                    <button class="chat-option-btn" data-msg="${Localization.t('mp.msg.hello')}">${Localization.t('mp.msg.hello')}</button>
+                    <button class="chat-option-btn" data-msg="${Localization.t('mp.msg.good_job')}">${Localization.t('mp.msg.good_job')}</button>
+                    <button class="chat-option-btn" data-msg="${Localization.t('mp.msg.wait')}">${Localization.t('mp.msg.wait')}</button>
+                    <button class="chat-option-btn" data-msg="${Localization.t('mp.msg.thinking')}">${Localization.t('mp.msg.thinking')}</button>
+                    <button class="chat-option-btn" data-msg="${Localization.t('mp.msg.amazing')}">${Localization.t('mp.msg.amazing')}</button>
+                    <button class="chat-option-btn" data-msg="${Localization.t('mp.msg.gg')}">${Localization.t('mp.msg.gg')}</button>
+                    <button class="chat-option-btn" data-msg="${Localization.t('mp.msg.rematch')}">${Localization.t('mp.msg.rematch')}</button>
+                    <button class="chat-option-btn" data-msg="${Localization.t('mp.msg.bye')}">${Localization.t('mp.msg.bye')}</button>
                 </div>
-                <button style="margin-top: 15px; width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; color: white; cursor: pointer;" onclick="MultiplayerUI.closeChatPopup()">关闭</button>
+                <button style="margin-top: 15px; width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; color: white; cursor: pointer;" onclick="MultiplayerUI.closeChatPopup()">${Localization.t('mp.close')}</button>
             `;
             document.body.appendChild(chatPopup);
         }
@@ -223,8 +223,8 @@ const MultiplayerUI = {
         if (content) {
             content.innerHTML = `
                 <div class="quantum-search">
-                    <div class="quantum-title" id="quantum-title">◉ 量子搜索中...</div>
-                    <div class="quantum-subtitle" id="quantum-subtitle">正在寻找对手</div>
+                    <div class="quantum-title" id="quantum-title">◉ ${Localization.t('mp.search.title')}</div>
+                    <div class="quantum-subtitle" id="quantum-subtitle">${Localization.t('mp.search.subtitle')}</div>
                     <div class="quantum-avatars">
                         <div class="quantum-avatar">${this.getMyAvatar()}</div>
                         <div class="quantum-connection"></div>
@@ -235,13 +235,13 @@ const MultiplayerUI = {
                     </div>
                     <div class="quantum-timer" id="quantum-timer">00:00</div>
                     <div class="quantum-online" id="quantum-online" style="display:none;">
-                        🌐 当前在线: <span id="quantum-online-count">--</span> 人
+                        ${Localization.t('mp.search.online_prefix')}<span id="quantum-online-count">--</span>${Localization.t('mp.search.online_suffix')}
                     </div>
                     <div class="quantum-actions" id="quantum-actions" style="display:none; gap: 10px; justify-content: center; margin-top: 15px;">
-                        <button class="quantum-btn primary" id="quantum-reserve-btn">📅 预约匹配</button>
-                        <button class="quantum-btn secondary" id="quantum-continue-btn">⏳ 继续等待</button>
+                        <button class="quantum-btn primary" id="quantum-reserve-btn">${Localization.t('mp.search.reserve')}</button>
+                        <button class="quantum-btn secondary" id="quantum-continue-btn">${Localization.t('mp.search.continue')}</button>
                     </div>
-                    <button class="quantum-cancel-btn" id="quantum-cancel-btn">❌ 取消匹配</button>
+                    <button class="quantum-cancel-btn" id="quantum-cancel-btn">${Localization.t('mp.search.cancel')}</button>
                 </div>
             `;
 
@@ -324,21 +324,21 @@ const MultiplayerUI = {
 
             if (accelElapsed < 5) {
                 // 加速阶段1：提示空队列
-                if (title) title.textContent = '🔍 搜索中...';
-                if (subtitle) subtitle.textContent = '暂无其他玩家在线';
+                if (title) title.textContent = Localization.t('mp.search.expanding');
+                if (subtitle) subtitle.textContent = Localization.t('mp.search.empty');
                 if (progressBar) progressBar.style.width = `${20 + accelElapsed * 10}%`;
                 if (onlineSection) {
                     onlineSection.style.display = 'block';
                 }
             } else if (accelElapsed < 10) {
                 // 加速阶段2：即将显示选项
-                if (title) title.textContent = '⏳ 等待玩家中';
-                if (subtitle) subtitle.textContent = '当前无其他玩家，可选择预约匹配';
+                if (title) title.textContent = Localization.t('mp.search.few_players');
+                if (subtitle) subtitle.textContent = Localization.t('mp.search.few_players_sub');
                 if (progressBar) progressBar.style.width = `${70 + (accelElapsed - 5) * 6}%`;
             } else {
                 // 加速阶段3：显示预约选项
-                if (title) title.textContent = '⏳ 玩家较少';
-                if (subtitle) subtitle.textContent = '请选择继续等待或预约匹配';
+                if (title) title.textContent = Localization.t('mp.search.few_players');
+                if (subtitle) subtitle.textContent = Localization.t('mp.search.few_players_sub');
                 if (progressBar) progressBar.style.width = '95%';
                 if (actionsSection && actionsSection.style.display === 'none') {
                     actionsSection.style.display = 'flex';
@@ -351,29 +351,29 @@ const MultiplayerUI = {
         // 正常模式：按时间阶段显示
         if (elapsed < 15) {
             // 阶段1：正常搜索 (0-15秒)
-            if (title) title.textContent = '◉ 量子搜索中...';
-            if (subtitle) subtitle.textContent = '正在寻找对手';
+            if (title) title.textContent = Localization.t('mp.search.title');
+            if (subtitle) subtitle.textContent = Localization.t('mp.search.subtitle');
             if (progressBar) progressBar.style.width = `${5 + (elapsed / 15) * 25}%`;
             this.matchingStage = 1;
         } else if (elapsed < 30) {
             // 阶段2：扩大范围 (15-30秒)
-            if (title) title.textContent = '🔍 扩大搜索范围';
-            if (subtitle) subtitle.textContent = '正在寻找实力相近的对手';
+            if (title) title.textContent = Localization.t('mp.search.expanding');
+            if (subtitle) subtitle.textContent = Localization.t('mp.search.expanding_sub');
             if (progressBar) progressBar.style.width = `${30 + ((elapsed - 15) / 15) * 25}%`;
             this.matchingStage = 2;
         } else if (elapsed < 45) {
             // 阶段3：全局搜索 (30-45秒)
-            if (title) title.textContent = '🌐 全局搜索中';
+            if (title) title.textContent = Localization.t('mp.search.global');
             if (onlineSection) {
                 onlineSection.style.display = 'block';
             }
-            if (subtitle) subtitle.textContent = '当前玩家较少，请耐心等待';
+            if (subtitle) subtitle.textContent = Localization.t('mp.search.global_sub');
             if (progressBar) progressBar.style.width = `${55 + ((elapsed - 30) / 15) * 25}%`;
             this.matchingStage = 3;
         } else {
             // 阶段4：显示选项 (45秒+)
-            if (title) title.textContent = '⏳ 玩家较少';
-            if (subtitle) subtitle.textContent = '请选择继续等待或预约匹配';
+            if (title) title.textContent = Localization.t('mp.search.few_players');
+            if (subtitle) subtitle.textContent = Localization.t('mp.search.few_players_sub');
             if (progressBar) progressBar.style.width = `${80 + Math.min((elapsed - 45) / 15 * 15, 15)}%`;
             if (actionsSection && actionsSection.style.display === 'none') {
                 actionsSection.style.display = 'flex';
@@ -405,7 +405,7 @@ const MultiplayerUI = {
                     <div class="fate-wheel spinning">
                         <div class="fate-wheel-center">❓</div>
                     </div>
-                    <div class="fate-wheel-text">命运之轮旋转中...</div>
+                    <div class="fate-wheel-text">${Localization.t('mp.search.fate_wheel')}</div>
                 </div>
             `;
 
@@ -429,41 +429,45 @@ const MultiplayerUI = {
             const myColorLabel = myColor === 'black' ? '先手' : '后手';
             const oppColorLabel = myColor === 'black' ? '后手' : '先手';
 
+            const oppAvatar = opponentInfo.avatar || '🎮';
+            const oppName = opponentInfo.name || Localization.t('mp.mysterious_opponent');
+            const oppElo = opponentInfo.elo || 1000;
+
             content.innerHTML = `
                 <div class="hero-duel-container">
-                    <!-- 极光背景 -->
+                    <!-- Aurora Background -->
                     <div class="aurora-bg"></div>
                     
-                    <!-- 标题 -->
-                    <div class="duel-title">🤝 很高兴认识你 🤝</div>
+                    <!-- Title -->
+                    <div class="duel-title">🤝 ${Localization.t('mp.search.found')} 🤝</div>
                     
-                    <!-- 对决区域 -->
+                    <!-- Duel Arena -->
                     <div class="duel-arena">
-                        <!-- 我方区域 -->
+                        <!-- My Zone -->
                         <div class="player-zone me slide-in-left">
                             <div class="zone-avatar">
                                 <div class="avatar-halo me"></div>
                                 <span class="avatar-emoji">${this.getMyAvatar()}</span>
                             </div>
                             <div class="zone-info">
-                                <div class="zone-label me">你</div>
+                                <div class="zone-label me">${Localization.t('mp.me')}</div>
                                 <div class="zone-name">${this.getMyName()}</div>
                                 <div class="zone-elo">ELO ${this.getMyElo()}</div>
                             </div>
                             <div class="zone-piece me">
                                 <span class="piece-icon">${myPiece}</span>
-                                <span class="piece-label">${myColorLabel}</span>
+                                <span class="piece-label">${Localization.t(myColor === 'black' ? 'mp.color_first' : 'mp.color_second')}</span>
                             </div>
                         </div>
                         
-                        <!-- VS 连接区 -->
+                        <!-- VS Connector -->
                         <div class="vs-connector">
                             <div class="particle-flow">
                                 <span class="particle p1">✨</span>
                                 <span class="particle p2">⭐</span>
                                 <span class="particle p3">💫</span>
                             </div>
-                            <div class="vs-badge">VS</div>
+                            <div class="vs-badge">${Localization.t('mp.search.vs')}</div>
                             <div class="particle-flow reverse">
                                 <span class="particle p1">💫</span>
                                 <span class="particle p2">⭐</span>
@@ -471,27 +475,27 @@ const MultiplayerUI = {
                             </div>
                         </div>
                         
-                        <!-- 对手区域 -->
+                        <!-- Opponent Zone -->
                         <div class="player-zone opponent slide-in-right">
                             <div class="zone-avatar">
                                 <div class="avatar-halo opponent"></div>
-                                <span class="avatar-emoji">${opponentInfo.avatar || '🎮'}</span>
+                                <span class="avatar-emoji">${oppAvatar}</span>
                             </div>
                             <div class="zone-info">
-                                <div class="zone-label opponent">对手</div>
-                                <div class="zone-name">${opponentInfo.name || '神秘对手'}</div>
-                                <div class="zone-elo">ELO ${opponentInfo.elo || 1000}</div>
+                                <div class="zone-label opponent">${Localization.t('mp.opponent')}</div>
+                                <div class="zone-name">${oppName}</div>
+                                <div class="zone-elo">ELO ${oppElo}</div>
                             </div>
                             <div class="zone-piece opponent">
                                 <span class="piece-icon">${oppPiece}</span>
-                                <span class="piece-label">${oppColorLabel}</span>
+                                <span class="piece-label">${Localization.t(myColor === 'black' ? 'mp.color_second' : 'mp.color_first')}</span>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- 倒计时区域 -->
+                    <!-- Countdown Section -->
                     <div class="duel-countdown-section">
-                        <div class="duel-message">「 对决即将开始 」</div>
+                        <div class="duel-message">「 ${Localization.t('mp.search.starting')} 」</div>
                         <div class="duel-countdown-number" id="duel-countdown">—</div>
                     </div>
                 </div>
@@ -525,7 +529,7 @@ const MultiplayerUI = {
                 count--;
                 setTimeout(tick, 1000);
             } else if (count === 0 && countdownEl) {
-                countdownEl.textContent = 'GO!';
+                countdownEl.textContent = Localization.t('mp.search.ready');
                 countdownEl.classList.add('go');
 
                 // 500ms 后进入游戏
@@ -573,7 +577,7 @@ const MultiplayerUI = {
                             </div>
                         </div>
                         <div class="countdown-number">${count}</div>
-                        <div class="countdown-text">准备开始！</div>
+                        <div class="countdown-text">${Localization.t('mp.search.ready')}</div>
                     </div>
                 `;
                 count--;
@@ -656,10 +660,10 @@ const MultiplayerUI = {
 
     // 显示悔棋请求弹窗
     showUndoRequestModal(request) {
-        const opponentName = Network.opponentName || '对手';
+        const opponentName = Network.opponentName || Localization.t('mp.opponent');
         this.showRequestConfirmModal({
-            title: '悔棋请求',
-            message: `${opponentName} 请求悔棋，是否同意？`,
+            title: Localization.t('mp.request.undo'),
+            message: Localization.t('mp.request.undo_msg', { NAME: opponentName }),
             onAccept: () => this.respondToUndo(true),
             onReject: () => this.respondToUndo(false)
         });
@@ -686,9 +690,9 @@ const MultiplayerUI = {
                     });
                 }
             }
-            this.showToast('已同意悔棋');
+            this.showToast(Localization.t('mp.toast.undo_accepted'));
         } else {
-            this.showToast('已拒绝悔棋');
+            this.showToast(Localization.t('mp.toast.undo_rejected'));
         }
 
         // 清除请求
@@ -697,10 +701,10 @@ const MultiplayerUI = {
 
     // 显示求和请求弹窗
     showDrawRequestModal(request) {
-        const opponentName = Network.opponentName || '对手';
+        const opponentName = Network.opponentName || Localization.t('mp.opponent');
         this.showRequestConfirmModal({
-            title: '求和请求',
-            message: `${opponentName} 请求和棋，是否同意？`,
+            title: Localization.t('mp.request.draw'),
+            message: Localization.t('mp.request.draw_msg', { NAME: opponentName }),
             onAccept: () => this.respondToDraw(true),
             onReject: () => this.respondToDraw(false)
         });
@@ -717,9 +721,9 @@ const MultiplayerUI = {
                 'game/winner': 'draw',
                 'game/endReason': 'draw_agreed'
             });
-            this.showToast('双方同意和棋');
+            this.showToast(Localization.t('mp.toast.draw_accepted'));
         } else {
-            this.showToast('已拒绝求和');
+            this.showToast(Localization.t('mp.toast.draw_rejected'));
         }
 
         // 清除请求
@@ -740,8 +744,8 @@ const MultiplayerUI = {
                 <div class="request-title">${options.title}</div>
                 <div class="request-message">${options.message}</div>
                 <div class="request-actions">
-                    <button class="request-btn accept" id="request-accept-btn">✅ 同意</button>
-                    <button class="request-btn reject" id="request-reject-btn">❌ 拒绝</button>
+                    <button class="request-btn accept" id="request-accept-btn">${Localization.t('mp.request.accept')}</button>
+                    <button class="request-btn reject" id="request-reject-btn">${Localization.t('mp.request.reject')}</button>
                 </div>
             </div>
         `;
@@ -912,13 +916,13 @@ const MultiplayerUI = {
         document.getElementById('mp-my-avatar').textContent = myInfo.avatar || this.getMyAvatar();
         document.getElementById('mp-my-name').textContent = myInfo.name || this.getMyName();
         document.getElementById('mp-my-elo').textContent = `ELO: ${myInfo.elo || this.getMyElo()}`;
-        document.getElementById('mp-my-color').textContent = this.gameState.myColor === 'black' ? '⚫ 执黑' : '⚪ 执白';
+        document.getElementById('mp-my-color').textContent = this.gameState.myColor === 'black' ? Localization.get('mp.color_black_label') : Localization.get('mp.color_white_label');
 
         // 对手卡片
         document.getElementById('mp-opponent-avatar').textContent = oppInfo.avatar || '🎮';
-        document.getElementById('mp-opponent-name').textContent = oppInfo.name || '对手';
+        document.getElementById('mp-opponent-name').textContent = oppInfo.name || Localization.get('mp.opponent');
         document.getElementById('mp-opponent-elo').textContent = `ELO: ${oppInfo.elo || 1000}`;
-        document.getElementById('mp-opponent-color').textContent = this.gameState.myColor === 'black' ? '⚪ 执白' : '⚫ 执黑';
+        document.getElementById('mp-opponent-color').textContent = this.gameState.myColor === 'black' ? Localization.get('mp.color_white_label') : Localization.get('mp.color_black_label');
     },
 
     updateTurnIndicator() {
@@ -949,13 +953,13 @@ const MultiplayerUI = {
             myCard.classList.toggle('waiting-turn', !isMyTurn);
         }
         if (myStatus) {
-            myStatus.textContent = isMyTurn ? '👆 你的回合' : '';
+            myStatus.textContent = isMyTurn ? Localization.get('mp.turn_mine_label') : '';
             myStatus.classList.toggle('hidden', !isMyTurn);
         }
         // 更新chat元素显示回合状态（移动端用）
         if (myChat && !myChat._hideTimer) {
             if (isMyTurn) {
-                myChat.textContent = '👆 你的回合';
+                myChat.textContent = Localization.get('mp.turn_mine_label');
                 myChat.classList.remove('hidden');
                 myChat.classList.add('turn-status');
             } else {
@@ -973,13 +977,13 @@ const MultiplayerUI = {
             oppCard.classList.toggle('waiting-turn', isMyTurn);
         }
         if (oppStatus) {
-            oppStatus.textContent = !isMyTurn ? '💭 思考中...' : '';
+            oppStatus.textContent = !isMyTurn ? Localization.get('mp.thinking_label') : '';
             oppStatus.classList.toggle('hidden', isMyTurn);
         }
         // 更新对手chat元素显示回合状态（移动端用）
         if (oppChat && !oppChat._hideTimer) {
             if (!isMyTurn) {
-                oppChat.textContent = '💭 思考中...';
+                oppChat.textContent = Localization.get('mp.thinking_label');
                 oppChat.classList.remove('hidden');
                 oppChat.classList.add('turn-status');
             } else {
@@ -1007,7 +1011,7 @@ const MultiplayerUI = {
         this.updateMoveCount();
     },
 
-    // 更新双方落子数显示
+    // Update move count display for both players
     updateMoveCount() {
         if (!window.game || !game.state.history) return;
 
@@ -1015,7 +1019,7 @@ const MultiplayerUI = {
         let myMoves = 0;
         let oppMoves = 0;
 
-        // 根据我执的颜色统计落子数
+        // Count moves based on player's color
         const myPlayer = this.gameState.myColor === 'black' ? 1 : 2;
 
         history.forEach(move => {
@@ -1030,8 +1034,8 @@ const MultiplayerUI = {
         const myMovesEl = document.getElementById('mp-my-moves');
         const oppMovesEl = document.getElementById('mp-opponent-moves');
 
-        if (myMovesEl) myMovesEl.textContent = `落子: ${myMoves}`;
-        if (oppMovesEl) oppMovesEl.textContent = `落子: ${oppMoves}`;
+        if (myMovesEl) myMovesEl.textContent = Localization.get('mp.moves_count', { COUNT: myMoves });
+        if (oppMovesEl) oppMovesEl.textContent = Localization.get('mp.moves_count', { COUNT: oppMoves });
 
         // 同步到 gameState
         this.gameState.myMoves = myMoves;
@@ -1181,7 +1185,7 @@ const MultiplayerUI = {
     // ============ 操作按钮 ============
     requestUndo() {
         if (this.gameState.undoCount <= 0) {
-            this.showToast('悔棋次数已用尽');
+            this.showToast(Localization.get('mp.undo_limit_reached'));
             return;
         }
 
@@ -1191,7 +1195,7 @@ const MultiplayerUI = {
                 from: Network.myPlayerId,
                 timestamp: Date.now()
             });
-            this.showToast('已发送悔棋请求，等待对方响应...');
+            this.showToast(Localization.get('mp.undo_request_sent'));
         }
     },
 
@@ -1199,7 +1203,7 @@ const MultiplayerUI = {
         // 使用游戏历史记录获取实际步数
         const totalMoves = window.game ? game.state.history.length : 0;
         if (totalMoves < 10) {
-            this.showToast(`至少下满10步才能求和（当前${totalMoves}步）`);
+            this.showToast(Localization.get('mp.toast.draw_min_moves', { COUNT: totalMoves }));
             return;
         }
 
@@ -1208,15 +1212,15 @@ const MultiplayerUI = {
                 from: Network.myPlayerId,
                 timestamp: Date.now()
             });
-            this.showToast('已发送求和请求，等待对方响应...');
+            this.showToast(Localization.get('mp.draw_request_sent'));
         }
     },
 
     confirmSurrender() {
         // 使用自定义弹窗替代 confirm()，避免浏览器限制
         this.showRequestConfirmModal({
-            title: '确认认输',
-            message: '确定要认输吗？此操作不可撤销。',
+            title: Localization.get('mp.confirm_surrender_title'),
+            message: Localization.get('mp.confirm_surrender_msg'),
             onAccept: () => this.executeSurrender(),
             onReject: () => { } // 取消不做任何操作
         });
@@ -1361,7 +1365,7 @@ const MultiplayerUI = {
 
         if (result === 'victory') {
             icon = '🏆';
-            title = '🏆 胜 利 🏆';
+            title = Localization.get('mp.result.victory');
             titleClass = 'victory';
             eloChange = stats.eloChange || 25;
             eloClass = 'up';
@@ -1369,14 +1373,14 @@ const MultiplayerUI = {
             this.showVictoryParticles();
         } else if (result === 'defeat') {
             icon = '💔';
-            title = '惜 败 ...';
+            title = Localization.get('mp.result.defeat');
             titleClass = 'defeat';
             eloChange = stats.eloChange || -15;
             eloClass = 'down';
-            message = '💪 "再接再厉，下次一定赢！"';
+            message = '💪 "Keep going, you\'ll win next time!"';
         } else {
             icon = '🤝';
-            title = '握手言和';
+            title = Localization.get('mp.result.draw');
             titleClass = 'draw';
             eloChange = 0;
             eloClass = '';
@@ -1392,12 +1396,12 @@ const MultiplayerUI = {
                 
                 <div class="result-stats">
                     <div class="result-stat-row">
-                        <span>📊 用时</span>
+                        <span>${Localization.get('mp.result.duration')}</span>
                         <span>${stats.duration || '0:00'}</span>
                     </div>
                     <div class="result-stat-row">
-                        <span>落子数</span>
-                        <span>${stats.moves || 0}步</span>
+                        <span>${Localization.get('mp.result.moves')}</span>
+                        <span>${stats.moves || 0}</span>
                     </div>
                 </div>
                 
@@ -1408,8 +1412,8 @@ const MultiplayerUI = {
                 ${message ? `<div class="result-message">${message}</div>` : ''}
                 
                 <div class="result-actions">
-                    <button class="result-btn primary" onclick="MultiplayerUI.requestRematch()">🔄 再来一局</button>
-                    <button class="result-btn secondary" onclick="window.location.reload()">🏠 返回</button>
+                    <button class="result-btn primary" onclick="MultiplayerUI.requestRematch()">${Localization.get('mp.result.rematch')}</button>
+                    <button class="result-btn secondary" onclick="window.location.reload()">${Localization.get('mp.result.return')}</button>
                 </div>
             </div>
         `;
@@ -1473,27 +1477,27 @@ const MultiplayerUI = {
             el.classList.add('hidden');
         });
 
-        // 离开房间
+        // Leave Room
         if (window.Network && Network.leaveRoom) {
             Network.leaveRoom();
         }
 
-        // 🔥 清理匹配队列数据，防止幽灵匹配
+        // Clean up matchmaking queue data to prevent ghost matches
         if (window.RobustMatchmaking) {
             RobustMatchmaking.cancelSearch();
             RobustMatchmaking.cleanupMyData();
         }
 
-        // 重置游戏状态
+        // Reset game state
         if (window.game) {
-            game.state.gameOver = true; // 标记游戏结束
+            game.state.gameOver = true; // Mark game over
             game.state.isOnline = false;
         }
 
-        // 显示主界面的选择按钮
+        // Show main menu selection buttons
         document.getElementById('choose-mode-btn')?.classList.remove('hidden');
 
-        // 显示主菜单 / 触发主菜单显示
+        // Show main menu / Trigger main menu display
         if (window.game && game.ui && game.ui.showModeSelection) {
             game.ui.showModeSelection();
         } else if (window.game && game.showModeSelection) {
@@ -2331,7 +2335,7 @@ const MultiplayerUI = {
 
         document.body.appendChild(popup);
 
-        // 7秒倒计时
+        // 7-second countdown
         let countdown = 7;
         const countdownEl = document.getElementById('invite-countdown');
         const countdownTimer = setInterval(() => {
@@ -2340,12 +2344,12 @@ const MultiplayerUI = {
             if (countdown <= 0) {
                 clearInterval(countdownTimer);
                 popup.remove();
-                // 超时视为拒绝
+                // Timeout treated as rejection
                 this.handleInviteDecline(invite);
             }
         }, 1000);
 
-        // 绑定接受按钮
+        // Bind accept button
         document.getElementById('invite-accept-btn')?.addEventListener('click', () => {
             clearInterval(countdownTimer);
             popup.remove();
@@ -2355,7 +2359,7 @@ const MultiplayerUI = {
             }
         });
 
-        // 绑定拒绝按钮
+        // Bind reject button
         document.getElementById('invite-decline-btn')?.addEventListener('click', () => {
             clearInterval(countdownTimer);
             popup.remove();
@@ -2363,12 +2367,12 @@ const MultiplayerUI = {
         });
     },
 
-    // 处理邀请拒绝
+    // Handle invite rejection
     async handleInviteDecline(invite) {
-        // 检查是否勾选了"不再接收邀请"
+        // Check if "Do Not Disturb" is checked
         const dndCheckbox = document.getElementById('invite-dnd-checkbox');
         if (dndCheckbox?.checked) {
-            // 保存免打扰设置
+            // Save DND settings
             localStorage.setItem('gomoku_invite_disabled', 'true');
             if (window.firebase && firebase.database && window.Network?.myPlayerId) {
                 try {
@@ -2388,7 +2392,7 @@ const MultiplayerUI = {
     }
 };
 
-// 页面加载后初始化
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         MultiplayerUI.init();

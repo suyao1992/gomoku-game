@@ -1,8 +1,8 @@
-// ========== 玩家入场与加载模块 ==========
+// ========== Player Onboarding & Loading Module ==========
 
 const Onboarding = {
     STORAGE_KEY: 'gomoku_player_name',
-    playerName: '玩家',
+    playerName: Localization.get('mp.player'),
 
     // 需要预加载的资源
     resources: {
@@ -22,11 +22,11 @@ const Onboarding = {
     },
 
     loadingTips: [
-        '正在建立量子连接...',
-        '同步时空坐标...',
-        '初始化神经网络...',
-        '加载对弈核心...',
-        '量子态就绪'
+        'loading.tip1',
+        'loading.tip2',
+        'loading.tip3',
+        'loading.tip4',
+        'loading.tip5'
     ],
 
     init() {
@@ -73,12 +73,12 @@ const Onboarding = {
             });
         }
 
-        // 随机中文名按钮
+        // Random name button
         const randomCnBtn = document.getElementById('random-name-cn');
         if (randomCnBtn) {
             randomCnBtn.addEventListener('click', () => {
                 if (window.NameGenerator && this.nameInput) {
-                    this.nameInput.value = NameGenerator.generate('cn');
+                    this.nameInput.value = NameGenerator.generate();
                     this.hideNameHint();
                 }
             });
@@ -109,7 +109,7 @@ const Onboarding = {
     hideNameHint() {
         const hint = document.querySelector('.name-hint');
         if (hint) {
-            hint.textContent = '名字将显示在游戏中';
+            hint.textContent = Localization.get('onboarding.hint');
             hint.style.color = '';
         }
     },
@@ -155,7 +155,8 @@ const Onboarding = {
                 this.loadingTips.length - 1
             );
             if (this.loadingTip) {
-                this.loadingTip.textContent = this.loadingTips[tipIndex];
+                const tipKey = this.loadingTips[tipIndex];
+                this.loadingTip.textContent = (window.Localization && Localization.t) ? Localization.t(tipKey) : tipKey;
             }
         };
 
@@ -258,13 +259,13 @@ const Onboarding = {
                     try {
                         // 默认生成一个随机中文名
                         if (window.NameGenerator && !this.nameInput.value) {
-                            this.nameInput.value = NameGenerator.generate('cn');
+                            this.nameInput.value = NameGenerator.generate();
                             console.log('[Onboarding] Generated default name:', this.nameInput.value);
                         }
                     } catch (genError) {
                         console.warn('[Onboarding] Name generation failed:', genError);
                         // Fallback default name
-                        this.nameInput.value = '玩家' + Math.floor(Math.random() * 1000);
+                        this.nameInput.value = Localization.get('mp.player') + Math.floor(Math.random() * 1000);
                     }
                     this.nameInput.focus();
                 }
@@ -287,7 +288,7 @@ const Onboarding = {
 
     handleStartGame() {
         // 直接获取名字并开始游戏，无需验证码
-        const name = this.nameInput?.value.trim() || '玩家';
+        const name = this.nameInput?.value.trim() || Localization.get('mp.player');
         this.playerName = name;
         localStorage.setItem(this.STORAGE_KEY, name);
 
@@ -368,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // 导出供其他模块使用
 window.Onboarding = Onboarding;
 
-// ========== 版本公告系统 ==========
+// ========== Version Announcement System ==========
 const VERSION_KEY = 'gomoku_version_seen';
 const CURRENT_VERSION = 'v2.2'; // Updated to v2.2
 
