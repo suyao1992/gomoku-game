@@ -1,4 +1,4 @@
-// 五子棋游戏主逻辑
+﻿// 五子棋游戏主逻辑
 class GomokuGame {
     constructor() {
         // 立即导出到window供外部函数使用
@@ -12,6 +12,9 @@ class GomokuGame {
         this.board = new BoardRenderer(document.getElementById('board'), 15);
         this.stats = new GameStats();
         this.forbidden = new ForbiddenChecker(15);  // 禁手检测模块
+
+        // Zen Board Integration
+        this.useZenMode = true;
 
 
         // 游戏状态
@@ -91,6 +94,9 @@ class GomokuGame {
         // 初始化响应式 Canvas 尺寸
         this.resizeBoard();
 
+        // Initialize Zen Board
+        this.initZenBoard();
+
         // 优化: 保存resize处理器引用,便于后续移除
         this.resizeBoardHandler = () => this.resizeBoard();
         window.removeEventListener('resize', this.resizeBoardHandler); // 先移除旧的
@@ -114,7 +120,115 @@ class GomokuGame {
         // Let Onboarding.js handle the initial flow (Loading -> Name -> Menu).
     }
 
-    // 键盘快捷键
+    initZenBoard() {
+        const initBridge = () => {
+            if (window.ZenBoard) {
+                window.ZenBoard.init('zen-board-root');
+                window.ZenBoard.setClickHandler((row, col) => this.handleZenClick(row, col));
+                console.log('[Game] Zen Board Bridge connected');
+                // Force a redraw if we have state
+                if (this.state.board) {
+                    this.drawBoard();
+                }
+            } else {
+                // Retry until loaded (Babel compilation takes a moment)
+                console.log('[Game] Waiting for Zen Board Bridge...');
+                setTimeout(initBridge, 200);
+            }
+        };
+        initBridge();
+    }
+
+    handleZenClick(row, col) {
+        console.log('[handleZenClick] 点击位置:', row, col, '游戏模式:', this.state.gameMode);
+
+        if (this.state.isSpectating) {
+            this.ui.showToast(Localization.get('toast.spectate_no_move'), 'info');
+            return;
+        }
+
+        if (this.state.gameOver) {
+            console.log('[handleZenClick] 游戏已结束');
+            return;
+        }
+        if (!this.state.gameMode) {
+            console.log('[handleZenClick] 无游戏模式');
+            return;
+        }
+        if (!this.isHumanTurn()) {
+            console.log('[handleZenClick] 非人类回合 - gameMode:', this.state.gameMode);
+            return;
+        }
+
+        if (!window.BoardUtils || !BoardUtils.isSafePosition(row, col, 15)) {
+            console.log('[handleZenClick] 无效位置');
+            return;
+        }
+
+        const cellValue = BoardUtils.safeGet(this.state.board, row, col, -1);
+        if (cellValue !== 0) {
+            console.log('[handleZenClick] 位置已被占用:', cellValue);
+            return;
+        }
+
+        // 联机模式：通过网络发送落子
+        if (this.state.gameMode === 'online') {
+            // 检查是否轮到自己
+            const isMyTurn = (Network.myColor === 'black' && this.state.currentPlayer === 1) ||
+                (Network.myColor === 'white' && this.state.currentPlayer === 2);
+
+            console.log('[handleZenClick] 联机回合检查:', {
+                myColor: Network.myColor,
+                currentPlayer: this.state.currentPlayer,
+                isMyTurn: isMyTurn
+            });
+
+            if (!isMyTurn) {
+                this.ui.showToast(Localization.get('toast.not_your_turn'), 'warning');
+                return;
+            }
+            // 发送到服务器，实际落子由onGameUpdate回调处理
+            // 传递当前时间状态，以便同步给观战者
+            const timeStats = {
+                p1Time: this.state.p1Time,
+                p2Time: this.state.p2Time,
+                moveTime: this.state.moveTime
+            };
+            Network.makeMove(row, col, timeStats);
+            return;
+        }
+
+        // 检查禁手（故事模式 或 PVE模式）
+        const forbiddenMode = this.storyState.isStoryMode
+            ? this.storyState.forbiddenMode
+            : (this.state.gameMode === 'pve' ? window.selectedForbiddenMode : 'none');
+
+        if (forbiddenMode !== 'none') {
+            const isBlack = this.state.currentPlayer === 1;
+            if (isBlack && this.isForbiddenMove(row, col)) {
+                if (forbiddenMode === 'teaching') {
+                    this.showForbiddenTeachingToast(row, col);
+                    return;
+                } else if (forbiddenMode === 'strict') {
+                    this.handleForbiddenLoss(row, col);
+                    return;
+                }
+            }
+        }
+
+        this.placePiece(row, col);
+
+        if (!this.state.gameOver && this.state.gameMode === 'pve') {
+            this.showSmartDialogueAfterPlayerMove(row, col);
+        }
+    }
+
+    shouldUseZenMode() {
+        if (!this.useZenMode) return false;
+        // 统一所有模式使用 ZenBoard (3D 木纹棋盘)
+        // Also check if ZenBoard is actually ready
+        return !!window.ZenBoard;
+    }
 
     // 键盘快捷键
     initKeyboardShortcuts() {
@@ -185,7 +299,20 @@ class GomokuGame {
 
     startPVEMode() {
         if (window.Network) Network.updatePlayerStatus('pve');
-        this.selectMode('pve');
+
+        // Use immersive Zen PVE mode (no RPS, no popups)
+        // Wait for ZenPVE if not loaded yet
+        const tryZenPVE = () => {
+            if (window.ZenPVE) {
+                console.log('[Game] Starting Zen PVE mode');
+                ZenPVE.show();
+            } else {
+                // Wait and retry
+                console.log('[Game] Waiting for ZenPVE to load...');
+                setTimeout(tryZenPVE, 100);
+            }
+        };
+        tryZenPVE();
     }
 
     startStoryMode() {
@@ -312,6 +439,11 @@ class GomokuGame {
         // 设置 Canvas 内部分辨率（关键！）
         canvas.width = boardSize;
         canvas.height = boardSize;
+
+        // 同时设置 CSS 显示尺寸，确保与内部分辨率一致，避免拉伸
+        // 这是修复移动端棋盘变形的关键
+        canvas.style.width = boardSize + 'px';
+        canvas.style.height = boardSize + 'px';
 
         // 优化：复用 BoardRenderer 实例，仅更新尺寸参数
         // 避免每次 resize 都创建新实例造成内存泄漏
@@ -700,9 +832,17 @@ class GomokuGame {
         if (mode === 'pve' || mode === 'eve') {
             this.ui.showCharacter(true);
             this.ui.setCharacterState('IDLE');
-            // 应用AI难度设置
-            if (mode === 'pve' && window.selectedAIDifficulty) {
-                this.ai.setLevel(window.selectedAIDifficulty);
+
+            // 应用AI难度设置（PVE模式）
+            if (mode === 'pve') {
+                // 使用选择的难度，如果未设置则默认为中等难度
+                const difficulty = window.selectedAIDifficulty || 'medium';
+                this.ai.setLevel(difficulty);
+
+                // 确保全局变量也被设置，方便后续使用
+                if (!window.selectedAIDifficulty) {
+                    window.selectedAIDifficulty = difficulty;
+                }
             }
         } else {
             this.ui.showCharacter(false);
@@ -711,7 +851,12 @@ class GomokuGame {
         if (mode === 'eve') {
             this.state.firstPlayer = Math.random() < 0.5 ? 1 : 2;
             this.prepareGame();
+        } else if (mode === 'pve') {
+            // Zen PVE: skip RPS, randomly decide first player
+            this.state.firstPlayer = Math.random() < 0.5 ? 1 : 2;
+            this.prepareGame();
         } else {
+            // PVP still uses RPS
             this.showRPS();
         }
     }
@@ -981,18 +1126,40 @@ class GomokuGame {
 
     // 绘制棋盘
     drawBoard() {
-        if (!this.board) {
-            console.error('[Game] BoardRenderer not initialized');
-            return;
-        }
-        if (!this.state.board) {
-            console.error('[Game] Board state is null');
-            return;
-        }
-        try {
-            this.board.draw(this.state.board, this.state.history, this.state.winningLine);
-        } catch (e) {
-            console.error('[Game] Draw error:', e);
+        if (!this.state.board) return;
+
+        const useZen = this.shouldUseZenMode();
+        const canvas = document.getElementById('board');
+        const zenRoot = document.getElementById('zen-board-root');
+
+        if (useZen) {
+            if (canvas) canvas.style.display = 'none';
+            if (zenRoot) zenRoot.style.display = 'flex'; // flex for centering
+
+            // Render via React Bridge
+            if (window.ZenBoard) {
+                // Ghost player: 决定影子棋子颜色
+                // - online: 根据玩家自己的颜色显示影子
+                // - pvp: 当前回合玩家颜色
+                // - pve/story: 人类玩家颜色（firstPlayer）
+                let ghostPlayer;
+                if (this.state.gameMode === 'online' && window.Network) {
+                    // 联机模式：根据自己的颜色决定影子
+                    ghostPlayer = Network.myColor === 'black' ? 1 : 2;
+                } else if (this.state.gameMode === 'pvp') {
+                    ghostPlayer = this.state.currentPlayer;
+                } else {
+                    ghostPlayer = this.state.firstPlayer;
+                }
+                window.ZenBoard.render({ ...this.state, ghostPlayer });
+            }
+        } else {
+            if (canvas) canvas.style.display = 'block';
+            if (zenRoot) zenRoot.style.display = 'none';
+
+            if (this.board) {
+                this.board.draw(this.state.board, this.state.history, this.state.winningLine);
+            }
         }
     }
 
@@ -1063,15 +1230,19 @@ class GomokuGame {
             return;
         }
 
-        // 故事模式下检查禁手
-        if (this.storyState.isStoryMode && this.storyState.forbiddenMode !== 'none') {
+        // 检查禁手（故事模式 或 PVE模式）
+        const forbiddenMode = this.storyState.isStoryMode
+            ? this.storyState.forbiddenMode
+            : (this.state.gameMode === 'pve' ? window.selectedForbiddenMode : 'none');
+
+        if (forbiddenMode !== 'none') {
             const isBlack = this.state.currentPlayer === 1;
             if (isBlack && this.isForbiddenMove(pos.x, pos.y)) {
-                if (this.storyState.forbiddenMode === 'teaching') {
+                if (forbiddenMode === 'teaching') {
                     // 教学模式：提示但阻止落子
                     this.showForbiddenTeachingToast(pos.x, pos.y);
                     return;
-                } else if (this.storyState.forbiddenMode === 'strict') {
+                } else if (forbiddenMode === 'strict') {
                     // 严格模式：禁手即判负
                     this.handleForbiddenLoss(pos.x, pos.y);
                     return;
@@ -1222,7 +1393,15 @@ class GomokuGame {
         this.state.board[x][y] = this.state.currentPlayer;
         this.state.history.push({ x, y, player: this.state.currentPlayer });
         this.drawBoard();
-        this.audio.playPlace();
+
+        // Zen Sound Integration
+        if (this.shouldUseZenMode() && window.ZenBoard) {
+            setTimeout(() => {
+                if (window.ZenBoard) window.ZenBoard.playStoneSound(this.state.currentPlayer);
+            }, 100);
+        } else {
+            this.audio.playPlace();
+        }
 
         // 检查胜利
         const winResult = this.ai.checkWin(this.state.board, x, y);
@@ -1354,6 +1533,9 @@ class GomokuGame {
         // 切换玩家
         this.state.currentPlayer = this.state.currentPlayer === 1 ? 2 : 1;
         this.ui.updateCurrentPlayer(this.state.currentPlayer);
+
+        // Redraw to update ghost stone color for next player
+        this.drawBoard();
 
         // 故事模式：AI落子后轮到玩家时启动计时器
         if (!this.state.gameOver && this.storyState.isStoryMode && this.isHumanTurn()) {
@@ -3044,6 +3226,8 @@ class GomokuGame {
 
         // 监听房间状态变化
         Network.onRoomUpdate = (roomData) => {
+            console.log('[onRoomUpdate] 收到房间状态更新:', roomData.status);
+
             // 🔥 关键：如果房间已结束，彻底停止监听，不做任何处理
             if (roomData.status === 'finished' || roomData.game?.winner) {
                 console.log('[onRoomUpdate] Room finished, ignoring update');
@@ -3055,7 +3239,23 @@ class GomokuGame {
                 if (this.state.gameMode === 'online' && !this.state.gameOver) {
                     return;
                 }
-                // 游戏开始
+
+                // 🔥 关键修复：立即设置所有必要状态，与快速匹配保持一致
+                console.log('[onRoomUpdate] 房间状态变为 playing，初始化游戏');
+
+                // 1. 立即设置 gameMode（最重要！）
+                this.state.gameMode = 'online';
+
+                // 2. 初始化棋盘状态（防止点击时棋盘为空）
+                if (!this.state.board || this.state.board.length === 0) {
+                    this.state.board = this.createEmptyBoard();
+                }
+                this.state.currentPlayer = 1; // 黑棋先手
+                this.state.gameOver = false;
+
+                console.log('[onRoomUpdate] 游戏状态已初始化, gameMode:', this.state.gameMode, 'myColor:', Network.myColor);
+
+                // 3. 调用完整的游戏启动流程
                 this.startOnlineGame();
             }
         };
@@ -3261,6 +3461,20 @@ class GomokuGame {
 
     // 开始联机游戏
     startOnlineGame() {
+        console.log('[startOnlineGame] 开始联机游戏, Network.myColor:', Network.myColor, 'Network.isHost:', Network.isHost);
+
+        // 🔥 关键修复：隐藏 ZenPVE 容器，显示主游戏布局
+        const zenPveContainer = document.getElementById('zen-pve-container');
+        if (zenPveContainer) {
+            zenPveContainer.style.display = 'none';
+        }
+
+        // 显示主游戏布局
+        const gameLayout = document.querySelector('.game-layout');
+        if (gameLayout) {
+            gameLayout.classList.remove('hidden');
+        }
+
         // 关闭所有模态框
         this.ui.closeRoomWaiting();
         this.ui.hideMainMenu();
@@ -3444,10 +3658,8 @@ class GomokuGame {
     }
 }
 
-// 启动游戏
-document.addEventListener('DOMContentLoaded', () => {
-    window.game = new GomokuGame();  // 导出到window供外部函数使用
-});
+// GomokuGame 类定义结束
+// 游戏实例在文件末尾通过 DOMContentLoaded 事件创建
 
 // ========== 捐赠弹窗功能 ==========
 
@@ -3578,16 +3790,87 @@ function startGameWithDifficulty() {
     if (window.game) {
         // 设置AI难度
         window.game.ai.setLevel(window.selectedAIDifficulty);
+
+        // 保存禁手模式到localStorage
+        localStorage.setItem('zen_pve_forbidden_mode', window.selectedForbiddenMode);
+
         // 继续原有的PVE流程
         window.game.selectMode('pve', true); // true表示跳过难度选择
     }
 }
+
+// ========== 禁手规则选择 ==========
+
+// 存储选择的禁手模式
+window.selectedForbiddenMode = localStorage.getItem('zen_pve_forbidden_mode') || 'none';
+
+// 选择禁手模式
+function selectForbiddenMode(mode) {
+    window.selectedForbiddenMode = mode;
+
+    // 更新UI
+    document.querySelectorAll('.forbidden-btn').forEach(btn => {
+        btn.classList.remove('selected');
+        if (btn.dataset.mode === mode) {
+            btn.classList.add('selected');
+        }
+    });
+
+    // 根据难度自动推荐禁手模式（可选）
+    console.log('[Forbidden] Mode selected:', mode);
+}
+
+// 显示禁手帮助说明
+function showForbiddenHelp() {
+    const helpText = `📖 禁手规则快速说明
+
+黑棋（先手）受到三种限制：
+• 三三：不能同时形成两个活三
+• 四四：不能同时形成两个四
+• 长连：连成6个或更多算禁手
+
+🔓 关闭：普通五子棋，无禁手限制
+🎓 教学：会提示禁手位置，但不判负
+⚠️ 严格：下到禁手点直接判负（连珠规则）`;
+
+    alert(helpText);
+}
+
+// 初始化难度选择弹窗的禁手模式
+function initDifficultyModal() {
+    // 读取保存的禁手模式
+    const savedMode = window.selectedForbiddenMode;
+    if (savedMode) {
+        selectForbiddenMode(savedMode);
+    }
+
+    // 根据难度建议禁手模式
+    const difficultyBtn = document.querySelector('.difficulty-btn.selected');
+    if (difficultyBtn) {
+        const level = parseInt(difficultyBtn.dataset.level);
+        // 简单难度默认关闭，普通默认教学，困难默认严格
+        if (!localStorage.getItem('zen_pve_forbidden_mode')) {
+            if (level === 1) selectForbiddenMode('none');
+            else if (level === 2) selectForbiddenMode('teaching');
+            else if (level === 3) selectForbiddenMode('strict');
+        }
+    }
+}
+
+// 页面加载时初始化
+document.addEventListener('DOMContentLoaded', () => {
+    // 延迟初始化，等待DOM完全加载
+    setTimeout(initDifficultyModal, 100);
+});
+
 
 // 导出
 window.selectAIDifficulty = selectAIDifficulty;
 window.showDifficultyModal = showDifficultyModal;
 window.closeDifficultyModal = closeDifficultyModal;
 window.startGameWithDifficulty = startGameWithDifficulty;
+window.selectForbiddenMode = selectForbiddenMode;
+window.showForbiddenHelp = showForbiddenHelp;
 
 // ========== 留言板功能 ==========
 

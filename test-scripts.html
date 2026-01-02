@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>脚本加载测试</title>
+</head>
+
+<body>
+    <h1>脚本加载测试</h1>
+    <div id="status"></div>
+    <button id="testBtn">测试快速匹配</button>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+    <script src="js/utils/BoardUtils.js"></script>
+    <script src="js/utils/MultiplayerFix.js"></script>
+    <script src="js/utils/RobustMatchmaking.js"></script>
+    <script src="js/utils/MultiplayerUI.js"></script>
+    <script src="js/utils/RobustMatchmakingUI.js" onerror="alert('Failed to load RobustMatchmakingUI.js')"></script>
+    <script src="js/utils/ai-player-adapter.js"></script>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+
+        function checkLoad() {
+            const results = [];
+
+            results.push(`window.RobustMatchmaking: ${typeof window.RobustMatchmaking}`);
+            results.push(`window.MultiplayerUI: ${typeof window.MultiplayerUI}`);
+            results.push(`window.RobustMatchmakingUI: ${typeof window.RobustMatchmakingUI}`);
+            results.push(`window.AIPlayerAdapter: ${typeof window.AIPlayerAdapter}`);
+
+            // 详细检查
+            results.push(`\n--- Debug Info ---`);
+            results.push(`RobustMatchmakingUI file exists: check console`);
+
+            // 打开控制台查看日志
+            console.log('[Test] Module check:', {
+                RobustMatchmaking: window.RobustMatchmaking,
+                MultiplayerUI: window.MultiplayerUI,
+                RobustMatchmakingUI: window.RobustMatchmakingUI,
+                AIPlayerAdapter: window.AIPlayerAdapter
+            });
+
+            statusDiv.innerHTML = '<pre>' + results.join('\n') + '</pre>';
+
+            // 测试按钮
+            document.getElementById('testBtn').onclick = () => {
+                if (window.RobustMatchmakingUI) {
+                    console.log('[Test] Calling RobustMatchmakingUI.startMatch()');
+                    RobustMatchmakingUI.startMatch();
+                } else {
+                    alert('RobustMatchmakingUI not loaded!');
+                }
+            };
+        }
+
+        setTimeout(checkLoad, 2000);
+    </script>
+</body>
+
+</html>

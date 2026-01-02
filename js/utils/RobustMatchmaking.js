@@ -484,9 +484,30 @@ const RobustMatchmaking = {
 
     // 寻找对手
     async findOpponent() {
+        // 如果已经在匹配AI,直接返回
+        if (this.isMatchingAI) {
+            console.log('[RobustMatch] Already matching AI, skipping...');
+            return;
+        }
+
         const queueSnap = await this.queueRef.once('value');
         const queue = queueSnap.val() || {};
         const now = Date.now();
+
+        // 🤖 关键优化:5秒后无真人,召唤AI对手（原10秒）
+        const searchDuration = now - this.searchStartTime;
+        console.log('[RobustMatch] Search duration:', searchDuration, 'ms');
+        if (searchDuration > 5000) {
+            console.log('[RobustMatch] ⏰ 5s timeout reached!');
+            console.log('[RobustMatch] 🤖 Calling summonAIOpponent...');
+
+            // 设置标志防止重复匹配
+            this.isMatchingAI = true;
+
+            const result = await this.summonAIOpponent();
+            console.log('[RobustMatch] summonAIOpponent returned:', result);
+            return result;
+        }
 
         // 初始化跳过列表（失败过的对手暂时不再尝试）
         if (!this.skipList) this.skipList = {};
@@ -645,6 +666,8 @@ const RobustMatchmaking = {
         if (this.onMatchFound) {
             this.onMatchFound(roomCode, 'black');
         }
+
+        return roomCode; // 返回房间代码
     },
 
     // 作为房客加入
@@ -718,6 +741,111 @@ const RobustMatchmaking = {
         Network.setupDisconnectHandler();
     },
 
+    // 🤖 新增:召唤AI对手
+    async summonAIOpponent() {
+        try {
+            const myElo = window.PlayerStats?.data.competitive.elo || 1000;
+
+            // 调用Cloudflare Worker获取AI对手
+            const AI_MATCHER_URL = 'https://gomoku-ai-matcher.suyao1992.workers.dev/match';
+
+            const res = await fetch(AI_MATCHER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    playerId: this.playerId,
+                    playerElo: myElo
+                })
+            });
+
+            if (!res.ok) {
+                console.error('[RobustMatch] AI matcher failed:', res.status);
+                return; // 降级到继续等待真人
+            }
+
+            const { opponent } = await res.json();
+
+            if (!opponent) {
+                console.warn('[RobustMatch] No AI available');
+                return;
+            }
+
+            console.log('[RobustMatch] 🤖 AI opponent assigned:', opponent.nickname);
+
+            // 🔥 关键: 停止搜索轮询
+            this.cancelSearch();
+
+            // 🔑 关键:AI对手数据结构与真人完全一致
+            // 创建匹配房间(复用现有逻辑)
+            const roomCode = await this.createMatchedRoom(opponent.uid, {
+                name: opponent.nickname,
+                elo: opponent.elo,
+                avatar: opponent.avatar,
+                sessionId: 'ai-session' // AI没有真实sessionId
+            });
+
+            // 🎮 初始化AI适配器(在浏览器中驱动AI落子)
+            console.log('[RobustMatch] Checking AI initialization:', {
+                isAI: opponent._isAI,
+                hasAdapter: !!window.AIPlayerAdapter,
+                roomCode: roomCode
+            });
+
+            if (opponent._isAI && window.AIPlayerAdapter) {
+                // 注意:需要等待房间创建和Network设置完成后再初始化
+                setTimeout(() => {
+                    console.log('[RobustMatch] Initializing AI adapter for room:', roomCode);
+                    window.AIPlayerAdapter.init(opponent, roomCode);
+                }, 2000);
+            } else if (!opponent._isAI) {
+                console.warn('[RobustMatch] opponent._isAI is false, AI will not be initialized');
+            } else if (!window.AIPlayerAdapter) {
+                console.error('[RobustMatch] AIPlayerAdapter not loaded!');
+            }
+
+            return true; // 返回成功
+
+        } catch (error) {
+            console.error('[RobustMatch] Summon AI error:', error);
+            return false;
+        }
+    },
+
+    /**
+     * 🔄 与同一个AI再来一局
+     */
+    async requestRematchWithSameAI() {
+        console.log('[RobustMatch] Requesting rematch with same AI...');
+
+        // 检查是否有上一局的AI配置
+        if (!window.AIPlayerAdapter?.lastAIConfig) {
+            console.warn('[RobustMatch] No last AI config, fallback to normal match');
+            this.startSearch(this.onMatchFound, this.onMatchFailed, this.onStatusUpdate);
+            return false;
+        }
+
+        const aiConfig = window.AIPlayerAdapter.lastAIConfig;
+        console.log('[RobustMatch] Reusing AI:', aiConfig.nickname);
+
+        // 创建新房间（复用createMatchedRoom逻辑）
+        const roomCode = await this.createMatchedRoom(aiConfig.uid, {
+            name: aiConfig.nickname,
+            elo: aiConfig.elo,
+            avatar: aiConfig.avatar,
+            sessionId: 'ai-rematch-session'
+        });
+
+        // 初始化AI适配器
+        if (roomCode && aiConfig._isAI && window.AIPlayerAdapter) {
+            setTimeout(() => {
+                console.log('[RobustMatch] Re-initializing AI adapter for rematch');
+                window.AIPlayerAdapter.init(aiConfig, roomCode);
+            }, 2000);
+        }
+
+        return true;
+    },
+
     // 设置悔棋/求和请求回调
     setupRequestCallbacks() {
         if (!window.Network) return;
@@ -742,6 +870,7 @@ const RobustMatchmaking = {
     // 停止搜索（内部）
     stopSearch() {
         this.isSearching = false;
+        this.isMatchingAI = false; // 重置AI匹配标志
         this.stopHeartbeat();
         this.stopPolling();
         this.stopResultListener(); // 🚀 停止实时监听器
@@ -1128,264 +1257,9 @@ const RobustMatchmaking = {
     }
 };
 
-// 覆盖快速匹配按钮 - 集成MultiplayerUI
-const RobustMatchmakingUI = {
-    timerInterval: null,
-    timerSeconds: 0,
-
-    init() {
-        const btn = document.getElementById('quick-match-btn');
-        if (!btn) return;
-
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode?.replaceChild(newBtn, btn);
-
-        newBtn.addEventListener('click', () => this.startMatch());
-
-        const cancelBtn = document.getElementById('cancel-match-btn');
-        if (cancelBtn) {
-            const newCancelBtn = cancelBtn.cloneNode(true);
-            cancelBtn.parentNode?.replaceChild(newCancelBtn, cancelBtn);
-            newCancelBtn.addEventListener('click', () => this.cancelMatch());
-        }
-
-        console.log('[RobustMatchUI] Buttons initialized');
-    },
-
-    async startMatch() {
-        console.log('[RobustMatchUI] Starting match with quantum search UI');
-
-        // Game Analytics 埋点
-        if (window.GameAnalytics) {
-            GameAnalytics.trackEvent('matchmaking_start');
-        }
-
-        // 显示匹配界面 - 使用MultiplayerUI的量子搜索
-        if (window.MultiplayerUI) {
-            MultiplayerUI.showQuantumSearch();
-        } else {
-            // 降级：使用原来的界面
-            document.getElementById('matchmaking-modal')?.classList.remove('hidden');
-        }
-
-        // 计时器
-        this.timerSeconds = 0;
-        const updateTimer = () => {
-            this.timerSeconds++;
-            const timerEl = document.getElementById('quantum-timer') || document.getElementById('matchmaking-timer');
-            if (timerEl) {
-                const min = Math.floor(this.timerSeconds / 60).toString().padStart(2, '0');
-                const sec = (this.timerSeconds % 60).toString().padStart(2, '0');
-                timerEl.textContent = `${min}:${sec}`;
-            }
-            // 更新进度条
-            const progressBar = document.querySelector('.quantum-progress-bar');
-            if (progressBar) {
-                const progress = Math.min(30 + (this.timerSeconds * 2), 95);
-                progressBar.style.width = `${progress}%`;
-            }
-        };
-        this.timerInterval = setInterval(updateTimer, 1000);
-
-        // 使用 RobustMatchmaking 核心逻辑
-        try {
-            // 设置游戏监听器
-            if (window.game) {
-                game.setupOnlineGameListeners();
-            }
-
-            const success = await RobustMatchmaking.startSearch(
-                // onMatchFound
-                (roomCode, color) => {
-                    this.stopTimer();
-                    console.log('[RobustMatchUI] Match found via Robust:', roomCode);
-                    this.onMatchSuccess(roomCode, color);
-                },
-                // onMatchFailed
-                (error) => {
-                    this.stopTimer();
-                    console.error('[RobustMatchUI] Match failed:', error);
-
-                    // Game Analytics 埋点
-                    if (window.GameAnalytics) {
-                        GameAnalytics.trackEvent('matchmaking_error', { error: error });
-                    }
-
-                    document.getElementById('matchmaking-modal')?.classList.add('hidden');
-                    document.getElementById('main-menu')?.classList.remove('hidden');
-                    if (window.UI) UI.showToast(error || Localization.t('mp.toast.error_matching'), 'error');
-                },
-                // onStatusUpdate
-                (status) => {
-                    console.log('[RobustMatchUI] Status:', status);
-                }
-            );
-
-            if (!success) {
-                this.stopTimer();
-                if (window.UI) UI.showToast(Localization.t('mp.toast.error_matching'), 'error');
-            }
-        } catch (e) {
-            this.stopTimer();
-            console.error('[RobustMatchUI] Match error:', e);
-            document.getElementById('matchmaking-modal')?.classList.add('hidden');
-            document.getElementById('main-menu')?.classList.remove('hidden');
-            if (window.UI) UI.showToast(Localization.t('mp.toast.error_matching'), 'error');
-        }
-    },
-
-    // 匹配成功后的动画流程
-    async onMatchSuccess(roomCode, color) {
-        console.log('[RobustMatchUI] Match success! Room:', roomCode, 'Color:', color);
-
-        // Game Analytics 埋点
-        if (window.GameAnalytics) {
-            GameAnalytics.trackEvent('matchmaking_complete', {
-                duration: this.timerSeconds,
-                room_code: roomCode,
-                color: color
-            });
-        }
-
-        // 获取房间数据以显示对手信息
-        const roomSnap = await firebase.database().ref('rooms').child(roomCode).once('value');
-        const roomData = roomSnap.val();
-
-        let opponentInfo = { name: Localization.t('mp.opponent'), avatar: '🎮', elo: 1000 };
-
-        if (roomData && roomData.players) {
-            const myId = Network.myPlayerId;
-            for (const [pid, pdata] of Object.entries(roomData.players)) {
-                if (pid !== myId) {
-                    opponentInfo = {
-                        name: pdata.name || Localization.t('mp.opponent'),
-                        avatar: pdata.avatar || '🎮',
-                        elo: pdata.elo || 1000
-                    };
-                    break;
-                }
-            }
-        }
-
-        if (window.MultiplayerUI) {
-            // 设置游戏状态
-            MultiplayerUI.gameState.opponentInfo = opponentInfo;
-            MultiplayerUI.gameState.myColor = color;
-            MultiplayerUI.gameState.currentTurn = 'black';
-
-            // 🔥 设置我的信息（确保ELO正确显示）
-            MultiplayerUI.gameState.myInfo = {
-                name: localStorage.getItem('gomoku_player_name') || Localization.t('mp.me'),
-                avatar: window.AvatarSystem ? AvatarSystem.getCurrent().emoji : '🎮',
-                elo: window.PlayerStats ? PlayerStats.data.competitive.elo : 1000
-            };
-
-            // 保存房间信息供后续使用
-            MultiplayerUI.gameState.roomCode = roomCode;
-
-            // 🚀 预约模式下：显示通知让预约方确认
-            if (window.RobustMatchmaking && RobustMatchmaking.reservationMode) {
-                console.log('[RobustMatchUI] Reservation mode - showing notification');
-                // 清除预约超时
-                if (RobustMatchmaking.reservationTimeout) {
-                    clearTimeout(RobustMatchmaking.reservationTimeout);
-                    RobustMatchmaking.reservationTimeout = null;
-                }
-                RobustMatchmaking.reservationMode = false;
-                RobustMatchmaking.stopInviteMonitor();
-
-                // 显示匹配成功通知
-                MultiplayerUI.showReservationMatchNotification(opponentInfo);
-                return;
-            }
-
-            // ✅ Quick match / Invite accepted: Start animation flow
-            console.log('[RobustMatchUI] Quick match - starting animation directly');
-            MultiplayerUI.showFateWheel(opponentInfo);
-            this.setupAnimationWatcher(roomCode, color);
-        } else {
-            // Fallback: Start game directly
-            document.getElementById('matchmaking-modal')?.classList.add('hidden');
-            this.startGame(roomCode, color);
-        }
-    },
-
-    // Listen for animation completion then start game
-    setupAnimationWatcher(roomCode, color) {
-        const checkGameStart = setInterval(() => {
-            if (window.MultiplayerUI && MultiplayerUI.phase === 'playing') {
-                clearInterval(checkGameStart);
-                this.startGame(roomCode, color);
-            }
-        }, 100);
-
-        // 超时保护
-        setTimeout(() => {
-            clearInterval(checkGameStart);
-            if (window.MultiplayerUI && MultiplayerUI.phase !== 'playing') {
-                console.warn('[RobustMatchUI] Animation timeout, force starting game');
-                this.startGame(roomCode, color);
-            }
-        }, 10000);
-    },
-
-    // Start Game
-    async startGame(roomCode, color) {
-        console.log('[RobustMatchUI] Starting game, room:', roomCode);
-
-        document.getElementById('matchmaking-modal')?.classList.add('hidden');
-
-        // Ensure network connection is set
-        if (window.Network && Network.roomsRef) {
-            Network.currentRoom = roomCode;
-            Network.currentRoomRef = Network.roomsRef.child(roomCode);
-            Network.myColor = color;
-            Network.startRoomListeners();
-        }
-
-        if (window.game) {
-            game.setupOnlineGameListeners();
-            game.startOnlineGame();
-        }
-
-        // NOTE: enterGamePhase is automatically called by MultiplayerUI.showCountdown
-        // No need to call it again here to avoid duplicate UI updates
-    },
-
-    async cancelMatch() {
-        console.log('[RobustMatchUI] Cancelling match');
-
-        // Game Analytics 埋点
-        if (window.GameAnalytics) {
-            GameAnalytics.trackEvent('matchmaking_cancel', {
-                durationSeconds: this.timerSeconds
-            });
-        }
-
-        this.stopTimer();
-        await RobustMatchmaking.cancelSearch();
-        document.getElementById('matchmaking-modal')?.classList.add('hidden');
-        document.getElementById('main-menu')?.classList.remove('hidden');
-
-        if (window.MultiplayerUI) {
-            MultiplayerUI.cleanup();
-        }
-    },
-
-    stopTimer() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
-        }
-    }
-};
-
 // Initialize matching system on page load
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(async () => {
-        // 初始化 UI 按钮
-        RobustMatchmakingUI.init();
-
         // Automatically initialize matchmaking to receive invites
         // Even if the player doesn't click match, they can still receive invites
         await RobustMatchmaking.init();
@@ -1395,4 +1269,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.RobustMatchmaking = RobustMatchmaking;
-window.RobustMatchmakingUI = RobustMatchmakingUI;

@@ -1,0 +1,298 @@
+/* ===========================================
+   ZEN PVE MODE - Immersive UI Styles
+   Inspired by zen-gomoku-3d
+   =========================================== */
+
+/* Main Container */
+#zen-pve-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    /* Changed from flex-start */
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+    padding: 10px 0;
+    /* Reduced from 20px */
+    gap: 8px;
+    /* Reduced from 20px */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    overflow-y: auto;
+}
+
+#zen-pve-container.active {
+    display: flex;
+}
+
+/* Hide old UI elements when Zen PVE is active */
+#zen-pve-container.active~.controls,
+#zen-pve-container.active~.game-layout,
+body:has(#zen-pve-container.active) .controls,
+body:has(#zen-pve-container.active) .game-layout {
+    display: none !important;
+}
+
+/* ===== HEADER ===== */
+.zen-header {
+    text-align: center;
+    padding: 5px 0;
+    /* Reduced from 10px */
+}
+
+.zen-title {
+    font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+    font-size: 2rem;
+    /* Reduced from 2.5rem */
+    font-weight: 300;
+    letter-spacing: 0.4em;
+    /* Reduced from 0.5em */
+    color: #d4af6a;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.zen-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.65rem;
+    /* Reduced from 0.75rem */
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    /* Reduced from 0.3em */
+    color: rgba(212, 175, 106, 0.6);
+    margin-top: 2px;
+    /* Reduced from 4px */
+    text-transform: uppercase;
+}
+
+/* ===== PLAYER SELECTOR ===== */
+.zen-player-selector {
+    display: flex;
+    /* User can now choose their color */
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    padding: 6px 8px;
+    gap: 4px;
+}
+
+.zen-player-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    user-select: none;
+}
+
+.zen-player-option:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.zen-player-option.selected {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.zen-player-option .stone-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.zen-player-option .stone-icon.black {
+    background: radial-gradient(circle at 30% 30%, #3a3a3a, #000);
+}
+
+.zen-player-option .stone-icon.white {
+    background: radial-gradient(circle at 30% 30%, #fff, #e0d8c8);
+}
+
+.zen-selector-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 4px;
+}
+
+/* ===== AI CHARACTER CARD (Compact) ===== */
+.zen-ai-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    /* Reduced from 8px */
+    max-width: 180px;
+    /* Reduced from 200px */
+}
+
+.zen-ai-portrait {
+    width: 60px;
+    /* Reduced from 80px */
+    height: 60px;
+    /* Reduced from 80px */
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(212, 175, 106, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.zen-ai-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.zen-ai-dialogue {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 6px 12px;
+    /* Reduced from 8px 16px */
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    /* Reduced from 0.8rem */
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    max-width: 180px;
+    /* Reduced from 200px */
+    min-height: 20px;
+    /* Reduced from 24px */
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+}
+
+.zen-ai-dialogue.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===== BOARD WRAPPER ===== */
+.zen-board-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 1 auto;
+    /* Changed from flex: 1 */
+    max-width: 500px;
+    /* Reduced from 600px */
+    width: 85vw;
+    /* Reduced from 90vw */
+    min-height: 300px;
+    /* Reduced from 400px */
+    position: relative;
+}
+
+#zen-pve-board-root {
+    width: 100%;
+    max-width: 500px;
+    /* Reduced from 600px */
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===== BOTTOM CONTROLS ===== */
+.zen-controls {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 8px 0;
+    /* Reduced from 20px */
+    margin-top: auto;
+    /* Push to bottom */
+}
+
+.zen-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    /* Reduced from 0.8rem */
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    /* Reduced from 0.15em */
+    color: rgba(255, 255, 255, 0.4);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px 18px;
+    /* Reduced from 12px 24px */
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.zen-btn:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.zen-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.zen-btn-divider {
+    width: 1px;
+    height: 14px;
+    /* Reduced from 16px */
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== GAME STATE OVERLAYS ===== */
+.zen-game-result {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: #d4af6a;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
+}
+
+.zen-game-result.visible {
+    opacity: 1;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+    .zen-title {
+        font-size: 1.8rem;
+        letter-spacing: 0.3em;
+    }
+
+    .zen-player-option {
+        padding: 6px 14px;
+        font-size: 0.75rem;
+    }
+
+    .zen-ai-portrait {
+        width: 60px;
+        height: 60px;
+    }
+
+    .zen-btn {
+        padding: 10px 16px;
+        font-size: 0.7rem;
+    }
+
+    .zen-board-wrapper {
+        width: 95vw;
+    }
+}

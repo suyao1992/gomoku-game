@@ -32,6 +32,55 @@ const AvatarSystem = {
         if (window.Network && Network.myPlayerId) {
             // Network.updateMyInfo({ avatar: this.presets.find(a => a.id === id).emoji });
         }
+    },
+
+    // 初始化头像选择器 (用于注册界面)
+    init() {
+        const previewEl = document.getElementById('avatar-preview');
+        const selectorEl = document.getElementById('avatar-selector');
+
+        if (!previewEl || !selectorEl) {
+            console.warn('[AvatarSystem] Preview or selector element not found');
+            return;
+        }
+
+        // 获取当前头像
+        const current = this.getCurrent();
+
+        // 更新预览
+        previewEl.textContent = current.emoji;
+
+        // 渲染头像网格
+        selectorEl.innerHTML = this.presets.map(avatar => `
+            <div class="avatar-option ${avatar.id === current.id ? 'selected' : ''}" 
+                 data-avatar-id="${avatar.id}"
+                 title="${avatar.name}">
+                ${avatar.emoji}
+            </div>
+        `).join('');
+
+        // 绑定点击事件
+        selectorEl.addEventListener('click', (e) => {
+            const option = e.target.closest('.avatar-option');
+            if (!option) return;
+
+            const avatarId = parseInt(option.dataset.avatarId);
+            const selected = this.presets.find(a => a.id === avatarId);
+
+            if (selected) {
+                // 更新预览
+                previewEl.textContent = selected.emoji;
+
+                // 更新选中状态
+                selectorEl.querySelectorAll('.avatar-option').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                option.classList.add('selected');
+
+                // 保存选择
+                this.save(avatarId);
+            }
+        });
     }
 };
 

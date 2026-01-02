@@ -285,17 +285,34 @@ const MultiplayerUI = {
 
             const elapsed = (Date.now() - this.matchStartTime) / 1000;
             this.updateProgressiveUI(elapsed);
+
+            // 更新真实计时器显示
+            const timerEl = document.getElementById('quantum-timer');
+            if (timerEl) {
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = Math.floor(elapsed % 60);
+                timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
         }, 500);
     },
 
     // 🚀 接收队列信息更新（从 RobustMatchmaking 调用）
-    updateQueueInfo(otherPlayersCount) {
+    async updateQueueInfo(otherPlayersCount) {
         this.queueCount = otherPlayersCount;
+
+        // 🤖 获取AI在线数量
+        let aiCount = 0;
+        if (window.AIOnlineManager) {
+            aiCount = await window.AIOnlineManager.getAIOnlineCount();
+        }
+
+        // 总在线数 = 其他真人玩家 + AI
+        const totalOnline = otherPlayersCount + aiCount;
 
         // 更新显示的在线人数
         const onlineCount = document.getElementById('quantum-online-count');
         if (onlineCount) {
-            onlineCount.textContent = otherPlayersCount;
+            onlineCount.textContent = totalOnline;
         }
 
         // 智能加速：队列为空时启用加速模式
@@ -318,32 +335,24 @@ const MultiplayerUI = {
         const onlineSection = document.getElementById('quantum-online');
         const actionsSection = document.getElementById('quantum-actions');
 
-        // 智能加速模式：10秒后直接跳到预约选项
+        // 智能加速模式：5秒后会召唤AI对手
         if (this.accelerationMode && this.accelerationStartTime) {
             const accelElapsed = (Date.now() - this.accelerationStartTime) / 1000;
 
             if (accelElapsed < 5) {
-                // 加速阶段1：提示空队列
-                if (title) title.textContent = Localization.t('mp.search.expanding');
-                if (subtitle) subtitle.textContent = Localization.t('mp.search.empty');
-                if (progressBar) progressBar.style.width = `${20 + accelElapsed * 10}%`;
+                // 加速阶段：不提示空队列，而是显示"正在寻找对手"
+                if (title) title.textContent = '🎯 ' + Localization.t('mp.search.title');
+                if (subtitle) subtitle.textContent = '正在召唤旗鼓相当的对手...';
+                if (progressBar) progressBar.style.width = `${20 + accelElapsed * 16}%`;
                 if (onlineSection) {
+                    // 显示在线人数（包含AI），但不特别提示队列为空
                     onlineSection.style.display = 'block';
                 }
-            } else if (accelElapsed < 10) {
-                // 加速阶段2：即将显示选项
-                if (title) title.textContent = Localization.t('mp.search.few_players');
-                if (subtitle) subtitle.textContent = Localization.t('mp.search.few_players_sub');
-                if (progressBar) progressBar.style.width = `${70 + (accelElapsed - 5) * 6}%`;
             } else {
-                // 加速阶段3：显示预约选项
-                if (title) title.textContent = Localization.t('mp.search.few_players');
-                if (subtitle) subtitle.textContent = Localization.t('mp.search.few_players_sub');
-                if (progressBar) progressBar.style.width = '95%';
-                if (actionsSection && actionsSection.style.display === 'none') {
-                    actionsSection.style.display = 'flex';
-                }
-                this.matchingStage = 4;
+                // 5秒后AI会被召唤，这时应该很快匹配成功
+                if (title) title.textContent = '✨ 对手即将抵达';
+                if (subtitle) subtitle.textContent = '请稍候...';
+                if (progressBar) progressBar.style.width = '90%';
             }
             return;
         }
@@ -1517,8 +1526,50 @@ const MultiplayerUI = {
 
     // 请求再来一局
     requestRematch() {
-        // TODO: 实现再来一局逻辑
-        alert('再来一局功能开发中...');
+        console.log('[MultiplayerUI] Request rematch...');
+
+        // 检查是否是AI对局
+        const isAIMatch = window.AIPlayerAdapter?.lastAIConfig?._isAI;
+
+        if (isAIMatch) {
+            console.log('[MultiplayerUI] AI match detected, reusing same AI');
+
+            // AI再战：直接重新初始化同一个AI
+            if (window.RobustMatchmaking) {
+                this.showToast('正在与同一AI再战...');
+
+                // 关闭结算弹窗
+                document.getElementById('mp-result-modal')?.remove();
+
+                // 请求与同一AI再战
+                RobustMatchmaking.requestRematchWithSameAI();
+            } else {
+                this.showToast('匹配系统未就绪');
+            }
+        } else {
+            console.log('[MultiplayerUI] Human match, sending rematch request');
+
+            // 真人再战：发送网络请求
+            if (window.Network && Network.requestRematch) {
+                Network.requestRematch().then(result => {
+                    if (result && result.success) {
+                        this.showToast('已发送再来一局请求...');
+                        // 更新按钮状态
+                        const btn = document.querySelector('.result-btn.primary');
+                        if (btn) {
+                            btn.textContent = '等待对方...';
+                            btn.disabled = true;
+                            btn.style.opacity = '0.7';
+                            btn.style.cursor = 'not-allowed';
+                        }
+                    } else {
+                        this.showToast('请求失败: ' + (result ? result.error : '未知错误'));
+                    }
+                });
+            } else {
+                this.showToast('网络模块未接通');
+            }
+        }
     },
 
     showVictoryParticles() {

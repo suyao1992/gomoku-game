@@ -73,7 +73,7 @@ export default {
             // 应用中间件
             // 1. 频率限制
             const rateLimitResult = await rateLimitMiddleware(request, context);
-            if (rateLimitResult) return corsMiddleware(rateLimitResult, env);
+            if (rateLimitResult) return corsMiddleware(rateLimitResult, env, request);
 
             // 2. 用户认证 (非管理接口)
             if (!path.startsWith('/api/admin')) {
@@ -86,7 +86,8 @@ export default {
                 if (!adminAuth || adminAuth !== `Bearer ${env.ADMIN_SECRET}`) {
                     return corsMiddleware(
                         Response.json({ error: 'Unauthorized' }, { status: 401 }),
-                        env
+                        env,
+                        request
                     );
                 }
             }
@@ -95,7 +96,7 @@ export default {
             const response = await handler.handler(request, context);
 
             // 添加 CORS 头
-            return corsMiddleware(response, env);
+            return corsMiddleware(response, env, request);
 
         } catch (error) {
             console.error('Worker error:', error);
@@ -104,7 +105,8 @@ export default {
                     { error: 'Internal Server Error', message: error.message },
                     { status: 500 }
                 ),
-                env
+                env,
+                request
             );
         }
     }

@@ -1,0 +1,324 @@
+niqueding/*
+ * Tailwind Utility Classes Replacement
+ * Replaces cdn.tailwindcss.com for the Board component
+ * Only includes classes actually used in the project
+ */
+
+/* ==================== LAYOUT ==================== */
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.inset-0 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.flex {
+    display: flex;
+}
+
+.grid {
+    display: grid;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.w-2 {
+    width: 0.5rem;
+}
+
+.h-2 {
+    height: 0.5rem;
+}
+
+.w-\[50\%\] {
+    width: 50%;
+}
+
+.h-\[30\%\] {
+    height: 30%;
+}
+
+.w-\[60\%\] {
+    width: 60%;
+}
+
+.h-\[50\%\] {
+    height: 50%;
+}
+
+.w-\[85\%\] {
+    width: 85%;
+}
+
+.h-\[85\%\] {
+    height: 85%;
+}
+
+.w-\[86\%\] {
+    width: 86%;
+}
+
+.h-\[86\%\] {
+    height: 86%;
+}
+
+.w-\[92\%\] {
+    width: 92%;
+}
+
+.h-\[92\%\] {
+    height: 92%;
+}
+
+.max-w-\[600px\] {
+    max-width: 600px;
+}
+
+.aspect-square {
+    aspect-ratio: 1 / 1;
+}
+
+/* ==================== SPACING ==================== */
+.top-0 {
+    top: 0;
+}
+
+.left-0 {
+    left: 0;
+}
+
+.top-1\/2 {
+    top: 50%;
+}
+
+.left-1\/2 {
+    left: 50%;
+}
+
+.translate-y-6 {
+    transform: translateY(1.5rem);
+}
+
+/* ==================== TRANSFORMS ==================== */
+.transform {
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.-translate-x-1\/2 {
+    --tw-translate-x: -50%;
+    transform: translateX(-50%) translateY(var(--tw-translate-y, 0));
+}
+
+.-translate-y-1\/2 {
+    --tw-translate-y: -50%;
+    transform: translateX(var(--tw-translate-x, 0)) translateY(-50%);
+}
+
+.-translate-x-1\/2.-translate-y-1\/2 {
+    transform: translate(-50%, -50%);
+}
+
+.preserve-3d {
+    transform-style: preserve-3d;
+}
+
+/* ==================== GRID ==================== */
+.grid-rows-\[repeat\(15\2c minmax\(0\2c 1fr\)\)\] {
+    grid-template-rows: repeat(15, minmax(0, 1fr));
+}
+
+.grid-cols-\[repeat\(15\2c minmax\(0\2c 1fr\)\)\] {
+    grid-template-columns: repeat(15, minmax(0, 1fr));
+}
+
+/* ==================== BORDERS ==================== */
+.rounded-full {
+    border-radius: 9999px;
+}
+
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+
+.rounded-sm {
+    border-radius: 0.125rem;
+}
+
+.border-t {
+    border-top-width: 1px;
+}
+
+.border-white\/20 {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ==================== BACKGROUNDS ==================== */
+.bg-black {
+    background-color: #000;
+}
+
+.bg-\[\#5c4d3c\] {
+    background-color: #5c4d3c;
+}
+
+.bg-\[\#8c6038\] {
+    background-color: #8c6038;
+}
+
+.bg-\[\#ff3333\] {
+    background-color: #ff3333;
+}
+
+.bg-\[\#cc0000\] {
+    background-color: #cc0000;
+}
+
+.bg-gradient-to-br {
+    background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.bg-gradient-to-b {
+    background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+}
+
+.from-white\/10 {
+    --tw-gradient-from: rgba(255, 255, 255, 0.1);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+}
+
+.from-white {
+    --tw-gradient-from: #fff;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+}
+
+.to-transparent {
+    --tw-gradient-to: transparent;
+}
+
+/* ==================== SHADOWS ==================== */
+.shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.shadow-\[0_0_8px_rgba\(255\2c 50\2c 50\2c 0\.8\)\] {
+    box-shadow: 0 0 8px rgba(255, 50, 50, 0.8);
+}
+
+.shadow-\[0_0_5px_rgba\(200\2c 0\2c 0\2c 0\.4\)\] {
+    box-shadow: 0 0 5px rgba(200, 0, 0, 0.4);
+}
+
+.shadow-\[inset_0_0_2px_rgba\(255\2c 255\2c 255\2c 0\.4\)\] {
+    box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.4);
+}
+
+/* ==================== EFFECTS ==================== */
+.opacity-60 {
+    opacity: 0.6;
+}
+
+.opacity-100 {
+    opacity: 1;
+}
+
+.blur-\[2px\] {
+    filter: blur(2px);
+}
+
+.blur-\[6px\] {
+    filter: blur(6px);
+}
+
+/* ==================== INTERACTIVITY ==================== */
+.pointer-events-none {
+    pointer-events: none;
+}
+
+.select-none {
+    user-select: none;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* ==================== Z-INDEX ==================== */
+.z-0 {
+    z-index: 0;
+}
+
+.z-10 {
+    z-index: 10;
+}
+
+/* ==================== TRANSITIONS ==================== */
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.duration-1000 {
+    transition-duration: 1000ms;
+}
+
+.ease-in-out {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-fade-in {
+    animation: fade-in 0.2s ease-out;
+}

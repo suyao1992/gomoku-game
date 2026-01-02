@@ -63,7 +63,7 @@
     </script>
 
     <!-- PWA Support -->
-    <link rel="manifest" href="manifest.json">
+    <!-- <link rel="manifest" href="manifest.json"> Disabled for file:// protocol -->
     <meta name="theme-color" content="#a855f7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -81,9 +81,35 @@
     <link rel="stylesheet" href="css/multiplayer-ui.css">
     <link rel="stylesheet" href="css/settings-modal.css">
     <link rel="stylesheet" href="css/community.css">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="css/zen-pve.css">
+    <link rel="stylesheet" href="css/forbidden-rules.css">
+
+    <!-- React 18 (Local - Faster Loading) -->
+    <script src="lib/react.production.min.js"></script>
+    <script src="lib/react-dom.production.min.js"></script>
+    <!-- Babel Standalone (CDN - required for JSX) -->
+    <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
+    <script>
+        if (typeof Babel === 'undefined') {
+            console.error('Babel failed to load!');
+            // Create a visible error overlay if Babel fails
+            window.addEventListener('load', () => {
+                const errDiv = document.createElement('div');
+                errDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:red;color:white;z-index:99999;padding:10px;text-align:center;';
+                errDiv.textContent = 'Critical Error: script resource failed to load. Please check your network connection.';
+                document.body.appendChild(errDiv);
+            });
+        }
+    </script>
+
+
+    <!-- Tailwind Utilities Replacement (Local CSS - Much Faster!) -->
+    <link rel="stylesheet" href="css/tailwind-utilities.css">
+    <link rel="stylesheet" href="css/zen-board.css">
+
+    <!-- Firebase SDK (Local - Avoids Tracking Prevention) -->
+    <script src="lib/firebase-app-compat.js"></script>
+    <script src="lib/firebase-database-compat.js"></script>
 
     <!-- Firebase配置 - 必须在SDK之后加载 -->
     <script src="js/firebaseConfig.js"></script>
@@ -796,6 +822,32 @@
                         <span class="diff-desc" data-i18n="difficulty.hard_desc">高手过招</span>
                     </button>
                 </div>
+
+                <!-- Forbidden Rules Section -->
+                <div class="forbidden-rules-section">
+                    <h3 class="forbidden-title">
+                        <span>⚖️ 禁手规则</span>
+                        <button class="help-btn" onclick="showForbiddenHelp()" title="什么是禁手？">？</button>
+                    </h3>
+                    <div class="forbidden-options">
+                        <button class="forbidden-btn selected" data-mode="none" onclick="selectForbiddenMode('none')">
+                            <span class="forbidden-icon">🔓</span>
+                            <span class="forbidden-name">关闭</span>
+                            <span class="forbidden-desc">普通五子棋</span>
+                        </button>
+                        <button class="forbidden-btn" data-mode="teaching" onclick="selectForbiddenMode('teaching')">
+                            <span class="forbidden-icon">🎓</span>
+                            <span class="forbidden-name">教学</span>
+                            <span class="forbidden-desc">提示但不判负</span>
+                        </button>
+                        <button class="forbidden-btn" data-mode="strict" onclick="selectForbiddenMode('strict')">
+                            <span class="forbidden-icon">⚠️</span>
+                            <span class="forbidden-name">严格</span>
+                            <span class="forbidden-desc">禁手即判负</span>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="difficulty-actions">
                     <button class="btn difficulty-start-btn" onclick="startGameWithDifficulty()"
                         data-i18n="difficulty.start_btn">开始对局</button>
@@ -919,9 +971,65 @@
             </div>
         </div>
 
+        <!-- Zen PVE Mode - Immersive Layout -->
+        <div id="zen-pve-container">
+            <!-- Header -->
+            <div class="zen-header">
+                <h1 class="zen-title" data-i18n="zen.title">GOMOKU</h1>
+                <div class="zen-subtitle" data-i18n="zen.subtitle">Zen Mode</div>
+            </div>
+
+            <!-- Player Selector -->
+            <div class="zen-player-selector">
+                <div class="zen-player-option selected" data-color="black"
+                    onclick="window.ZenPVE?.selectColor('black')">
+                    <span class="stone-icon black"></span>
+                    <span>Black</span>
+                </div>
+                <div class="zen-selector-divider"></div>
+                <div class="zen-player-option" data-color="white" onclick="window.ZenPVE?.selectColor('white')">
+                    <span>White</span>
+                    <span class="stone-icon white"></span>
+                </div>
+            </div>
+
+            <!-- Forbidden Rule Toggle -->
+            <div class="zen-forbidden-toggle" onclick="window.ZenPVE?.toggleForbiddenMode()" title="切换禁手规则">
+                <span class="forbidden-toggle-icon" id="zen-forbidden-icon">🔓</span>
+                <span class="forbidden-toggle-text" id="zen-forbidden-text">禁手: 关</span>
+            </div>
+
+            <!-- AI Character (Compact) -->
+            <div class="zen-ai-card">
+                <div class="zen-ai-portrait">
+                    <img id="zen-ai-img" src="assets/images/char_idle.webp" alt="弈·零">
+                </div>
+                <div class="zen-ai-dialogue" id="zen-ai-dialogue"></div>
+            </div>
+
+            <!-- Board Wrapper (reuse existing zen-board-root) -->
+            <div class="zen-board-wrapper">
+                <div id="zen-pve-board-root"></div>
+            </div>
+
+            <!-- Bottom Controls -->
+            <div class="zen-controls">
+                <button class="zen-btn" id="zen-restart-btn" data-i18n="zen.restart"
+                    onclick="window.ZenPVE?.restart()">RESTART</button>
+                <div class="zen-btn-divider"></div>
+                <button class="zen-btn" id="zen-undo-btn" data-i18n="zen.undo"
+                    onclick="window.ZenPVE?.undo()">UNDO</button>
+                <div class="zen-btn-divider"></div>
+                <button class="zen-btn" id="zen-menu-btn" data-i18n="zen.menu"
+                    onclick="window.ZenPVE?.backToMenu()">MENU</button>
+            </div>
+        </div>
+
         <div class="game-layout hidden">
             <div class="game-container">
                 <canvas id="board" width="600" height="600"></canvas>
+                <!-- Zen Board (React) Mount Point -->
+                <div id="zen-board-root"></div>
             </div>
 
             <!-- 角色"弈·零"展示区域 -->
@@ -1197,6 +1305,12 @@
     <script src="js/utils/MultiplayerFix.js"></script>
     <script src="js/utils/RobustMatchmaking.js"></script>
     <script src="js/utils/MultiplayerUI.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/utils/ai-online-manager.js"></script>
+    <script src="js/utils/RobustMatchmakingUI.js"></script>
+    <script src="js/utils/ai-player-adapter.js"></script>
+    <!-- Zen PVE Mode Controller -->
+    <script src="js/zen-pve.js"></script>
 
     <!-- PWA Install Modal -->
     <div id="pwa-install-modal" class="modal hidden">
@@ -1431,6 +1545,501 @@
             </div>
         </div>
     </div>
+
+
+
+    <!-- Zen Board Bundle (Inline, UMD/Global version) -->
+    <!-- Zen Board Bundle (Inline, UMD/Global version) -->
+    <script type="text/babel" data-presets="react">
+        console.log("Babel: Starting Zen Board script execution...");
+        if (!window.React) { console.error("CRITICAL: React not loaded"); throw new Error("React missing"); }
+        if (!window.ReactDOM) { console.error("CRITICAL: ReactDOM not loaded"); throw new Error("ReactDOM missing"); }
+
+        // Access Globals directly
+        const { useState, useMemo } = React;
+        const ReactDOM = window.ReactDOM;
+
+        // ==========================================
+        // TYPES
+        // ==========================================
+        const Player = {
+            None: 0,
+            Black: 1,
+            White: 2
+        };
+
+        // ==========================================
+        // SOUND ENGINE (Web Audio API)
+        // ==========================================
+        let audioCtx = null;
+        let noiseBuffer = null;
+
+        const initAudio = () => {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        };
+
+        const createNoiseBuffer = (ctx) => {
+            if (noiseBuffer) return noiseBuffer;
+            const bufferSize = ctx.sampleRate * 2;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            noiseBuffer = buffer;
+            return buffer;
+        };
+
+        const playStoneSound = (player) => {
+            try {
+                const ctx = initAudio();
+                if (!ctx) return;
+
+                const t = ctx.currentTime;
+                const randPitch = 1.0 + (Math.random() * 0.05 - 0.025);
+                const randVel = 0.9 + Math.random() * 0.2;
+                const baseFreq = 950;
+                const snapFreq = 4000;
+                const bodyDecay = 0.1;
+
+                // Layer 1: Crack
+                const noiseSrc = ctx.createBufferSource();
+                noiseSrc.buffer = createNoiseBuffer(ctx);
+                const noiseFilter = ctx.createBiquadFilter();
+                const noiseGain = ctx.createGain();
+                noiseFilter.type = 'bandpass';
+                noiseFilter.frequency.setValueAtTime(snapFreq * randPitch, t);
+                noiseFilter.Q.value = 1.0;
+                noiseGain.gain.setValueAtTime(0, t);
+                noiseGain.gain.linearRampToValueAtTime(0.5 * randVel, t + 0.002);
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
+                noiseSrc.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                noiseGain.connect(ctx.destination);
+                noiseSrc.start(t);
+                noiseSrc.stop(t + 0.05);
+
+                // Layer 2: Body
+                const oscBody = ctx.createOscillator();
+                const gainBody = ctx.createGain();
+                oscBody.type = 'triangle';
+                const mainFreq = baseFreq * randPitch;
+                oscBody.frequency.setValueAtTime(mainFreq, t);
+                oscBody.frequency.exponentialRampToValueAtTime(mainFreq - 40, t + bodyDecay);
+                gainBody.gain.setValueAtTime(0, t);
+                gainBody.gain.linearRampToValueAtTime(0.7 * randVel, t + 0.002);
+                gainBody.gain.exponentialRampToValueAtTime(0.001, t + bodyDecay);
+                const bodyFilter = ctx.createBiquadFilter();
+                bodyFilter.type = 'lowpass';
+                bodyFilter.frequency.setValueAtTime(2500, t);
+                oscBody.connect(bodyFilter);
+                bodyFilter.connect(gainBody);
+                gainBody.connect(ctx.destination);
+                oscBody.start(t);
+                oscBody.stop(t + 0.2);
+
+                // Layer 3: Thud
+                const oscRes = ctx.createOscillator();
+                const gainRes = ctx.createGain();
+                oscRes.type = 'sine';
+                oscRes.frequency.setValueAtTime(150, t);
+                gainRes.gain.setValueAtTime(0, t);
+                gainRes.gain.linearRampToValueAtTime(0.3 * randVel, t + 0.005);
+                gainRes.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+                oscRes.connect(gainRes);
+                gainRes.connect(ctx.destination);
+                oscRes.start(t);
+                oscRes.stop(t + 0.15);
+            } catch (e) {
+                console.warn("Audio play failed", e);
+            }
+        };
+
+        // ==========================================
+        // COMPONENT: STONE
+        // ==========================================
+        const Stone = ({ player, isLastMove, isGhost = false }) => {
+            if (player === Player.None) return null;
+
+            const variations = useMemo(() => {
+                return {
+                    lightX: 25 + Math.random() * 15,
+                    lightY: 25 + Math.random() * 15,
+                    rotation: Math.random() * 360,
+                };
+            }, []);
+
+            const baseClasses = "absolute inset-0 m-auto w-[90%] h-[90%] rounded-full transition-transform duration-300 pointer-events-none";
+
+            const blackStyle = {
+                background: `radial-gradient(circle at ${variations.lightX}% ${variations.lightY}%, #3a3a3a 0%, #0a0a0a 45%, #000000 100%)`,
+                boxShadow: `
+              inset 1px 1px 2px rgba(255, 255, 255, 0.2), 
+              inset -1px -1px 4px rgba(255, 255, 255, 0.05),
+              0px 0px 1px rgba(0,0,0,0.8)
+            `,
+            };
+
+            const whiteStyle = {
+                background: `radial-gradient(circle at ${variations.lightX}% ${variations.lightY}%, #ffffff 0%, #f7f4ed 45%, #e0d8c8 100%)`,
+                boxShadow: `
+              inset 0px 2px 15px rgba(255, 255, 255, 0.8), 
+              inset -2px -4px 10px rgba(170, 160, 130, 0.3), 
+              0px 1px 3px rgba(0, 0, 0, 0.2)
+            `,
+            };
+
+            const stoneStyle = player === Player.Black ? blackStyle : whiteStyle;
+            const shadowOpacity = player === Player.White ? 0.3 : 0.6;
+
+            if (isGhost) {
+                return (
+                    <div
+                        className={`${baseClasses}`}
+                        style={{
+                            ...stoneStyle,
+                            background: player === Player.Black
+                                ? 'radial-gradient(circle at 30% 30%, #3a3a3a 0%, #0a0a0a 100%)'
+                                : 'radial-gradient(circle at 30% 30%, #ffffff 0%, #e0d8c8 100%)',
+                            opacity: 0.6,
+                            transform: 'scale(0.88)',
+                            boxShadow: 'none',
+                            filter: player === Player.Black ? 'brightness(1.5)' : 'opacity(0.8)'
+                        }}
+                    />
+                );
+            }
+
+            return (
+                <div className="relative w-full h-full flex items-center justify-center pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
+                    <div
+                        className={`absolute w-[86%] h-[86%] rounded-full ${player === Player.White ? 'bg-[#5c4d3c]' : 'bg-black'}`}
+                        style={{
+                            '--shadow-opacity': shadowOpacity,
+                            transform: 'translate(10%, 15%) scale(1)',
+                            filter: 'blur(4px)',
+                            opacity: shadowOpacity,
+                            zIndex: 0,
+                            animation: 'shadow-drop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) backwards'
+                        }}
+                    />
+
+                    <div
+                        className={`${baseClasses} z-10`}
+                        style={{
+                            ...stoneStyle,
+                            animation: 'stone-drop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both'
+                        }}
+                    >
+                        {player === Player.Black && (
+                            <React.Fragment>
+                                <div
+                                    className="absolute top-0 left-0 w-full h-full rounded-full bg-gradient-to-br from-white/10 to-transparent opacity-100 pointer-events-none"
+                                    style={{ transform: `rotate(${variations.rotation}deg)` }}
+                                />
+                                <div
+                                    className="absolute w-[50%] h-[30%] bg-gradient-to-b from-white/10 to-transparent rounded-full blur-[2px]"
+                                    style={{
+                                        top: `${variations.lightY * 0.2}%`,
+                                        left: `${variations.lightX * 0.3}%`,
+                                        transform: 'rotate(-45deg)'
+                                    }}
+                                />
+                            </React.Fragment>
+                        )}
+
+                        {player === Player.White && (
+                            <React.Fragment>
+                                <div
+                                    className="absolute w-[60%] h-[50%] bg-gradient-to-br from-white to-transparent rounded-full opacity-60 blur-[6px]"
+                                    style={{
+                                        top: `${variations.lightY * 0.15}%`,
+                                        left: `${variations.lightX * 0.15}%`
+                                    }}
+                                />
+                                <div className="absolute inset-0 rounded-full shadow-[inset_0_0_2px_rgba(255,255,255,0.4)] pointer-events-none" />
+                            </React.Fragment>
+                        )}
+
+                        {isLastMove && (
+                            <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                      flex items-center justify-center rounded-full shadow-sm animate-fade-in
+                      ${player === Player.Black
+                                    ? 'w-2 h-2 bg-[#ff3333] shadow-[0_0_8px_rgba(255,50,50,0.8)]'
+                                    : 'w-2 h-2 bg-[#cc0000] shadow-[0_0_5px_rgba(200,0,0,0.4)]'
+                                }
+                    `}
+                                style={{ animation: 'fade-in 0.2s ease-out 0.45s backwards' }}>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // ==========================================
+        // COMPONENT: BOARD
+        // ==========================================
+        const Board = ({
+            board,
+            onCellClick,
+            lastMove,
+            currentPlayer,
+            ghostPlayer,
+            winner,
+            winningLine
+        }) => {
+            const [hoverPos, setHoverPos] = useState(null);
+
+            const isWinningCell = (row, col) => {
+                return winningLine?.some(p => p.row === row && p.col === col) ?? false;
+            };
+
+            const handleCellHover = (row, col) => {
+                if (!winner && board[row][col] === Player.None) {
+                    setHoverPos({ row, col });
+                }
+            };
+
+            const boardStyle = {
+                backgroundColor: '#e6b45c',
+                backgroundImage: `
+              radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 45%, rgba(60, 40, 20, 0.25) 100%),
+              repeating-linear-gradient(90deg, rgba(140, 90, 40, 0.06) 0px, rgba(140, 90, 40, 0.06) 1px, transparent 1px, transparent 3px),
+              repeating-linear-gradient(90deg, transparent 0px, transparent 4px, rgba(100, 60, 20, 0.03) 5px, transparent 8px, rgba(100, 60, 20, 0.04) 9px, transparent 14px)
+            `,
+                boxShadow: 'inset 0 0 60px rgba(60, 30, 10, 0.4), 0 25px 50px -12px rgba(0, 0, 0, 0.65)'
+            };
+
+            const GRID_SIZE = 15;
+            const STAR_POINTS = [3, 7, 11];
+            const cellPercent = 100 / (GRID_SIZE - 1);
+            const stoneSize = `${cellPercent * 0.85}%`;
+
+            return (
+                <div
+                    className="zen-board-frame relative w-full max-w-[600px] aspect-square select-none"
+                    style={{
+                        perspective: 'none',
+                        padding: 'var(--zen-frame-padding, 32px)',
+                        background: 'linear-gradient(180deg, #6e4c2b 0%, #4a321d 100%)',
+                        borderRadius: 'var(--zen-frame-radius, 14px)',
+                        boxShadow: 'var(--zen-frame-shadow, 0 22px 50px rgba(0, 0, 0, 0.5))',
+                        boxSizing: 'border-box'
+                    }}
+                    onContextMenu={(e) => e.preventDefault()}
+                >
+                    <div className="w-full h-full relative"
+                        style={{
+                            transform: 'none',
+                            transformStyle: 'flat',
+                            transition: 'none'
+                        }}>
+
+                        <div className="absolute inset-0 bg-[#8c6038] rounded-lg"
+                            style={{
+                                opacity: 0.08
+                            }}></div>
+
+                        <div className="absolute inset-0 rounded-sm border-t border-white/20 flex items-center justify-center"
+                            style={{
+                                ...boardStyle,
+                                transform: 'translateZ(0)',
+                                border: 'var(--zen-frame-border, 10px solid rgba(45, 30, 18, 0.92))',
+                                boxShadow: 'var(--zen-frame-inner-shadow, inset 0 0 0 3px rgba(255, 255, 255, 0.08), inset 0 0 26px rgba(0, 0, 0, 0.25))'
+                            }}>
+
+                            <div className="relative w-[92%] h-[92%]">
+
+                                <svg className="absolute inset-0 w-full h-full pointer-events-none z-0"
+                                    width="100%" height="100%"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    {Array.from({ length: GRID_SIZE }).map((_, i) => {
+                                        const pos = i * cellPercent;
+                                        const start = 0;
+                                        const end = 100;
+                                        return (
+                                            <React.Fragment key={i}>
+                                                <line
+                                                    x1={`${pos}%`} y1={`${start}%`}
+                                                    x2={`${pos}%`} y2={`${end}%`}
+                                                    stroke="rgba(43, 29, 18, 0.85)"
+                                                    strokeWidth="1.5"
+                                                    style={{ mixBlendMode: 'multiply' }}
+                                                />
+                                                <line
+                                                    x1={`${start}%`} y1={`${pos}%`}
+                                                    x2={`${end}%`} y2={`${pos}%`}
+                                                    stroke="rgba(43, 29, 18, 0.85)"
+                                                    strokeWidth="1.5"
+                                                    style={{ mixBlendMode: 'multiply' }}
+                                                />
+                                            </React.Fragment>
+                                        );
+                                    })}
+                                    {STAR_POINTS.map(row =>
+                                        STAR_POINTS.map(col => (
+                                            <circle
+                                                key={`${row}-${col}`}
+                                                cx={`${col * cellPercent}%`}
+                                                cy={`${row * cellPercent}%`}
+                                                r="3.5"
+                                                fill="#2b1d12"
+                                                style={{ mixBlendMode: 'multiply' }}
+                                            />
+                                        ))
+                                    )}
+                                </svg>
+
+                                <div className="absolute inset-0 grid grid-rows-[repeat(15,minmax(0,1fr))] grid-cols-[repeat(15,minmax(0,1fr))] z-10">
+                                    {board.map((rowArr, rIndex) => (
+                                        rowArr.map((cellState, cIndex) => (
+                                            <div
+                                                key={`hit-${rIndex}-${cIndex}`}
+                                                className="w-full h-full"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onCellClick({ row: rIndex, col: cIndex });
+                                                }}
+                                                onMouseEnter={() => handleCellHover(rIndex, cIndex)}
+                                            />
+                                        ))
+                                    ))}
+                                </div>
+
+                                {board.map((rowArr, rIndex) => (
+                                    rowArr.map((cellState, cIndex) => {
+                                        if (cellState === Player.None) return null;
+                                        const isLast = lastMove?.row === rIndex && lastMove?.col === cIndex;
+                                        const isWin = isWinningCell(rIndex, cIndex);
+                                        const isDimmed = winner && !isWin;
+                                        const left = `${cIndex * cellPercent}%`;
+                                        const top = `${rIndex * cellPercent}%`;
+                                        const scale = isWin ? ' scale(1.06)' : (isDimmed ? ' scale(0.96)' : '');
+
+                                        return (
+                                            <div
+                                                key={`stone-${rIndex}-${cIndex}`}
+                                                className="absolute z-20"
+                                                style={{
+                                                    left,
+                                                    top,
+                                                    width: stoneSize,
+                                                    height: stoneSize,
+                                                    transform: `translate(-50%, -50%)${scale}`,
+                                                    opacity: isDimmed ? 0.4 : 1,
+                                                    filter: isDimmed ? 'grayscale(0.4) blur(0.5px)' : 'none'
+                                                }}
+                                            >
+                                                {isWin && (
+                                                    <div className="absolute w-[85%] h-[85%] rounded-full animate-pulse-slow"
+                                                        style={{
+                                                            background: 'radial-gradient(circle, rgba(251, 191, 36, 0.3) 0%, transparent 70%)',
+                                                            boxShadow: '0 0 25px 8px rgba(251, 191, 36, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.4)'
+                                                        }}
+                                                    />
+                                                )}
+                                                <Stone player={cellState} isLastMove={isLast} />
+                                            </div>
+                                        );
+                                    })
+                                ))}
+
+                                {hoverPos && !winner && board[hoverPos.row]?.[hoverPos.col] === Player.None && (
+                                    <div
+                                        className="absolute z-20"
+                                        style={{
+                                            left: `${hoverPos.col * cellPercent}%`,
+                                            top: `${hoverPos.row * cellPercent}%`,
+                                            width: stoneSize,
+                                            height: stoneSize,
+                                            transform: 'translate(-50%, -50%)'
+                                        }}
+                                    >
+                                        <Stone player={ghostPlayer} isLastMove={false} isGhost={true} />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div >
+            );
+        };
+
+        // Expose Board component globally for ZenPVE
+        window.Board = Board;
+        window.Stone = Stone;
+        window.Player = Player;
+
+        // ==========================================
+        // BRIDGE
+        // ==========================================
+        let root = null;
+        let clickHandler = null;
+
+        window.ZenBoard = {
+            init(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.error("ZenBoard container not found:", containerId);
+                    return;
+                }
+                root = ReactDOM.createRoot(container);
+                console.log("React ZenBoard initialized (Bundle)");
+            },
+
+            render(gameState) {
+                if (!root) return;
+
+                const { board, history, winningLine, currentPlayer, ghostPlayer } = gameState;
+
+                let lastMove = null;
+                if (history && history.length > 0) {
+                    const last = history[history.length - 1];
+                    lastMove = { row: last.x, col: last.y };
+                }
+
+                let formattedWinningLine = null;
+                if (winningLine && winningLine.length > 0) {
+                    formattedWinningLine = winningLine.map(pt => ({ row: pt.x, col: pt.y }));
+                }
+
+                let winner = null;
+                if (formattedWinningLine && formattedWinningLine.length > 0 && history && history.length > 0) {
+                    const last = history[history.length - 1];
+                    winner = last.player;
+                }
+
+                root.render(
+                    <Board
+                        board={board}
+                        onCellClick={(pos) => {
+                            if (clickHandler) clickHandler(pos.row, pos.col);
+                        }}
+                        lastMove={lastMove}
+                        currentPlayer={currentPlayer}
+                        ghostPlayer={ghostPlayer || currentPlayer}
+                        winner={winner}
+                        winningLine={formattedWinningLine}
+                    />
+                );
+            },
+
+            setClickHandler(fn) {
+                clickHandler = fn;
+            },
+
+            playStoneSound(player) {
+                playStoneSound(player);
+            }
+        };
+    </script>
 
     <!-- 游戏分析 -->
     <script src="js/analytics.js"></script>

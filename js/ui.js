@@ -1113,25 +1113,34 @@ class UIManager {
     }
 
     // 更新在线人数
-    updateOnlineCount(count) {
+    async updateOnlineCount(count) {
         // 1. 联机大厅
         // data 可能是数字(旧版)或对象(新版 {total, playing, story})
         const total = (typeof count === 'object') ? (count.total || 0) : (count || 0);
         const playing = (typeof count === 'object') ? (count.playing || 0) : 0;
         const story = (typeof count === 'object') ? (count.story || 0) : 0;
 
+        // 🤖 获取AI在线数量
+        let aiCount = 0;
+        if (window.AIOnlineManager) {
+            aiCount = await window.AIOnlineManager.getAIOnlineCount();
+        }
+
+        // 总在线数 = 真人玩家 + AI玩家
+        const totalWithAI = total + aiCount;
+
         // 1. 联机大厅
         const lobbyCountEl = document.getElementById('online-count');
         if (lobbyCountEl) {
             // Need 'lobby.online_players' key. Fallback for now.
             const text = window.Localization ? Localization.t('menu.status_online') : '在线'; // Reuse status_online="Online"
-            lobbyCountEl.textContent = `${text}: ${total}`;
+            lobbyCountEl.textContent = `${text}: ${totalWithAI}`;
         }
 
         // 2. 主菜单 (Bento Grid) - Updated: menu-online-count is now just the number span
         const menuCountEl = document.getElementById('menu-online-count');
         if (menuCountEl) {
-            menuCountEl.textContent = total;
+            menuCountEl.textContent = totalWithAI;
         }
 
         // 3. 对战中 - Updated: menu-playing-count is now just the number span
@@ -1670,6 +1679,40 @@ class UIManager {
         const panel = document.getElementById('history-panel');
         if (panel) {
             panel.classList.add('hidden');
+        }
+    }
+
+    // ============ 兼容性方法 (用于旧版匹配系统回退) ============
+
+    /**
+     * 显示/隐藏匹配弹窗 (兼容性方法)
+     * 注意:新系统使用RobustMatchmakingUI,此方法仅作为回退
+     */
+    showMatchmaking(show) {
+        console.log('[UI] showMatchmaking called (compatibility method), show:', show);
+        // 如果RobustMatchmakingUI可用,委托给它
+        if (window.RobustMatchmakingUI) {
+            if (show) {
+                RobustMatchmakingUI.startMatch();
+            } else {
+                RobustMatchmakingUI.cancel();
+            }
+            return;
+        }
+
+        // 降级:显示简单toast提示
+        if (show) {
+            this.showToast(Localization.get('toast.matching'), 'info');
+        }
+    }
+
+    /**
+     * 关闭房间等待弹窗 (兼容性方法)
+     */
+    closeRoomWaiting() {
+        const roomWaitingModal = document.getElementById('room-waiting-modal');
+        if (roomWaitingModal) {
+            roomWaitingModal.classList.add('hidden');
         }
     }
 }

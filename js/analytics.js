@@ -13,6 +13,7 @@ const GameAnalytics = (function () {
     let currentGameId = null;
     let gameStartTime = null;
     let initialized = false;
+    let isLocalDev = false; // Track if running locally
 
     /**
      * 初始化
@@ -20,6 +21,11 @@ const GameAnalytics = (function () {
     function init() {
         if (initialized) return;
         initialized = true;
+
+        // Check if running from file:// protocol (local development)
+        isLocalDev = window.location.protocol === 'file:' ||
+            window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1';
 
         // 获取或生成访客ID
         visitorId = localStorage.getItem('ga_visitor_id');
@@ -31,10 +37,12 @@ const GameAnalytics = (function () {
         // 生成会话ID (每次打开页面新的)
         sessionId = 's_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 
-        // 自动记录访问
-        trackVisit();
+        // 自动记录访问 (skip if local dev)
+        if (!isLocalDev) {
+            trackVisit();
+        }
 
-        console.log('[Analytics] Initialized');
+        console.log('[Analytics] Initialized', isLocalDev ? '(local dev mode - API calls disabled)' : '');
     }
 
     /**
@@ -78,6 +86,9 @@ const GameAnalytics = (function () {
      * 发送数据 (使用 sendBeacon 不阻塞页面)
      */
     function send(endpoint, data) {
+        // Skip API calls in local development mode
+        if (isLocalDev) return;
+
         const payload = JSON.stringify({
             visitorId,
             sessionId,
@@ -130,24 +141,27 @@ const GameAnalytics = (function () {
     function trackGameStart(mode, subMode = null) {
         gameStartTime = Date.now();
 
-        fetch(`${API_BASE}/api/analytics/game/start`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                visitorId,
-                sessionId,
-                mode,
-                subMode
+        // Skip API call in local development mode
+        if (!isLocalDev) {
+            fetch(`${API_BASE}/api/analytics/game/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    visitorId,
+                    sessionId,
+                    mode,
+                    subMode
+                })
             })
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    currentGameId = data.data.gameId;
-                    console.log('[Analytics] Game started:', currentGameId);
-                }
-            })
-            .catch(() => { });
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        currentGameId = data.data.gameId;
+                        console.log('[Analytics] Game started:', currentGameId);
+                    }
+                })
+                .catch(() => { });
+        }
 
         // Google Analytics
         if (typeof gtag === 'function') {

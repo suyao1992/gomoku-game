@@ -37,6 +37,26 @@
     --game-button-v-offset: 20px;
 }
 
+/* ============ MP GAME SCENE (Premium) ============ */
+body.mp-game {
+    background: #0b0d1a;
+}
+
+body.mp-game #game-bg {
+    background-image: none;
+    background:
+        radial-gradient(circle at 18% 18%, rgba(92, 99, 180, 0.35), transparent 45%),
+        radial-gradient(circle at 82% 70%, rgba(40, 32, 80, 0.45), transparent 55%),
+        linear-gradient(180deg, #0a0c18 0%, #0c0f1e 45%, #101325 100%);
+    background-size: cover;
+    background-position: center;
+    filter: none;
+}
+
+body.mp-game .container {
+    position: relative;
+}
+
 /* ============ 毛玻璃弹窗基础 ============ */
 .mp-modal {
     position: fixed;
@@ -995,50 +1015,49 @@
 
 /* ============ 玩家信息卡片 ============ */
 .mp-game .player-card {
-    background: var(--mp-bg-card);
-    border: 2px solid transparent;
-    border-radius: 16px;
-    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(40, 42, 70, 0.9), rgba(24, 26, 45, 0.92));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+    padding: 18px 24px;
     position: fixed;
     z-index: 100;
-    min-width: 180px;
-    backdrop-filter: blur(10px);
-    background-image:
-        linear-gradient(var(--mp-bg-card), var(--mp-bg-card)),
-        linear-gradient(135deg, var(--mp-primary), var(--mp-secondary));
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
+    min-width: 260px;
+    width: min(720px, 90vw);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* 玩家卡片位置 - 使用CSS变量，便于复用 */
 
 .mp-game .player-card.me {
     /* 我方卡片：左边缘 = 棋盘左边缘 */
-    left: calc(50% - var(--game-board-half-width));
+    left: 50%;
+    right: auto;
     /* 垂直位置：棋盘下方，紧贴 */
-    bottom: calc(50% - var(--game-board-half-width) - var(--game-card-gap));
+    bottom: 140px;
     top: auto;
-    transform: translateY(100%);
+    transform: translateX(-50%);
 }
 
 .mp-game .player-card.opponent {
     /* 对手卡片：右边缘 = 棋盘右边缘 */
-    right: calc(50% - var(--game-board-half-width));
+    left: 50%;
+    right: auto;
     /* 垂直位置：棋盘上方，紧贴 */
-    top: calc(50% - var(--game-board-half-width) - var(--game-card-gap));
+    top: 90px;
     bottom: auto;
-    transform: translateY(-100%);
+    transform: translateX(-50%);
 }
 
 /* ============ 回合状态 ============ */
 .mp-game .player-card.me.active-turn {
     animation: active-glow 1.5s ease-in-out infinite;
-    transform: translateY(100%) scale(1.02);
+    transform: translateX(-50%) scale(1.02);
 }
 
 .mp-game .player-card.opponent.active-turn {
     animation: active-glow 1.5s ease-in-out infinite;
-    transform: translateY(-100%) scale(1.02);
+    transform: translateX(-50%) scale(1.02);
 }
 
 .mp-game .player-card.waiting-turn {
@@ -1142,6 +1161,50 @@
     color: white;
     text-align: center;
     animation: status-bounce 0.5s ease-out;
+}
+
+/* ============ MP BOARD LAYOUT (Desktop) ============ */
+body.mp-game .game-layout {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 120px 0 180px;
+}
+
+body.mp-game .game-container {
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+/* ============ MP ACTIONS (Desktop) ============ */
+body.mp-game #mp-game-actions,
+body.mp-game .game-actions {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: fixed !important;
+    left: 50% !important;
+    bottom: 36px !important;
+    transform: translateX(-50%) !important;
+    width: min(720px, 92vw) !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    padding: 12px 16px !important;
+    border-radius: 16px !important;
+    background: rgba(20, 22, 40, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(18px) !important;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.mp-game #mp-game-actions .action-btn,
+body.mp-game .game-actions .action-btn {
+    border-radius: 14px !important;
+    background: linear-gradient(180deg, rgba(70, 74, 120, 0.6), rgba(36, 40, 70, 0.85)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
 }
 
 @keyframes status-bounce {
@@ -1819,6 +1882,8 @@ body.mp-game #mp-game-actions {
     /* 棋盘容器：自适应剩余空间 - 必须限定作用域 */
     body.mp-game .game-container {
         flex: 1 !important;
+        aspect-ratio: 1 / 1;
+        /* 强制正方形，防止被flex拉伸变形 */
         width: 100% !important;
         max-width: 100% !important;
         display: flex !important;
@@ -1826,6 +1891,24 @@ body.mp-game #mp-game-actions {
         justify-content: center !important;
         padding: 5px !important;
         min-height: 0 !important;
+    }
+
+    body.mp-game .zen-board-frame {
+        width: min(92vw, calc(100vh - 210px)) !important;
+        height: min(92vw, calc(100vh - 210px)) !important;
+        aspect-ratio: 1 / 1 !important;
+        flex: 0 0 auto !important;
+        --zen-frame-padding: 14px;
+        --zen-frame-radius: 12px;
+        --zen-frame-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+        --zen-frame-border: 6px solid rgba(45, 30, 18, 0.92);
+        --zen-frame-inner-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.08), inset 0 0 16px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+    }
+
+    body.mp-game #zen-board-root {
+        width: 100% !important;
+        height: 100% !important;
     }
 
     /* 棋盘：根据可用空间自适应 */
@@ -1847,9 +1930,9 @@ body.mp-game #mp-game-actions {
         width: 100% !important;
         padding: 10px 15px !important;
         padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
-        background: rgba(10, 10, 30, 0.98) !important;
-        backdrop-filter: blur(10px) !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background: linear-gradient(135deg, rgba(24, 26, 45, 0.92), rgba(16, 18, 34, 0.98)) !important;
+        backdrop-filter: blur(16px) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
         z-index: 200 !important;
         display: flex !important;
         justify-content: center !important;
@@ -1893,8 +1976,10 @@ body.mp-game #mp-game-actions {
         /* 固定高度 */
         max-height: 44px !important;
         overflow: hidden !important;
-        background: rgba(20, 20, 40, 0.95) !important;
-        backdrop-filter: blur(10px) !important;
+        background: linear-gradient(135deg, rgba(40, 42, 70, 0.92), rgba(24, 26, 45, 0.95)) !important;
+        backdrop-filter: blur(14px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35) !important;
     }
 
     /* 对手卡片：顶部 */
@@ -2100,8 +2185,8 @@ body.mp-game #mp-game-actions {
         min-height: 50px !important;
         padding: 8px 10px !important;
         padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
-        background: rgba(10, 10, 30, 0.98) !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background: linear-gradient(135deg, rgba(24, 26, 45, 0.92), rgba(16, 18, 34, 0.98)) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
         z-index: 200 !important;
         display: flex !important;
         visibility: visible !important;
@@ -2387,13 +2472,35 @@ body.mp-game #mp-game-actions {
 }
 
 @keyframes bellRing {
-    0%, 100% { transform: rotate(0deg); }
-    10% { transform: rotate(15deg); }
-    20% { transform: rotate(-15deg); }
-    30% { transform: rotate(10deg); }
-    40% { transform: rotate(-10deg); }
-    50% { transform: rotate(5deg); }
-    60% { transform: rotate(0deg); }
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    10% {
+        transform: rotate(15deg);
+    }
+
+    20% {
+        transform: rotate(-15deg);
+    }
+
+    30% {
+        transform: rotate(10deg);
+    }
+
+    40% {
+        transform: rotate(-10deg);
+    }
+
+    50% {
+        transform: rotate(5deg);
+    }
+
+    60% {
+        transform: rotate(0deg);
+    }
 }
 
 .reservation-title {
@@ -2422,8 +2529,15 @@ body.mp-game #mp-game-actions {
 }
 
 @keyframes statusBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
 }
 
 .reservation-tip {

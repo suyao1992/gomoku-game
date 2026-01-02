@@ -1,0 +1,57 @@
+/* 
+ * ANIMATIONS for Stone Placement 
+ * Simulating a gentle physical placement from a lower height
+ */
+@keyframes stone-drop {
+    0% {
+        opacity: 0;
+        /* 
+       REDUCED HEIGHT & SCALE for a "Gentle" feel
+       Was: scale(2.5) / 100px height
+       Now: scale(1.4) / 40px height -> Closer to the board, like a careful hand placement.
+    */
+        transform: translate3d(0, -15px, 40px) scale(1.4);
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+        /* Lands at normal size on the board surface */
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+@keyframes shadow-drop {
+    0% {
+        opacity: 0;
+        /* Shadow is closer to the center because the object is lower */
+        transform: translate(25%, 35%) scale(1.2);
+        filter: blur(6px);
+    }
+
+    100% {
+        opacity: var(--shadow-opacity);
+        /* Shadow converges to the base */
+        transform: translate(10%, 15%) scale(1);
+        filter: blur(4px);
+    }
+}
+
+/* Ensure React root fills container */
+#zen-board-root {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Custom Wood Texture Class used in original project */
+.wood-texture {
+    background-image: url('https://images.unsplash.com/photo-1546484396-fb3fc6f95f98?q=80&w=2000&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+}

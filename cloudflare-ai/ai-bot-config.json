@@ -1,0 +1,328 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-01-01T23:52:00+09:00",
+  "description": "AI对手配置池 - 20个智能机器人",
+  "aiPlayers": [
+    {
+      "uid": "U7x9K2mP4q",
+      "nickname": "棋道新星",
+      "lang": "zh",
+      "avatar": "🦊",
+      "elo": 1285,
+      "personality": "normal",
+      "aiLevel": 2,
+      "thinkTimeRange": [800, 2500],
+      "errorRate": 0.12,
+      "behaviorTraits": {
+        "chatProbability": 0.08,
+        "resignThreshold": 0.05
+      }
+    },
+    {
+      "uid": "P3nL8vQr2m",
+      "nickname": "五子传说",
+      "lang": "zh",
+      "avatar": "🐼",
+      "elo": 1420,
+      "personality": "fast",
+      "aiLevel": 3,
+      "thinkTimeRange": [300, 1200],
+      "errorRate": 0.05,
+      "behaviorTraits": {
+        "chatProbability": 0.12,
+        "resignThreshold": 0.03
+      }
+    },
+    {
+      "uid": "M9kR4tYb7w",
+      "nickname": "云端旅人",
+      "lang": "zh",
+      "avatar": "🦁",
+      "elo": 1350,
+      "personality": "slow",
+      "aiLevel": 2,
+      "thinkTimeRange": [1500, 4000],
+      "errorRate": 0.10,
+      "behaviorTraits": {
+        "chatProbability": 0.05,
+        "resignThreshold": 0.08
+      }
+    },
+    {
+      "uid": "Q2wH6sNp9x",
+      "nickname": "棋海探索",
+      "lang": "zh",
+      "avatar": "🐯",
+      "elo": 1230,
+      "personality": "normal",
+      "aiLevel": 1,
+      "thinkTimeRange": [1000, 2800],
+      "errorRate": 0.18,
+      "behaviorTraits": {
+        "chatProbability": 0.06,
+        "resignThreshold": 0.12
+      }
+    },
+    {
+      "uid": "K5jD3zXc8v",
+      "nickname": "黑白之间",
+      "lang": "zh",
+      "avatar": "🐲",
+      "elo": 1390,
+      "personality": "normal",
+      "aiLevel": 2,
+      "thinkTimeRange": [900, 2400],
+      "errorRate": 0.08,
+      "behaviorTraits": {
+        "chatProbability": 0.10,
+        "resignThreshold": 0.05
+      }
+    },
+    {
+      "uid": "F8mT1pWh5y",
+      "nickname": "落子无悔",
+      "lang": "zh",
+      "avatar": "🦅",
+      "elo": 1480,
+      "personality": "fast",
+      "aiLevel": 3,
+      "thinkTimeRange": [400, 1400],
+      "errorRate": 0.03,
+      "behaviorTraits": {
+        "chatProbability": 0.15,
+        "resignThreshold": 0.02
+      }
+    },
+    {
+      "uid": "N6vB9rLk2s",
+      "nickname": "BoardMaster",
+      "lang": "en",
+      "avatar": "🐺",
+      "elo": 1320,
+      "personality": "normal",
+      "aiLevel": 2,
+      "thinkTimeRange": [850, 2600],
+      "errorRate": 0.11,
+      "behaviorTraits": {
+        "chatProbability": 0.09,
+        "resignThreshold": 0.06
+      }
+    },
+    {
+      "uid": "R4cF7xMj3t",
+      "nickname": "StoneSeeker",
+      "lang": "en",
+      "avatar": "🦄",
+      "elo": 1260,
+      "personality": "slow",
+      "aiLevel": 1,
+      "thinkTimeRange": [1600, 3800],
+      "errorRate": 0.16,
+      "behaviorTraits": {
+        "chatProbability": 0.07,
+        "resignThreshold": 0.10
+      }
+    },
+    {
+      "uid": "W1yG5kQn8p",
+      "nickname": "GridWarrior",
+      "lang": "en",
+      "avatar": "🐱",
+      "elo": 1440,
+      "personality": "fast",
+      "aiLevel": 3,
+      "thinkTimeRange": [350, 1300],
+      "errorRate": 0.04,
+      "behaviorTraits": {
+        "chatProbability": 0.11,
+        "resignThreshold": 0.04
+      }
+    },
+    {
+      "uid": "Z9sJ2vBm4r",
+      "nickname": "LineChaser",
+      "lang": "en",
+      "avatar": "🐶",
+      "elo": 1370,
+      "personality": "normal",
+      "aiLevel": 2,
+      "thinkTimeRange": [750, 2300],
+      "errorRate": 0.09,
+      "behaviorTraits": {
+        "chatProbability": 0.08,
+        "resignThreshold": 0.07
+      }
+    },
+    {
+      "uid": "H3pL6wKx9v",
+      "nickname": "PatternHunter",
+      "lang": "en",
+      "avatar": "🦋",
+      "elo": 1210,
+      "personality": "slow",
+      "aiLevel": 1,
+      "thinkTimeRange": [1700, 4200],
+      "errorRate": 0.20,
+      "behaviorTraits": {
+        "chatProbability": 0.05,
+        "resignThreshold": 0.15
+      }
+    },
+    {
+      "uid": "T8dY4rZn2q",
+      "nickname": "碁盤の旅人",
+      "lang": "ja",
+      "avatar": "🌸",
+      "elo": 1340,
+      "personality": "normal",
+      "aiLevel": 2,
+      "thinkTimeRange": [900, 2700],
+      "errorRate": 0.10,
+      "behaviorTraits": {
+        "chatProbability": 0.06,
+        "resignThreshold": 0.08
+      }
+    },
+    {
+      "uid": "V5bC8jXm1w",
+      "nickname": "五目の達人",
+      "lang": "ja",
+      "avatar": "🦊",
+      "elo": 1470,
+      "personality": "fast",
+      "aiLevel": 3,
+      "thinkTimeRange": [380, 1250],
+      "errorRate": 0.04,
+      "behaviorTraits": {
+        "chatProbability": 0.13,
+        "resignThreshold": 0.03
+      }
+    },
+    {
+      "uid": "D2nH7fWp6y",
+      "nickname": "石の詩人",
+      "lang": "ja",
+      "avatar": "🐼",
+      "elo": 1290,
+      "personality": "slow",
+      "aiLevel": 2,
+      "thinkTimeRange": [1400, 3600],
+      "errorRate": 0.13,
+      "behaviorTraits": {
+        "chatProbability": 0.07,
+        "resignThreshold": 0.09
+      }
+    },
+    {
+      "uid": "L6kQ3sVr9x",
+      "nickname": "盤上の風",
+      "lang": "ja",
+      "avatar": "🦁",
+      "elo": 1410,
+      "personality": "normal",
+      "aiLevel": 2,
+      "thinkTimeRange": [800, 2400],
+      "errorRate": 0.07,
+      "behaviorTraits": {
+        "chatProbability": 0.09,
+        "resignThreshold": 0.05
+      }
+    },
+    {
+      "uid": "B9xT5mLk2p",
+      "nickname": "바둑여행자",
+      "lang": "ko",
+      "avatar": "🐯",
+      "elo": 1310,
+      "personality": "normal",
+      "aiLevel": 2,
+      "thinkTimeRange": [950, 2550],
+      "errorRate": 0.11,
+      "behaviorTraits": {
+        "chatProbability": 0.08,
+        "resignThreshold": 0.07
+      }
+    },
+    {
+      "uid": "Y4wF8jNq7r",
+      "nickname": "오목마스터",
+      "lang": "ko",
+      "avatar": "🐲",
+      "elo": 1450,
+      "personality": "fast",
+      "aiLevel": 3,
+      "thinkTimeRange": [320, 1180],
+      "errorRate": 0.05,
+      "behaviorTraits": {
+        "chatProbability": 0.12,
+        "resignThreshold": 0.04
+      }
+    },
+    {
+      "uid": "G7zD2vBm5s",
+      "nickname": "돌의시인",
+      "lang": "ko",
+      "avatar": "🦅",
+      "elo": 1250,
+      "personality": "slow",
+      "aiLevel": 1,
+      "thinkTimeRange": [1550, 3900],
+      "errorRate": 0.17,
+      "behaviorTraits": {
+        "chatProbability": 0.06,
+        "resignThreshold": 0.11
+      }
+    },
+    {
+      "uid": "C3pR6kXh8t",
+      "nickname": "Người chơi cờ",
+      "lang": "vi",
+      "avatar": "🐺",
+      "elo": 1380,
+      "personality": "normal",
+      "aiLevel": 2,
+      "thinkTimeRange": [870, 2450],
+      "errorRate": 0.09,
+      "behaviorTraits": {
+        "chatProbability": 0.07,
+        "resignThreshold": 0.06
+      }
+    },
+    {
+      "uid": "X2hM9wSn4v",
+      "nickname": "Thợ săn chiến thắng",
+      "lang": "vi",
+      "avatar": "🦄",
+      "elo": 1220,
+      "personality": "slow",
+      "aiLevel": 1,
+      "thinkTimeRange": [1650, 4100],
+      "errorRate": 0.19,
+      "behaviorTraits": {
+        "chatProbability": 0.05,
+        "resignThreshold": 0.14
+      }
+    }
+  ],
+  "statistics": {
+    "totalAIs": 20,
+    "eloDistribution": {
+      "min": 1210,
+      "max": 1480,
+      "mean": 1345,
+      "median": 1350
+    },
+    "personalityDistribution": {
+      "fast": 6,
+      "normal": 9,
+      "slow": 5
+    },
+    "languageDistribution": {
+      "zh": 6,
+      "en": 5,
+      "ja": 4,
+      "ko": 3,
+      "vi": 2
+    }
+  }
+}

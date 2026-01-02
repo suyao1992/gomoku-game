@@ -870,8 +870,11 @@ const Network = {
         // 监听房间状态变化
         this.listeners.room = this.currentRoomRef.on('value', (snapshot) => {
             const data = snapshot.val();
+            console.log('[Network] 房间监听器触发, status:', data?.status, 'onRoomUpdate回调:', !!this.onRoomUpdate);
             if (data && this.onRoomUpdate) {
                 this.onRoomUpdate(data);
+            } else if (data && !this.onRoomUpdate) {
+                console.warn('[Network] ⚠️ onRoomUpdate 回调未设置！房间状态:', data.status);
             }
         });
 

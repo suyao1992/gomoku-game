@@ -1,0 +1,127 @@
+/* Forbidden Rules Section in Difficulty Modal */
+.forbidden-rules-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.forbidden-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 12px;
+}
+
+.help-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.help-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.forbidden-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.forbidden-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.forbidden-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.forbidden-btn.selected {
+    background: rgba(212, 175, 106, 0.15);
+    border-color: rgba(212, 175, 106, 0.6);
+}
+
+.forbidden-icon {
+    font-size: 1.5rem;
+}
+
+.forbidden-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.forbidden-desc {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Zen PVE Forbidden Toggle */
+.zen-forbidden-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Reduced from 8px */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    /* Reduced from 20px */
+    padding: 4px 12px;
+    /* Reduced from 6px 16px */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.zen-forbidden-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.forbidden-toggle-icon {
+    font-size: 0.9rem;
+    /* Reduced from 1rem */
+}
+
+.forbidden-toggle-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    /* Reduced from 0.8rem */
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.05em;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .forbidden-options {
+        flex-direction: column;
+    }
+
+    .forbidden-btn {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 10px 12px;
+    }
+}
